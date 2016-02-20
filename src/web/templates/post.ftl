@@ -2,7 +2,7 @@
 	
 	<#include "menu.ftl">
 
-	 <header class="intro-header" style="background-image: url('img/post-bg.jpg')">
+	 <header class="intro-header" style="background-image: url('<#if (content.rootpath)??>${content.rootpath}<#else></#if>img/post-bg.jpg')">
         <div class="container">
             <div class="row">
                 <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
@@ -15,6 +15,8 @@
             </div>
         </div>
     </header>
+
+
  	<article>
         <div class="container">
             <div class="row">
@@ -24,6 +26,6 @@
             </div>
         </div>
     </article>
-	<hr />
+	<hr >
 	
 <#include "footer.ftl">
