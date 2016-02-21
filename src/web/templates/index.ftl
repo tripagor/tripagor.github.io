@@ -41,7 +41,7 @@
                 <!-- Pager -->
                 <ul class="pager">
                     <li class="next">
-                        Older posts are available in the <a href="${content.rootpath}${config.archive_file}">archive</a>.
+                        <a href="${content.rootpath}${config.archive_file}">Older Posts &rarr;</a>
                     </li>
                 </ul>
             </div>
