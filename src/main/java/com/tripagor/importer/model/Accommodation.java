@@ -1,23 +1,34 @@
 package com.tripagor.importer.model;
 
+import org.beanio.annotation.Field;
+import org.beanio.annotation.Record;
+
+@Record
 public class Accommodation {
 	@Override
 	public String toString() {
-		return "Accommodation [title=" + title + ", description=" + description + ", url=" + url + ", address="
+		return "Accommodation [title=" + name + ", description=" + description + ", url=" + url + ", address="
 				+ address + "]";
 	}
 
-	private String title;
+	@Field(at = 0)
+	private String name;
+
+	@Field(at = 1)
 	private String description;
+
+	@Field(at = 2)
 	private String url;
+
+	@Field(at = 3)
 	private String address;
 
-	public String getTitle() {
-		return title;
+	public String getName() {
+		return name;
 	}
 
-	public void setTitle(String title) {
-		this.title = title;
+	public void setName(String title) {
+		this.name = title;
 	}
 
 	public String getDescription() {
