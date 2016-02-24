@@ -1,12 +1,11 @@
 package com.tripagor.importer;
 
 import java.io.File;
-import java.util.List;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
 
 import com.tripagor.importer.model.Accommodation;
 import com.tripagor.importer.model.AffiliateSourceLine;
@@ -24,15 +23,19 @@ public class ExtractionWrapperTest {
 	}
 
 	@Test
-	public void doIt() throws Exception{
+	public void doIt() throws Exception {
 		List<Accommodation> accommodations = new LinkedList<Accommodation>();
-		List<AffiliateSourceLine> lines = affiliateImport.transform(new File("src/test/resources/short_link.csv"));
-		for(AffiliateSourceLine line: lines){
-			System.out.println("url="+line.getUrl());
-			Accommodation accommodation = bookingComAccommodationExtractor.extract(line.getUrl());
-			accommodations.add(accommodation);
+		List<AffiliateSourceLine> lines = affiliateImport.transform(new File("src/test/resources/frankfurt.csv"));
+		for (AffiliateSourceLine line : lines) {
+			System.out.println("url=" + line.getUrl());
+			try {
+				Accommodation accommodation = bookingComAccommodationExtractor.extract(line.getUrl());
+				accommodations.add(accommodation);
+			} catch (Exception e) {
+				System.out.println("error=" + e);
+			}
 		}
-		accommodationExport.export(accommodations, new File("target/export.csv"));
+		accommodationExport.export(accommodations, new File("target/full.json"));
 	}
 
 }

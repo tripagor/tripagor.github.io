@@ -1,5 +1,6 @@
 package com.tripagor.importer;
 
+import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
@@ -19,17 +20,21 @@ public class BookingComAccommodationExtractor {
 	public BookingComAccommodationExtractor() {
 	}
 
-	public Accommodation extract(String url) {
-		driver = new FirefoxDriver();
+	public Accommodation extract(String url) throws RuntimeException {
 		try {
+			driver = new FirefoxDriver();
 			Accommodation result = new Accommodation();
 
-			driver.manage().timeouts().pageLoadTimeout(15, TimeUnit.SECONDS);
-			driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-			driver.get(url);
+			driver.manage().timeouts().pageLoadTimeout(20, TimeUnit.SECONDS);
+			driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+
+			URL urlObj = new URL(url.replace("http:/", "http://"));
+			driver.get(urlObj.toString());
 			WebElement address = driver.findElement(By.className("hp_address_subtitle"));
 			WebElement desc = driver.findElement(By.id("summary"));
 			WebElement title = driver.findElement(By.id("hp_hotel_name"));
+			
+			driver.close();
 
 			result.setUrl(url);
 			result.setDescription(desc.getText());
@@ -38,10 +43,7 @@ public class BookingComAccommodationExtractor {
 
 			return result;
 		} catch (Exception e) {
-			logger.error("could not extract data from {}", url);
-			return null;
-		} finally {
-			driver.close();
+			throw new RuntimeException("error loading page" + e);
 		}
 	}
 
