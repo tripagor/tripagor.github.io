@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.tripagor.importer.model.Accommodation;
+import com.tripagor.importer.model.Address;
 
 public class BookingComAccommodationExtractor {
 
@@ -33,17 +34,17 @@ public class BookingComAccommodationExtractor {
 			WebElement address = driver.findElement(By.className("hp_address_subtitle"));
 			WebElement desc = driver.findElement(By.id("summary"));
 			WebElement title = driver.findElement(By.id("hp_hotel_name"));
-			
+
 			driver.close();
 
 			result.setUrl(url);
 			result.setDescription(desc.getText());
 			result.setName(title.getText());
-			result.setAddress(address.getText());
+			result.setAddress(new Address(address.getText()));
 
 			return result;
 		} catch (Exception e) {
-			throw new RuntimeException("error loading page" + e);
+			throw new RuntimeException(e);
 		}
 	}
 

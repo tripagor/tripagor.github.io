@@ -20,5 +20,8 @@ public class AffiliateImporterTest {
 	public void test() throws Exception {
 		List<AffiliateSourceLine> lines = affiliateImport.transform(new File("src/test/resources/links.csv"));
 		System.out.println("lines="+lines);
+		
+		
+		
 	}
 }
