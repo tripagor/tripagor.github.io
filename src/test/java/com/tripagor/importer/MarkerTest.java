@@ -34,9 +34,11 @@ public class MarkerTest {
 			boolean isMarked = false;
 			for (PlacesSearchResult place : places) {
 
-				System.out.println("accommodation.getName()=" + accommodation.getName() + " place.name " + place.name
-						+ " distance=" + StringUtils.getLevenshteinDistance(place.name, accommodation.getName()));
-				if (StringUtils.getLevenshteinDistance(place.name, accommodation.getName()) > 0.5) {
+				int length = accommodation.getName().length();
+				if (place.name.length() > accommodation.getName().length()) {
+					length = place.name.length();
+				}
+				if (StringUtils.getLevenshteinDistance(place.name, accommodation.getName()) / length < 0.2) {
 					isMarked = true;
 				}
 			}
