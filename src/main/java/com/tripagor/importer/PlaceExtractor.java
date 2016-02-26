@@ -9,6 +9,7 @@ import com.google.maps.model.LatLng;
 import com.google.maps.model.PlaceType;
 import com.google.maps.model.PlacesSearchResponse;
 import com.google.maps.model.PlacesSearchResult;
+import com.google.maps.model.RankBy;
 
 public class PlaceExtractor {
 
@@ -20,11 +21,12 @@ public class PlaceExtractor {
 		context = new GeoApiContext().setApiKey(API_KEY);
 	}
 
-	public PlacesSearchResult[] getAddressDetails(PlaceType placeType, LatLng latLng, int radius) throws RuntimeException {
+	public PlacesSearchResult[] getAddressDetails(PlaceType placeType, LatLng latLng, int radius)
+			throws RuntimeException {
 		try {
 
 			PlacesSearchResponse response = PlacesApi.nearbySearchQuery(context, latLng).type(placeType).radius(radius)
-					.await();
+					.rankby(RankBy.DISTANCE).await();
 
 			return response.results;
 		} catch (Exception e) {

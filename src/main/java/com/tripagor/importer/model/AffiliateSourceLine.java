@@ -6,6 +6,15 @@ import org.beanio.annotation.Record;
 @Record
 public class AffiliateSourceLine {
 
+	@Field(at = 0)
+	private String name;
+	@Field(at = 1)
+	private String plz;
+	@Field(at = 2)
+	private String city;
+	@Field(at = 3)
+	private String url;
+
 	@Override
 	public String toString() {
 		return "AffiliateSourceLine [name=" + name + ", plz=" + plz + ", city=" + city + ", url=" + url + "]";
@@ -42,14 +51,5 @@ public class AffiliateSourceLine {
 	public void setUrl(String url) {
 		this.url = url;
 	}
-
-	@Field(at = 0)
-	private String name;
-	@Field(at = 1)
-	private String plz;
-	@Field(at = 2)
-	private String city;
-	@Field(at = 3)
-	private String url;
 
 }

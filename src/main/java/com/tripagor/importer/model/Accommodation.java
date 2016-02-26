@@ -4,12 +4,6 @@ import org.beanio.annotation.Record;
 
 @Record
 public class Accommodation {
-	@Override
-	public String toString() {
-		return "Accommodation [title=" + name + ", description=" + description + ", url=" + url + ", address=" + address
-				+ "]";
-	}
-
 	private String name;
 
 	private String description;
@@ -48,6 +42,12 @@ public class Accommodation {
 
 	public void setAddress(Address address) {
 		this.address = address;
+	}
+
+	@Override
+	public String toString() {
+		return "Accommodation [title=" + name + ", description=" + description + ", url=" + url + ", address=" + address
+				+ "]";
 	}
 
 }
