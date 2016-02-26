@@ -1,6 +1,7 @@
 package com.tripagor.importer;
 
 import java.io.File;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -16,16 +17,19 @@ import com.tripagor.importer.model.Accommodation;
 public class MarkerTest {
 	private PlaceExtractor placeExtractor;
 	private ObjectMapper objectMapper;
+	private  AccommodationExport accommodationExport;
 
 	@Before
 	public void before() {
 		placeExtractor = new PlaceExtractor();
 		objectMapper = new ObjectMapper();
+		accommodationExport = new AccommodationExport();
 	}
 
 	@Test
 	public void doIt() throws Exception {
-		List<Accommodation> accommodations = objectMapper.readValue(new File("src/test/resources/selection.json"),
+		List<Accommodation> notMarked= new LinkedList<Accommodation>();
+		List<Accommodation> accommodations = objectMapper.readValue(new File("src/main/resources/frankfurt.json"),
 				objectMapper.getTypeFactory().constructCollectionType(List.class, Accommodation.class));
 		for (Accommodation accommodation : accommodations) {
 			PlacesSearchResult[] places = placeExtractor.getAddressDetails(PlaceType.LODGING,
@@ -42,7 +46,13 @@ public class MarkerTest {
 					isMarked = true;
 				}
 			}
-			System.out.println(accommodation.getName() + " marked? " + isMarked);
+			
+			
+			if (!isMarked) {
+				notMarked.add(accommodation);
+			}
 		}
+		accommodationExport.export(notMarked, new File("src/main/resources/notExportedFrankfurt.json"));
+		
 	}
 }
