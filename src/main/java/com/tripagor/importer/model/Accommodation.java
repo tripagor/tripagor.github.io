@@ -1,5 +1,8 @@
 package com.tripagor.importer.model;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.beanio.annotation.Record;
 
 @Record
@@ -11,6 +14,8 @@ public class Accommodation {
 	private String url;
 
 	private Address address;
+	
+	private List<String> imageUrls = new LinkedList<String>();
 
 	public String getName() {
 		return name;
@@ -48,6 +53,14 @@ public class Accommodation {
 	public String toString() {
 		return "Accommodation [title=" + name + ", description=" + description + ", url=" + url + ", address=" + address
 				+ "]";
+	}
+
+	public List<String> getImageUrls() {
+		return imageUrls;
+	}
+
+	public void setImageUrls(List<String> imageUrls) {
+		this.imageUrls = imageUrls;
 	}
 
 }

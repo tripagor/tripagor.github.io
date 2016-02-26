@@ -1,6 +1,7 @@
 package com.tripagor.importer;
 
 import java.net.URL;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
@@ -35,15 +36,23 @@ public class BookingComAccommodationExtractor {
 			driver = new FirefoxDriver();
 			Accommodation result = new Accommodation();
 
-			driver.manage().timeouts().pageLoadTimeout(20, TimeUnit.SECONDS);
-			driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+			driver.manage().timeouts().pageLoadTimeout(300, TimeUnit.SECONDS);
+			driver.manage().timeouts().implicitlyWait(500, TimeUnit.SECONDS);
 
 			URL urlObj = new URL(url.replace("http:/", "http://"));
 			driver.get(urlObj.toString());
 			WebElement address = driver.findElement(By.className("hp_address_subtitle"));
 			WebElement desc = driver.findElement(By.id("summary"));
 			WebElement title = driver.findElement(By.id("hp_hotel_name"));
+			List<WebElement> images = driver.findElements(By.xpath("//div[@class='slick-slide']//img"));
 
+
+			for (WebElement image : images) {
+				String imageUrl = image.getAttribute("src");
+				if (imageUrl != null) {
+					result.getImageUrls().add(imageUrl);
+				}
+			}
 			driver.close();
 
 			result.setUrl(url);
