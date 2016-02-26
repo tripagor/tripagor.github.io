@@ -45,13 +45,6 @@ public class BookingComAccommodationExtractor {
 			String addressLine = driver.findElement(By.className("hp_address_subtitle")).getText();
 			String desc = driver.findElement(By.id("summary")).getText();
 			String title = driver.findElement(By.id("hp_hotel_name")).getText();
-			List<WebElement> images = driver.findElements(By.xpath("//div[@class='slick-slide']//img"));
-			for (WebElement image : images) {
-				String imageUrl = image.getAttribute("src");
-				if (imageUrl != null) {
-					result.getImageUrls().add(imageUrl);
-				}
-			}
 
 			List<WebElement> featureSections = driver
 					.findElements(By.xpath("//div[@class='facilitiesChecklistSection']"));
@@ -65,11 +58,22 @@ public class BookingComAccommodationExtractor {
 					featureSection.getFeatures().add(featureElement.getText());
 				}
 			}
+			
+
+			List<WebElement> images = driver.findElements(By.xpath("//div[@class='slick-slide']//img"));
+			for (WebElement image : images) {
+				String imageUrl = image.getAttribute("src");
+				if (imageUrl != null) {
+					result.getImageUrls().add(imageUrl);
+				}
+			}
 
 			result.setUrl(url);
 			result.setDescription(desc);
 			result.setName(title);
 			result.setAddress(getAddress(normalizeAddressLine(addressLine)));
+			
+			driver.close();
 
 			return result;
 		} catch (Exception e) {
