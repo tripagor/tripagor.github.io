@@ -81,6 +81,8 @@ public class BookingComAccommodationExtractor {
 		GeocodingResult[] results = GeocodingApi.geocode(context, normalizedAddressLine).await();
 		if (results.length > 0) {
 			addressComponents = results[0].addressComponents;
+			address.setLatitude(results[0].geometry.location.lat);
+			address.setLongitude(results[0].geometry.location.lng);
 			for (AddressComponent addressComponent : addressComponents) {
 				AddressComponentType[] types = addressComponent.types;
 				for (AddressComponentType addressComponentType : types) {
@@ -97,10 +99,10 @@ public class BookingComAccommodationExtractor {
 						address.setCity(addressComponent.longName);
 						break;
 					} else if (addressComponentType == AddressComponentType.STREET_ADDRESS) {
-						address.setStreet(addressComponent.longName);
+						address.setStreetName(addressComponent.longName);
 						break;
 					} else if (addressComponentType == AddressComponentType.ROUTE) {
-						address.setStreet(addressComponent.longName);
+						address.setStreetName(addressComponent.longName);
 						break;
 					}
 				}

@@ -1,31 +1,36 @@
 package com.tripagor.importer.model;
 
 public class Address {
-	private String street;
+	private String streetName;
 	private String postalCode;
 	private String city;
 	private String country;
 	private String streetNumber;
+	private double latitude;
+	private double longitude;
 
-	public Address(String street, String postalCode, String city, String country, String streetNumber) {
+	public Address(String streetName, String postalCode, String city, String country, String streetNumber,
+			double longitude, double latitude) {
 		super();
-		this.street = street;
+		this.streetName = streetName;
 		this.postalCode = postalCode;
 		this.city = city;
 		this.country = country;
 		this.streetNumber = streetNumber;
+		this.latitude = latitude;
+		this.longitude = longitude;
 	}
 
 	public Address() {
 
 	}
 
-	public String getStreet() {
-		return street;
+	public String getStreetName() {
+		return streetName;
 	}
 
-	public void setStreet(String street) {
-		this.street = street;
+	public void setStreetName(String street) {
+		this.streetName = street;
 	}
 
 	public String getPostalCode() {
@@ -62,8 +67,25 @@ public class Address {
 
 	@Override
 	public String toString() {
-		return "Address [street=" + street + ", postalCode=" + postalCode + ", city=" + city + ", country=" + country
-				+ ", streetNumber=" + streetNumber + "]";
+		return "Address [streetName=" + streetName + ", postalCode=" + postalCode + ", city=" + city + ", country="
+				+ country + ", streetNumber=" + streetNumber + ", latitude=" + latitude + ", longitude=" + longitude
+				+ "]";
+	}
+
+	public double getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(double latitude) {
+		this.latitude = latitude;
+	}
+
+	public double getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(double longitude) {
+		this.longitude = longitude;
 	}
 
 }
