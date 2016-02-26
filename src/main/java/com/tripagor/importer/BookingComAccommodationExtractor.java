@@ -18,6 +18,7 @@ import com.google.maps.model.AddressComponentType;
 import com.google.maps.model.GeocodingResult;
 import com.tripagor.importer.model.Accommodation;
 import com.tripagor.importer.model.Address;
+import com.tripagor.importer.model.FeatureSection;
 
 public class BookingComAccommodationExtractor {
 
@@ -36,29 +37,39 @@ public class BookingComAccommodationExtractor {
 			driver = new FirefoxDriver();
 			Accommodation result = new Accommodation();
 
-			driver.manage().timeouts().pageLoadTimeout(300, TimeUnit.SECONDS);
-			driver.manage().timeouts().implicitlyWait(500, TimeUnit.SECONDS);
+			driver.manage().timeouts().pageLoadTimeout(20, TimeUnit.SECONDS);
+			driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
 
 			URL urlObj = new URL(url.replace("http:/", "http://"));
 			driver.get(urlObj.toString());
-			WebElement address = driver.findElement(By.className("hp_address_subtitle"));
-			WebElement desc = driver.findElement(By.id("summary"));
-			WebElement title = driver.findElement(By.id("hp_hotel_name"));
+			String addressLine = driver.findElement(By.className("hp_address_subtitle")).getText();
+			String desc = driver.findElement(By.id("summary")).getText();
+			String title = driver.findElement(By.id("hp_hotel_name")).getText();
 			List<WebElement> images = driver.findElements(By.xpath("//div[@class='slick-slide']//img"));
-
-
 			for (WebElement image : images) {
 				String imageUrl = image.getAttribute("src");
 				if (imageUrl != null) {
 					result.getImageUrls().add(imageUrl);
 				}
 			}
-			driver.close();
+
+			List<WebElement> featureSections = driver
+					.findElements(By.xpath("//div[@class='facilitiesChecklistSection']"));
+			for (WebElement featureSectionElement : featureSections) {
+				FeatureSection featureSection = new FeatureSection();
+				featureSection.setName(featureSectionElement.findElement(By.tagName("h5")).getText());
+				result.getFeatureSections().add(featureSection);
+
+				List<WebElement> featureElements = featureSectionElement.findElements(By.tagName("li"));
+				for (WebElement featureElement : featureElements) {
+					featureSection.getFeatures().add(featureElement.getText());
+				}
+			}
 
 			result.setUrl(url);
-			result.setDescription(desc.getText());
-			result.setName(title.getText());
-			result.setAddress(getAddress(normalizeAddressLine(address.getText())));
+			result.setDescription(desc);
+			result.setName(title);
+			result.setAddress(getAddress(normalizeAddressLine(addressLine)));
 
 			return result;
 		} catch (Exception e) {

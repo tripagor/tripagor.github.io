@@ -14,8 +14,10 @@ public class Accommodation {
 	private String url;
 
 	private Address address;
-	
+
 	private List<String> imageUrls = new LinkedList<String>();
+
+	private List<FeatureSection> featureSections = new LinkedList<FeatureSection>();
 
 	public String getName() {
 		return name;
@@ -61,6 +63,14 @@ public class Accommodation {
 
 	public void setImageUrls(List<String> imageUrls) {
 		this.imageUrls = imageUrls;
+	}
+
+	public List<FeatureSection> getFeatureSections() {
+		return featureSections;
+	}
+
+	public void setFeatureSections(List<FeatureSection> featureSections) {
+		this.featureSections = featureSections;
 	}
 
 }
