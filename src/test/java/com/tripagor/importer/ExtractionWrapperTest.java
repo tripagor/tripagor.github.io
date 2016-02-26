@@ -25,7 +25,7 @@ public class ExtractionWrapperTest {
 	@Test
 	public void doIt() throws Exception {
 		List<Accommodation> accommodations = new LinkedList<Accommodation>();
-		List<AffiliateSourceLine> lines = affiliateImport.transform(new File("src/test/resources/single.csv"));
+		List<AffiliateSourceLine> lines = affiliateImport.transform(new File("src/test/resources/frankfurt.csv"));
 		for (AffiliateSourceLine line : lines) {
 			System.out.println("url=" + line.getUrl());
 			try {
@@ -35,7 +35,7 @@ public class ExtractionWrapperTest {
 				System.out.println("error=" + e);
 			}
 		}
-		accommodationExport.export(accommodations, new File("target/single.json"));
+		accommodationExport.export(accommodations, new File("target/frankfurt.json"));
 	}
 
 }
