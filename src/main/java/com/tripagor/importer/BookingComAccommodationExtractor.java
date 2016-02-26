@@ -37,8 +37,8 @@ public class BookingComAccommodationExtractor {
 			driver = new FirefoxDriver();
 			Accommodation result = new Accommodation();
 
-			driver.manage().timeouts().pageLoadTimeout(20, TimeUnit.SECONDS);
-			driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+			driver.manage().timeouts().pageLoadTimeout(20000, TimeUnit.SECONDS);
+			driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 
 			URL urlObj = new URL(url.replace("http:/", "http://"));
 			driver.get(urlObj.toString());
@@ -58,13 +58,15 @@ public class BookingComAccommodationExtractor {
 					featureSection.getFeatures().add(featureElement.getText());
 				}
 			}
-			
 
 			List<WebElement> images = driver.findElements(By.xpath("//div[@class='slick-slide']//img"));
 			for (WebElement image : images) {
-				String imageUrl = image.getAttribute("src");
-				if (imageUrl != null) {
-					result.getImageUrls().add(imageUrl);
+				String src = image.getAttribute("src");
+				String dataLazy = image.getAttribute("data-lazy");
+				if (src != null) {
+					result.getImageUrls().add(src);
+				} else if (dataLazy != null) {
+					result.getImageUrls().add(dataLazy);
 				}
 			}
 
@@ -72,7 +74,7 @@ public class BookingComAccommodationExtractor {
 			result.setDescription(desc);
 			result.setName(title);
 			result.setAddress(getAddress(normalizeAddressLine(addressLine)));
-			
+
 			driver.close();
 
 			return result;
