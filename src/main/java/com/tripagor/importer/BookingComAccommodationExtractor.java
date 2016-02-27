@@ -22,11 +22,9 @@ import com.tripagor.importer.model.FeatureSection;
 
 public class BookingComAccommodationExtractor {
 
-	private WebDriver driver;
 	private final Logger logger = LoggerFactory.getLogger(BookingComAccommodationExtractor.class);
 	private final static String API_KEY = "AIzaSyC_V_8PAujfCgCSU0UOAsWJzvoIbNFKYGU";
 	private GeoApiContext context;
-	private AddressComponent[] addressComponents;
 
 	public BookingComAccommodationExtractor() {
 		context = new GeoApiContext().setApiKey(API_KEY);
@@ -34,7 +32,7 @@ public class BookingComAccommodationExtractor {
 
 	public Accommodation extract(String url) throws RuntimeException {
 		try {
-			driver = new FirefoxDriver();
+			WebDriver driver = new FirefoxDriver();
 			Accommodation result = new Accommodation();
 
 			driver.manage().timeouts().pageLoadTimeout(20000, TimeUnit.SECONDS);
@@ -106,7 +104,7 @@ public class BookingComAccommodationExtractor {
 		Address address = new Address();
 		GeocodingResult[] results = GeocodingApi.geocode(context, normalizedAddressLine).await();
 		if (results.length > 0) {
-			addressComponents = results[0].addressComponents;
+			AddressComponent[] addressComponents = results[0].addressComponents;
 			address.setLatitude(results[0].geometry.location.lat);
 			address.setLongitude(results[0].geometry.location.lng);
 			for (AddressComponent addressComponent : addressComponents) {
