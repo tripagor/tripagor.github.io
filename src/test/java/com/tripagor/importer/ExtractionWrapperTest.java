@@ -19,7 +19,7 @@ public class ExtractionWrapperTest {
 	private AffiliateImport affiliateImport;
 	private BookingComAccommodationExtractor bookingComAccommodationExtractor;
 	private AccommodationExport accommodationExport;
-	private ExecutorService executorService = Executors.newFixedThreadPool(20);
+	private ExecutorService executorService = Executors.newFixedThreadPool(8);
 
 	@Before
 	public void before() throws Exception {
@@ -36,7 +36,7 @@ public class ExtractionWrapperTest {
 	@Test
 	public void doIt() throws Exception {
 		List<Accommodation> accommodations = new LinkedList<Accommodation>();
-		List<AffiliateSourceLine> lines = affiliateImport.transform(new File("src/test/resources/selection.csv"));
+		List<AffiliateSourceLine> lines = affiliateImport.transform(new File("src/test/resources/nuremberg2.csv"));
 		List<Callable<Accommodation>> tasks = new LinkedList<Callable<Accommodation>>();
 
 		for (final AffiliateSourceLine line : lines) {
@@ -44,7 +44,11 @@ public class ExtractionWrapperTest {
 			try {
 				Callable<Accommodation> task = new Callable<Accommodation>() {
 					public Accommodation call() throws Exception {
-						return bookingComAccommodationExtractor.extract(line.getUrl());
+						try {
+							return bookingComAccommodationExtractor.extract(line.getUrl());
+						} catch (Exception e) {
+							return null;
+						}
 					}
 				};
 				tasks.add(task);
@@ -57,7 +61,7 @@ public class ExtractionWrapperTest {
 		for (Future<Accommodation> future : futures) {
 			accommodations.add(future.get());
 		}
-		accommodationExport.export(accommodations, new File("target/selection.json"));
+		accommodationExport.export(accommodations, new File("target/nuremberg.json"));
 	}
 
 }
