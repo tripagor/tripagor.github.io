@@ -20,7 +20,7 @@ public class AccommodationExport {
 
 	public void export(List<Accommodation> lines, File exportFile) throws Exception {
 		logger.debug("writing to {}...", exportFile.getName());
-		mapper.writeValue(exportFile, lines);
+		mapper.writerWithDefaultPrettyPrinter().writeValue(exportFile, lines);
 		logger.debug("writing to {} succeeded.", exportFile.getName());
 	}
 
