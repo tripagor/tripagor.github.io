@@ -32,7 +32,7 @@ public class MarkerTest {
 		List<Accommodation> accommodations = objectMapper.readValue(new File("src/main/resources/frankfurt.json"),
 				objectMapper.getTypeFactory().constructCollectionType(List.class, Accommodation.class));
 		for (Accommodation accommodation : accommodations) {
-			PlacesSearchResult[] places = placeExtractor.getAddressDetails(PlaceType.LODGING,
+			PlacesSearchResult[] places = placeExtractor.findPlaces(PlaceType.LODGING,
 					new LatLng(accommodation.getAddress().getLatitude(), accommodation.getAddress().getLongitude()),
 					30);
 			boolean isMarked = false;

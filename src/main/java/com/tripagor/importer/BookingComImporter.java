@@ -29,7 +29,12 @@ public class BookingComImporter {
 		CSVParser parser = null;
 		try {
 			reader = new InputStreamReader(new FileInputStream(file), "UTF-8");
-			//id	name	address	zip	city_hotel	cc1	ufi	class	currencycode	minrate	maxrate	preferred	nr_rooms	longitude	latitude	public_ranking	hotel_url	photo_url	desc_en	desc_fr	desc_es	desc_de	desc_nl	desc_it	desc_pt	desc_ja	desc_zh	desc_pl	desc_ru	desc_sv	desc_ar	desc_el	desc_no	city_unique	city_preferred	continent_id	review_score	review_nr	
+			// id name address zip city_hotel cc1 ufi class currencycode minrate
+			// maxrate preferred nr_rooms longitude latitude public_ranking
+			// hotel_url photo_url desc_en desc_fr desc_es desc_de desc_nl
+			// desc_it desc_pt desc_ja desc_zh desc_pl desc_ru desc_sv desc_ar
+			// desc_el desc_no city_unique city_preferred continent_id
+			// review_score review_nr
 
 			parser = new CSVParser(reader,
 					CSVFormat.TDF.withHeader("id", "name", "address", "zip", "city_hotel", "cc1", "ufi", "class",
@@ -38,7 +43,7 @@ public class BookingComImporter {
 							"desc_nl", "desc_it", "desc_pt", "desc_ja", "desc_zh", "desc_pl", "desc_ru", "desc_sv",
 							"desc_ar", "desc_el", "desc_no", "city_unique", "city_preferred", "continent_id",
 							"review_score", "review_nr"));
-			int i =0;
+			int i = 0;
 			int j = 0;
 			for (final CSVRecord record : parser) {
 				if (!record.get("name").equals("name")) {
@@ -47,28 +52,25 @@ public class BookingComImporter {
 					final double longitude = Double.parseDouble(record.get("longitude"));
 					final double latitude = Double.parseDouble(record.get("latitude"));
 
-					PlacesSearchResult[] places = placeExtractor.getAddressDetails(PlaceType.LODGING,
-							new LatLng(latitude, longitude), 30);
+					PlacesSearchResult[] places = placeExtractor.findPlaces(PlaceType.LODGING,
+							new LatLng(latitude, longitude), 200);
 					boolean isMarked = false;
 					for (PlacesSearchResult place : places) {
-
-						int length = name.length();
-						if (place.name.length() > name.length()) {
-							length = place.name.length();
-						}
-						if (StringUtils.getLevenshteinDistance(place.name, name) / length < 0.2) {
+						if (getWeight(place.name, name) > 0.7) {
 							isMarked = true;
+							break;
 						}
 					}
 
 					if (!isMarked) {
 						System.out.println("not marked: " + name + ", " + city);
 						j++;
-					} 
+					}
 					i++;
 				}
 			}
-			System.out.println(i+" "+j);;
+			System.out.println(i + " " + j);
+			;
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		} finally {
@@ -78,6 +80,20 @@ public class BookingComImporter {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		}
+	}
+
+	private double getWeight(String str1, String str2) {
+		// get the max possible levenstein distance score for string
+		int maxLen = Math.max(str1.length(), str2.length());
+
+		// check for 0 maxLen
+		if (maxLen == 0) {
+			return 1.0; // as both strings identically zero length
+		} else {
+			final int levenshteinDistance = StringUtils.getLevenshteinDistance(str1, str2);
+			// return actual / possible levenstein distance to get 0-1 range
+			return 1.0 - ((double) levenshteinDistance / maxLen);
 		}
 	}
 

@@ -20,16 +20,25 @@ public class PlaceExtractor {
 		context = new GeoApiContext().setApiKey(API_KEY);
 	}
 
-	public PlacesSearchResult[] getAddressDetails(PlaceType placeType, LatLng latLng, int radius)
-			throws RuntimeException {
+	public PlacesSearchResult[] findPlaces(PlaceType placeType, LatLng latLng, int radius) throws RuntimeException {
 		try {
-
 			PlacesSearchResponse response = PlacesApi.nearbySearchQuery(context, latLng).type(placeType).radius(radius)
 					.await();
 
 			return response.results;
 		} catch (Exception e) {
 			logger.error("error with {} {} {} failed with {}", placeType, latLng, radius, e);
+			throw new RuntimeException(e);
+		}
+	}
+
+	public PlacesSearchResult[] findPlaces(String query) throws RuntimeException {
+		try {
+			PlacesSearchResponse response = PlacesApi.textSearchQuery(context, query).await();
+
+			return response.results;
+		} catch (Exception e) {
+			logger.error("error with {} failed with {}", query);
 			throw new RuntimeException(e);
 		}
 	}
