@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import com.google.maps.GeoApiContext;
 import com.google.maps.PlacesApi;
 import com.google.maps.model.LatLng;
-import com.google.maps.model.PlaceType;
 import com.google.maps.model.PlacesSearchResponse;
 import com.google.maps.model.PlacesSearchResult;
 
@@ -20,14 +19,13 @@ public class PlaceExtractor {
 		context = new GeoApiContext().setApiKey(API_KEY);
 	}
 
-	public PlacesSearchResult[] findPlaces(PlaceType placeType, LatLng latLng, int radius) throws RuntimeException {
+	public PlacesSearchResult[] findPlaces(LatLng latLng, int radius) throws RuntimeException {
 		try {
-			PlacesSearchResponse response = PlacesApi.nearbySearchQuery(context, latLng).type(placeType).radius(radius)
-					.await();
+			PlacesSearchResponse response = PlacesApi.nearbySearchQuery(context, latLng).radius(radius).await();
 
 			return response.results;
 		} catch (Exception e) {
-			logger.error("error with {} {} {} failed with {}", placeType, latLng, radius, e);
+			logger.error("error with {} {} failed with {}", latLng, radius, e);
 			throw new RuntimeException(e);
 		}
 	}

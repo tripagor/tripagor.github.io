@@ -12,7 +12,6 @@ import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.maps.model.LatLng;
-import com.google.maps.model.PlaceType;
 import com.google.maps.model.PlacesSearchResult;
 
 public class BookingComImporter {
@@ -49,23 +48,30 @@ public class BookingComImporter {
 				if (!record.get("name").equals("name")) {
 					final String name = record.get("name");
 					final String city = record.get("city_hotel");
+					final String address = record.get("address");
+					final String zip = record.get("zip");
 					final double longitude = Double.parseDouble(record.get("longitude"));
 					final double latitude = Double.parseDouble(record.get("latitude"));
 
-					PlacesSearchResult[] places = placeExtractor.findPlaces(PlaceType.LODGING,
-							new LatLng(latitude, longitude), 200);
+					//PlacesSearchResult[] places = placeExtractor.findPlaces(new LatLng(latitude, longitude), 500);
+					PlacesSearchResult[] places = placeExtractor.findPlaces(name);
 					boolean isMarked = false;
+					System.out.println("HOTEL=" + name + ", " + " address=" + address + "," + zip + " " + city
+							+ " gemotery=" + new LatLng(latitude, longitude));
 					for (PlacesSearchResult place : places) {
-						if (getWeight(place.name, name) > 0.7) {
+
+						System.out.println(">>>>>>>" + place.name + " isMatched?" + getWeight(place.name, name));
+						if (getWeight(place.name, name) > 0.4) {
 							isMarked = true;
 							break;
 						}
 					}
 
 					if (!isMarked) {
-						System.out.println("not marked: " + name + ", " + city);
 						j++;
 					}
+					System.out.println("isMarked?" + isMarked);
+					System.out.println("============================");
 					i++;
 				}
 			}
