@@ -61,7 +61,7 @@ public class BookingComImporter {
 					for (PlacesSearchResult place : places) {
 
 						System.out.println(">>>>>>>" + place.name + " isMatched?" + getWeight(place.name, name));
-						if (getWeight(place.name, name) > 0.4) {
+						if (getWeight(place.name, name) > 0.3) {
 							isMarked = true;
 							break;
 						}
