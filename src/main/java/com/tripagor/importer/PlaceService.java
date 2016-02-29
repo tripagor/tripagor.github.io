@@ -9,13 +9,13 @@ import com.google.maps.model.LatLng;
 import com.google.maps.model.PlacesSearchResponse;
 import com.google.maps.model.PlacesSearchResult;
 
-public class PlaceExtractor {
+public class PlaceService {
 
-	private Logger logger = LoggerFactory.getLogger(PlaceExtractor.class);
+	private Logger logger = LoggerFactory.getLogger(PlaceService.class);
 	private final static String API_KEY = "AIzaSyC_V_8PAujfCgCSU0UOAsWJzvoIbNFKYGU";
 	private GeoApiContext context;
 
-	public PlaceExtractor() {
+	public PlaceService() {
 		context = new GeoApiContext().setApiKey(API_KEY);
 	}
 
