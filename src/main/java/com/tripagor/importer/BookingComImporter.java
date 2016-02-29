@@ -63,6 +63,8 @@ public class BookingComImporter {
 					final String desc = (String) customerMap.get("desc_en");
 					final String url = (String) customerMap.get("hotel_url");
 					final String imageUrl = (String) customerMap.get("photo_url");
+					final String country = new Locale("", ((String) customerMap.get("cc1")).toUpperCase())
+							.getDisplayCountry(new Locale("en"));
 					final double longitude = Double.parseDouble((String) customerMap.get("longitude"));
 					final double latitude = Double.parseDouble((String) customerMap.get("latitude"));
 
@@ -76,7 +78,7 @@ public class BookingComImporter {
 					}
 
 					if (!isMarked) {
-						if(hasEntry){
+						if (hasEntry) {
 							printWriter.print(",");
 						}
 						hasEntry = true;
@@ -84,8 +86,7 @@ public class BookingComImporter {
 								+ " gemotery=" + latitude + "," + longitude);
 						Accommodation accommodation = new Accommodation();
 						accommodation.setName(name);
-						accommodation.setAddress(
-								new Address(address, zip, city, "", "", longitude, latitude));
+						accommodation.setAddress(new Address(address, zip, city, country, "", longitude, latitude));
 						accommodation.setDescription(desc);
 						accommodation.setUrl(url);
 						accommodation.getImageUrls().add(imageUrl);
