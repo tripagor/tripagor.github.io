@@ -3,74 +3,104 @@ package com.tripagor.importer;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.supercsv.cellprocessor.Optional;
 import org.supercsv.cellprocessor.ift.CellProcessor;
 import org.supercsv.io.CsvMapReader;
 import org.supercsv.io.ICsvMapReader;
 import org.supercsv.prefs.CsvPreference;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.maps.model.PlacesSearchResult;
+import com.tripagor.importer.model.Accommodation;
+import com.tripagor.importer.model.Address;
 
 public class BookingComImporter {
 
 	private PlaceService placeExtractor;
+	private final Logger logger = LoggerFactory.getLogger(BookingComImporter.class);
+	private ObjectMapper mapper;
 
 	public BookingComImporter() {
 
+		mapper = new ObjectMapper();
 		placeExtractor = new PlaceService();
 	}
 
-	public void doImport(File file) throws RuntimeException {
+	public void doImport(File importFile, File exportFile) throws RuntimeException {
 		ICsvMapReader mapReader = null;
+		PrintWriter printWriter = null;
 		try {
-			mapReader = new CsvMapReader(new FileReader(file), CsvPreference.TAB_PREFERENCE);
-
+			mapReader = new CsvMapReader(new FileReader(importFile), CsvPreference.TAB_PREFERENCE);
+			printWriter = new PrintWriter(exportFile);
+			printWriter.print("[");
+			/*
+			 * id name address zip city_hotel cc1 ufi class currencycode minrate
+			 * maxrate preferred nr_rooms longitude latitude public_ranking
+			 * hotel_url photo_url desc_en desc_fr desc_es desc_de desc_nl
+			 * desc_it desc_pt desc_ja desc_zh desc_pl desc_ru desc_sv desc_ar
+			 * desc_el desc_no city_unique city_preferred continent_id
+			 * review_score review_nr
+			 */
 			// the header elements are used to map the values to the bean (names
 			// must match)
 			final String[] header = mapReader.getHeader(true);
 			final CellProcessor[] processors = getProcessors();
 			Map<String, Object> customerMap;
-			int i = 0;
-			int j = 0;
-			while ((customerMap = mapReader.read(header, processors)) != null) {
+			try {
+				boolean hasEntry = false;
+				while ((customerMap = mapReader.read(header, processors)) != null) {
+					final String name = (String) customerMap.get("name");
+					final String city = (String) customerMap.get("city_hotel");
+					final String address = (String) customerMap.get("address");
+					final String zip = (String) customerMap.get("zip");
+					final String desc = (String) customerMap.get("desc_en");
+					final String url = (String) customerMap.get("hotel_url");
+					final String imageUrl = (String) customerMap.get("photo_url");
+					final double longitude = Double.parseDouble((String) customerMap.get("longitude"));
+					final double latitude = Double.parseDouble((String) customerMap.get("latitude"));
 
-				final String name = (String) customerMap.get("name");
-				final String city = (String) customerMap.get("city_hotel");
-				final String address = (String) customerMap.get("address");
-				final String zip = (String) customerMap.get("zip");
-				final double longitude = Double.parseDouble((String) customerMap.get("longitude"));
-				final double latitude = Double.parseDouble((String) customerMap.get("latitude"));
+					PlacesSearchResult[] places = placeExtractor.findPlaces(name);
+					boolean isMarked = false;
+					for (PlacesSearchResult place : places) {
+						if (getWeightJaroWinkler(place.name, name) > 0.3) {
+							isMarked = true;
+							break;
+						}
+					}
 
-				System.out.println("HOTEL=" + name + ", " + " address=" + address + "," + zip + " " + city
-						+ " gemotery=" + latitude + "," + longitude);
-
-				PlacesSearchResult[] places = placeExtractor.findPlaces(name);
-				boolean isMarked = false;
-				for (PlacesSearchResult place : places) {
-					System.out.println(">>>>>>>" + place.name + " isMatched?" + getWeightJaroWinkler(place.name, name));
-					if (getWeightJaroWinkler(place.name, name) > 0.3) {
-						isMarked = true;
-						break;
+					if (!isMarked) {
+						if(hasEntry){
+							printWriter.print(",");
+						}
+						hasEntry = true;
+						logger.debug("HOTEL=" + name + ", " + " address=" + address + "," + zip + " " + city
+								+ " gemotery=" + latitude + "," + longitude);
+						Accommodation accommodation = new Accommodation();
+						accommodation.setName(name);
+						accommodation.setAddress(
+								new Address(address, zip, city, "", "", longitude, latitude));
+						accommodation.setDescription(desc);
+						accommodation.setUrl(url);
+						accommodation.getImageUrls().add(imageUrl);
+						printWriter.print(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(accommodation));
 					}
 				}
-
-				if (!isMarked) {
-					j++;
-				}
-				System.out.println("isMarked?" + isMarked);
-				System.out.println("============================");
-				i++;
+			} catch (Exception e) {
+				logger.error("failed with {}", e);
 			}
-			System.out.println(i + " " + j);
 
 		} catch (Exception e) {
-			System.out.println("could not read file");
+			logger.error("failed with {}", e);
 		} finally {
-
+			printWriter.print("]");
+			printWriter.close();
 			if (mapReader != null) {
 				try {
 					mapReader.close();

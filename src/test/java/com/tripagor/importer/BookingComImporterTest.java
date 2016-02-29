@@ -16,6 +16,6 @@ public class BookingComImporterTest {
 
 	@Test
 	public void doIt() throws Exception{
-		bookingComImporter.doImport(new File("src/test/resources/sdIUp77XtU4UzouBf47DQ_Africa_1.tsv"));
+		bookingComImporter.doImport(new File("src/test/resources/sdIUp77XtU4UzouBf47DQ_Africa_1.tsv"), new File("target/export.json"));
 	}
 }
