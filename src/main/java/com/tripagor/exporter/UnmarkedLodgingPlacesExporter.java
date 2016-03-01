@@ -31,13 +31,13 @@ public class UnmarkedLodgingPlacesExporter {
 				}
 				numOfAdds++;
 				PlaceBuilder builder = new PlaceBuilder(accommodation.getName(),
-						accommodation.getAddress().getLatitude(), accommodation.getAddress().getLongitude(), "LODGING");
+						accommodation.getAddress().getLatitude(), accommodation.getAddress().getLongitude(), "lodging");
 				try {
-					builder.address(accommodation.getAddress().toWellFormattedString()).website(accommodation.getUrl());
+					builder.address(accommodation.getAddress().toWellFormattedString()).website(accommodation.getUrl()+"?aid=948836");
 					System.out.println("accomodationAddress=" + accommodation.getAddress().toWellFormattedString());
 					placeService.addPlace(builder);
 				} catch (Exception e) {
-					// ignore it;
+					System.err.println("error "+e);
 				}
 			}
 		} catch (Exception e) {
