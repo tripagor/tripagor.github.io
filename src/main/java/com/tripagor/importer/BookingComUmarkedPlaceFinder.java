@@ -42,7 +42,7 @@ public class BookingComUmarkedPlaceFinder {
 		stringComparisonWeight = new StringComparisonWeight();
 	}
 
-	public void doImport(File importFile, File exportFile) throws RuntimeException {
+	public void doImport(File importFile, File exportFile) {
 		ICsvMapReader mapReader = null;
 		PrintWriter printWriter = null;
 		try {
@@ -61,7 +61,7 @@ public class BookingComUmarkedPlaceFinder {
 						break;
 					}
 					numberOfImportedRows++;
-					
+
 					final String name = (String) customerMap.get("name");
 					final String city = (String) customerMap.get("city_hotel");
 					final String address = (String) customerMap.get("address");

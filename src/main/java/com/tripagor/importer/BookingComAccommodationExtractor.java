@@ -34,7 +34,7 @@ public class BookingComAccommodationExtractor {
 		context = new GeoApiContext().setApiKey(apiKey);
 	}
 
-	public Accommodation extract(String url) throws RuntimeException {
+	public Accommodation extract(String url) {
 		try {
 			WebDriver driver = new FirefoxDriver();
 			Accommodation result = new Accommodation();
