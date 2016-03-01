@@ -42,7 +42,7 @@ public class BookingComUmarkedPlaceFinder {
 		stringComparisonWeight = new StringComparisonWeight();
 	}
 
-	public void doImport(File importFile, File exportFile) {
+	public void extract(File importFile, File exportFile) {
 		ICsvMapReader mapReader = null;
 		PrintWriter printWriter = null;
 		try {
@@ -57,7 +57,7 @@ public class BookingComUmarkedPlaceFinder {
 				boolean hasEntry = false;
 				int numberOfImportedRows = 0;
 				while ((customerMap = mapReader.read(header, processors)) != null) {
-					if (numberOfImportedRows > maxImports) {
+					if (numberOfImportedRows >= maxImports) {
 						break;
 					}
 					numberOfImportedRows++;
@@ -127,6 +127,10 @@ public class BookingComUmarkedPlaceFinder {
 				new Optional(), new Optional(), new Optional(), new Optional(), new Optional(), new Optional() };
 
 		return processors;
+	}
+
+	public void setMaxImports(int maxImports) {
+		this.maxImports = maxImports;
 	}
 
 }
