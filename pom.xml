@@ -34,9 +34,9 @@
 			<version>0.1.11</version>
 		</dependency>
 		<dependency>
-			<groupId>se.walkercrou</groupId>
-			<artifactId>google-places-api-java</artifactId>
-			<version>2.1.2</version>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-client</artifactId>
+			<version>1.19</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.supercsv</groupId>
