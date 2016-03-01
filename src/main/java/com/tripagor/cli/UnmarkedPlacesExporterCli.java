@@ -8,19 +8,18 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 
-import com.tripagor.importer.BookingComUmarkedPlaceFinder;
+import com.tripagor.exporter.UnmarkedLodgingPlacesExporter;
 
-public class BookingComUmarkedPlaceFinderCli {
+public class UnmarkedPlacesExporterCli {
 
 	private static Options options;
 
 	public static void main(String[] args) {
-		BookingComUmarkedPlaceFinder placeFinder = new BookingComUmarkedPlaceFinder();
+		UnmarkedLodgingPlacesExporter exporter = new UnmarkedLodgingPlacesExporter();
 
 		options = new Options();
 		options.addOption("s", true, "source file");
-		options.addOption("t", true, "target file");
-		options.addOption("n", true, "maxium number set to be imported");
+		options.addOption("n", true, "maxium number set to be exported");
 		options.addOption("h", false, "this help");
 
 		CommandLineParser parser = new DefaultParser();
@@ -31,14 +30,8 @@ public class BookingComUmarkedPlaceFinderCli {
 			}
 
 			String source = "";
-			String target = "";
-			int maxNumberOfImports = 0;
+			int numberOfPlacesToAdd = 0;
 
-			if (cmd.hasOption("t")) {
-				target = cmd.getOptionValue("t");
-			} else {
-				help();
-			}
 			if (cmd.hasOption("s")) {
 				source = cmd.getOptionValue("s");
 
@@ -47,14 +40,14 @@ public class BookingComUmarkedPlaceFinderCli {
 			}
 
 			if (cmd.hasOption("n")) {
-				maxNumberOfImports = Integer.parseInt(cmd.getOptionValue("n"));
+				numberOfPlacesToAdd = Integer.parseInt(cmd.getOptionValue("n"));
 			}
 
-			if (maxNumberOfImports > 0) {
-				placeFinder.setMaxImports(maxNumberOfImports);
+			if (numberOfPlacesToAdd > 0) {
+				exporter.setNumberOfPlacesToAdd(numberOfPlacesToAdd);
 			}
-			System.out.println(source + " > " + target);
-			placeFinder.extract(new File(source), new File(target));
+			System.out.println("Adding places for " + source);
+			exporter.export(new File(source));
 		} catch (Exception e) {
 			System.err.println("An problem occured:" + e);
 		}

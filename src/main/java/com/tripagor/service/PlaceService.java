@@ -1,4 +1,4 @@
-package com.tripagor.importer;
+package com.tripagor.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,11 +52,7 @@ public class PlaceService {
 		}
 	}
 
-	public Place addPlace(Place place) {
-		PlaceBuilder builder = new PlaceBuilder(place.getName(), place.getLatitude(), place.getLongitude(),
-				place.getTypes());
-		builder.address(place.getAddress()).website(place.getWebsite());
-		
+	public Place addPlace(PlaceBuilder builder) {
 		return googlePlaces.addPlace(builder, true);
 	}
 

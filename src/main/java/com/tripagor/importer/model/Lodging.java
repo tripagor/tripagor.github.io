@@ -6,7 +6,7 @@ import java.util.List;
 import org.beanio.annotation.Record;
 
 @Record
-public class Accommodation {
+public class Lodging {
 	private String name;
 
 	private String description;

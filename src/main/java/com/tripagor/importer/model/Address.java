@@ -88,4 +88,25 @@ public class Address {
 		this.longitude = longitude;
 	}
 
+	public String toWellFormattedString() {
+		String result = "";
+		if (streetNumber != null) {
+			result = result.concat(streetNumber).concat(" ");
+		}
+
+		if (streetName != null) {
+			result = result.concat(streetName).concat(", ");
+		}
+		if (city != null) {
+			if (postalCode != null) {
+				result.concat(postalCode).concat("");
+			}
+			result = result.concat(city).concat(", ");
+		}
+		if (country != null) {
+			result = result.concat(country);
+		}
+		return result;
+	}
+
 }

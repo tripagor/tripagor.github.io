@@ -17,7 +17,8 @@ import org.supercsv.prefs.CsvPreference;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.maps.model.PlacesSearchResult;
-import com.tripagor.importer.model.Accommodation;
+import com.tripagor.importer.model.Lodging;
+import com.tripagor.service.PlaceService;
 import com.tripagor.importer.model.Address;
 
 public class BookingComUmarkedPlaceFinder {
@@ -53,9 +54,10 @@ public class BookingComUmarkedPlaceFinder {
 			final String[] header = mapReader.getHeader(true);
 			final CellProcessor[] processors = getProcessors();
 			Map<String, Object> customerMap;
+			boolean hasEntry = false;
+			int numberOfImportedRows = 0;
+
 			try {
-				boolean hasEntry = false;
-				int numberOfImportedRows = 0;
 				while ((customerMap = mapReader.read(header, processors)) != null) {
 					if (numberOfImportedRows >= maxImports) {
 						break;
@@ -90,7 +92,7 @@ public class BookingComUmarkedPlaceFinder {
 						hasEntry = true;
 						logger.debug("HOTEL=" + name + ", " + " address=" + address + "," + zip + " " + city
 								+ " gemotery=" + latitude + "," + longitude);
-						Accommodation accommodation = new Accommodation();
+						Lodging accommodation = new Lodging();
 						accommodation.setName(name);
 						accommodation.setAddress(new Address(address, zip, city, country, "", longitude, latitude));
 						accommodation.setDescription(desc);
