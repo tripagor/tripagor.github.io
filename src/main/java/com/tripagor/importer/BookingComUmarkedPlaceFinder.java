@@ -26,6 +26,15 @@ public class BookingComUmarkedPlaceFinder {
 	private final Logger logger = LoggerFactory.getLogger(BookingComUmarkedPlaceFinder.class);
 	private ObjectMapper mapper;
 	private StringComparisonWeight stringComparisonWeight;
+	private int maxImports = 100000;
+
+	public BookingComUmarkedPlaceFinder(PlaceService placeExtractor, StringComparisonWeight stringComparisonWeight,
+			int maxImports) {
+		super();
+		this.placeExtractor = placeExtractor;
+		this.stringComparisonWeight = stringComparisonWeight;
+		this.maxImports = maxImports;
+	}
 
 	public BookingComUmarkedPlaceFinder() {
 		mapper = new ObjectMapper();
@@ -46,7 +55,13 @@ public class BookingComUmarkedPlaceFinder {
 			Map<String, Object> customerMap;
 			try {
 				boolean hasEntry = false;
+				int numberOfImportedRows = 0;
 				while ((customerMap = mapReader.read(header, processors)) != null) {
+					if (numberOfImportedRows > maxImports) {
+						break;
+					}
+					numberOfImportedRows++;
+					
 					final String name = (String) customerMap.get("name");
 					final String city = (String) customerMap.get("city_hotel");
 					final String address = (String) customerMap.get("address");
