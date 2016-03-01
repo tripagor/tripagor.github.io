@@ -90,18 +90,16 @@ public class Address {
 
 	public String toWellFormattedString() {
 		String result = "";
-		if (streetNumber != null) {
-			result = result.concat(streetNumber).concat(" ");
-		}
-
 		if (streetName != null) {
 			result = result.concat(streetName).concat(", ");
 		}
 		if (city != null) {
+			result = result.concat(city);
+
 			if (postalCode != null) {
-				result.concat(postalCode).concat("");
+				result = result.concat(" ").concat(postalCode);
 			}
-			result = result.concat(city).concat(", ");
+			result = result.concat(", ");
 		}
 		if (country != null) {
 			result = result.concat(country);
