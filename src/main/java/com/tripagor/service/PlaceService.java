@@ -15,6 +15,7 @@ import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import com.tripagor.importer.model.Place;
+import com.tripagor.importer.model.PlaceAddResponse;
 
 public class PlaceService {
 
@@ -57,7 +58,7 @@ public class PlaceService {
 		}
 	}
 
-	public String addPlace(Place place) {
+	public void addPlace(Place place) {
 
 		Client client = Client.create();
 
@@ -68,13 +69,11 @@ public class PlaceService {
 					.post(ClientResponse.class, new ObjectMapper().writeValueAsString(place));
 
 			if (response.getStatus() != 200) {
-				System.err.println("failed "+response.getStatus());
+				System.err.println("failed " + response.getStatus());
 				throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
 			}
-			System.out.println(""+response.getProperties().get("place_id"));
-			return (String) response.getProperties().get("place_id");
 		} catch (Exception e) {
-			System.err.println("error "+e);
+			System.err.println("error " + e);
 			throw new RuntimeException(e);
 		}
 	}
