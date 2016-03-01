@@ -19,6 +19,10 @@ public class PlaceService {
 		context = new GeoApiContext().setApiKey(API_KEY);
 	}
 
+	public PlaceService(String apiKey) {
+		context = new GeoApiContext().setApiKey(apiKey);
+	}
+
 	public PlacesSearchResult[] findPlaces(LatLng latLng, int radius) throws RuntimeException {
 		try {
 			PlacesSearchResponse response = PlacesApi.nearbySearchQuery(context, latLng).radius(radius).await();

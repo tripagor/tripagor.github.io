@@ -7,7 +7,6 @@ import java.io.PrintWriter;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.supercsv.cellprocessor.Optional;
@@ -21,16 +20,17 @@ import com.google.maps.model.PlacesSearchResult;
 import com.tripagor.importer.model.Accommodation;
 import com.tripagor.importer.model.Address;
 
-public class BookingComImporter {
+public class BookingComUmarkedPlaceFinder {
 
 	private PlaceService placeExtractor;
-	private final Logger logger = LoggerFactory.getLogger(BookingComImporter.class);
+	private final Logger logger = LoggerFactory.getLogger(BookingComUmarkedPlaceFinder.class);
 	private ObjectMapper mapper;
+	private StringComparisonWeight stringComparisonWeight;
 
-	public BookingComImporter() {
-
+	public BookingComUmarkedPlaceFinder() {
 		mapper = new ObjectMapper();
 		placeExtractor = new PlaceService();
+		stringComparisonWeight = new StringComparisonWeight();
 	}
 
 	public void doImport(File importFile, File exportFile) throws RuntimeException {
@@ -40,16 +40,7 @@ public class BookingComImporter {
 			mapReader = new CsvMapReader(new FileReader(importFile), CsvPreference.TAB_PREFERENCE);
 			printWriter = new PrintWriter(exportFile);
 			printWriter.print("[");
-			/*
-			 * id name address zip city_hotel cc1 ufi class currencycode minrate
-			 * maxrate preferred nr_rooms longitude latitude public_ranking
-			 * hotel_url photo_url desc_en desc_fr desc_es desc_de desc_nl
-			 * desc_it desc_pt desc_ja desc_zh desc_pl desc_ru desc_sv desc_ar
-			 * desc_el desc_no city_unique city_preferred continent_id
-			 * review_score review_nr
-			 */
-			// the header elements are used to map the values to the bean (names
-			// must match)
+
 			final String[] header = mapReader.getHeader(true);
 			final CellProcessor[] processors = getProcessors();
 			Map<String, Object> customerMap;
@@ -71,7 +62,7 @@ public class BookingComImporter {
 					PlacesSearchResult[] places = placeExtractor.findPlaces(name);
 					boolean isMarked = false;
 					for (PlacesSearchResult place : places) {
-						if (getWeightJaroWinkler(place.name, name) > 0.3) {
+						if (stringComparisonWeight.getWeightJaroWinkler(place.name, name) > 0.3) {
 							isMarked = true;
 							break;
 						}
@@ -121,48 +112,6 @@ public class BookingComImporter {
 				new Optional(), new Optional(), new Optional(), new Optional(), new Optional(), new Optional() };
 
 		return processors;
-	}
-
-	private double getWeightLevenshtein(String str1, String str2) {
-		// get the max possible levenstein distance score for string
-		int maxLen = Math.max(str1.length(), str2.length());
-
-		// check for 0 maxLen
-		if (maxLen == 0) {
-			return 1.0; // as both strings identically zero length
-		} else {
-			final int distance = StringUtils.getLevenshteinDistance(str1, str2);
-			// return actual / possible levenstein distance to get 0-1 range
-			return 1.0 - ((double) distance / maxLen);
-		}
-	}
-
-	private double getWeightFuzzy(String str1, String str2) {
-		// get the max possible levenstein distance score for string
-		int maxLen = Math.max(str1.length(), str2.length());
-
-		// check for 0 maxLen
-		if (maxLen == 0) {
-			return 1.0; // as both strings identically zero length
-		} else {
-			final int distance = StringUtils.getFuzzyDistance(str1, str2, new Locale("en", "US"));
-			// return actual / possible levenstein distance to get 0-1 range
-			return 1.0 - ((double) distance / maxLen);
-		}
-	}
-
-	private double getWeightJaroWinkler(String str1, String str2) {
-		// get the max possible levenstein distance score for string
-		int maxLen = Math.max(str1.length(), str2.length());
-
-		// check for 0 maxLen
-		if (maxLen == 0) {
-			return 1.0; // as both strings identically zero length
-		} else {
-			final double distance = StringUtils.getJaroWinklerDistance(str1, str2);
-			// return actual / possible levenstein distance to get 0-1 range
-			return 1.0 - ((double) distance / maxLen);
-		}
 	}
 
 }

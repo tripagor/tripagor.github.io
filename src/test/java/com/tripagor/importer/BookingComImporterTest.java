@@ -7,11 +7,11 @@ import org.junit.Test;
 
 public class BookingComImporterTest {
 	
-	private BookingComImporter bookingComImporter;
+	private BookingComUmarkedPlaceFinder bookingComImporter;
 	
 	@Before
 	public void before() throws Exception{
-		bookingComImporter = new BookingComImporter();
+		bookingComImporter = new BookingComUmarkedPlaceFinder();
 	}
 
 	@Test

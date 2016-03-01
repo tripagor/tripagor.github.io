@@ -14,6 +14,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<slf4jVersion>1.7.12</slf4jVersion>
 		<jacksonVersion>2.7.1</jacksonVersion>
+		<seleniumVersion>2.52.0</seleniumVersion>
 	</properties>
 
 	<dependencies>
@@ -47,13 +48,20 @@
 			<artifactId>commons-lang3</artifactId>
 			<version>3.4</version>
 		</dependency>
-
-
 		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-nop</artifactId>
-			<version>${slf4jVersion}</version>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-java</artifactId>
+			<version>${seleniumVersion}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-firefox-driver</artifactId>
+			<version>${seleniumVersion}</version>
+		</dependency>
+
+
+
+
 		<!-- Binding for System.out -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -72,7 +80,6 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>jcl-over-slf4j</artifactId>
 			<version>${slf4jVersion}</version>
-			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
