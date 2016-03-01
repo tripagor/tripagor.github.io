@@ -6,9 +6,8 @@ import java.util.List;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tripagor.importer.model.Lodging;
+import com.tripagor.importer.model.Place;
 import com.tripagor.service.PlaceService;
-
-import se.walkercrou.places.PlaceBuilder;
 
 public class UnmarkedLodgingPlacesExporter {
 	private PlaceService placeService;
@@ -30,14 +29,18 @@ public class UnmarkedLodgingPlacesExporter {
 					break;
 				}
 				numOfAdds++;
-				PlaceBuilder builder = new PlaceBuilder(accommodation.getName(),
-						accommodation.getAddress().getLatitude(), accommodation.getAddress().getLongitude(), "lodging");
+				Place place = new Place();
+				place.setName(accommodation.getName());
+				place.setFormattedAddress(accommodation.getAddress().toWellFormattedString());
+				place.setWebsite(accommodation.getUrl() + "?aid=948836");
+				place.getTypes().add("lodging");
+				place.getLocation().setLat(accommodation.getAddress().getLatitude());
+				place.getLocation().setLng(accommodation.getAddress().getLongitude());
+
 				try {
-					builder.address(accommodation.getAddress().toWellFormattedString()).website(accommodation.getUrl()+"?aid=948836");
-					System.out.println("accomodationAddress=" + accommodation.getAddress().toWellFormattedString());
-					placeService.addPlace(builder);
+					placeService.addPlace(place);
 				} catch (Exception e) {
-					System.err.println("error "+e);
+					System.err.println("error " + e);
 				}
 			}
 		} catch (Exception e) {

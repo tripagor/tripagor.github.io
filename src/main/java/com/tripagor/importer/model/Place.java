@@ -21,11 +21,11 @@ public class Place {
 	@JsonProperty("name")
 	private String name;
 	@JsonProperty("accuracy")
-	private int accuracy;
+	private Integer accuracy;
 	@JsonProperty("phone_number")
 	private String phoneNumber;
 	@JsonProperty("location")
-	private Location location;
+	private Location location = new Location();
 
 	/**
 	 * 
@@ -123,12 +123,12 @@ public class Place {
 	}
 
 	@JsonProperty("accuracy")
-	public int getAccuracy() {
+	public Integer getAccuracy() {
 		return accuracy;
 	}
 
 	@JsonProperty("accuracy")
-	public void setAccuracy(int accuracy) {
+	public void setAccuracy(Integer accuracy) {
 		this.accuracy = accuracy;
 	}
 
