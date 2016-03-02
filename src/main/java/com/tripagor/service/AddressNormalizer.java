@@ -5,6 +5,7 @@ import com.google.maps.GeocodingApi;
 import com.google.maps.model.AddressComponent;
 import com.google.maps.model.AddressComponentType;
 import com.google.maps.model.GeocodingResult;
+import com.google.maps.model.LatLng;
 import com.tripagor.importer.model.Address;
 
 public class AddressNormalizer {
@@ -56,6 +57,15 @@ public class AddressNormalizer {
 
 	public String normalizedString(String addressLine) throws Exception {
 		GeocodingResult[] results = GeocodingApi.geocode(context, addressLine).await();
+		if (results.length > 0) {
+			return results[0].formattedAddress;
+		} else {
+			throw new RuntimeException("no address data found");
+		}
+	}
+
+	public String wellFormattedString(double latitude, double longitude) throws Exception {
+		GeocodingResult[] results = GeocodingApi.reverseGeocode(context, new LatLng(latitude, longitude)).await();
 		if (results.length > 0) {
 			return results[0].formattedAddress;
 		} else {

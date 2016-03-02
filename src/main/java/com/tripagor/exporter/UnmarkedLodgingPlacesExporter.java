@@ -37,14 +37,14 @@ public class UnmarkedLodgingPlacesExporter {
 						new LatLng(accommodation.getAddress().getLatitude(), accommodation.getAddress().getLatitude()),
 						100);
 				for (PlacesSearchResult result : results) {
-					if(accommodation.getName().equals(result.name) && "APP".equals(result.scope)){
+					if (accommodation.getName().equals(result.name) && "APP".equals(result.scope)) {
 						placeService.delete(result.placeId);
 					}
 				}
 
 				PlaceAddRequest place = new PlaceAddRequest();
 				place.setName(accommodation.getName());
-				place.setFormattedAddress(accommodation.getAddress().toWellFormattedString());
+				place.setFormattedAddress(accommodation.getAddress().getWellFormattedAddress());
 				place.setWebsite(accommodation.getUrl() + "?aid=948836");
 				place.getTypes().add("lodging");
 				place.getLocation().setLat(accommodation.getAddress().getLatitude());
@@ -52,7 +52,7 @@ public class UnmarkedLodgingPlacesExporter {
 
 				try {
 					PlaceAddResponse add = placeService.add(place);
-					if(!"OK".equals(add.getStatus())){
+					if (!"OK".equals(add.getStatus())) {
 						System.err.println("could not add place");
 					}
 				} catch (Exception e) {

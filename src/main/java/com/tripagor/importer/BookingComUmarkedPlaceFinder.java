@@ -18,6 +18,7 @@ import org.supercsv.prefs.CsvPreference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.maps.model.PlacesSearchResult;
 import com.tripagor.importer.model.Lodging;
+import com.tripagor.service.AddressNormalizer;
 import com.tripagor.service.PlaceService;
 import com.tripagor.importer.model.Address;
 
@@ -27,6 +28,7 @@ public class BookingComUmarkedPlaceFinder {
 	private final Logger logger = LoggerFactory.getLogger(BookingComUmarkedPlaceFinder.class);
 	private ObjectMapper mapper;
 	private StringComparisonWeight stringComparisonWeight;
+	private AddressNormalizer addressNormalizer;
 	private int maxImports = 100000;
 
 	public BookingComUmarkedPlaceFinder(PlaceService placeExtractor, StringComparisonWeight stringComparisonWeight,
@@ -35,12 +37,14 @@ public class BookingComUmarkedPlaceFinder {
 		this.placeExtractor = placeExtractor;
 		this.stringComparisonWeight = stringComparisonWeight;
 		this.maxImports = maxImports;
+		this.addressNormalizer = new AddressNormalizer();
 	}
 
 	public BookingComUmarkedPlaceFinder() {
 		mapper = new ObjectMapper();
 		placeExtractor = new PlaceService();
 		stringComparisonWeight = new StringComparisonWeight();
+		this.addressNormalizer = new AddressNormalizer();
 	}
 
 	public void extract(File importFile, File exportFile) {
@@ -95,6 +99,7 @@ public class BookingComUmarkedPlaceFinder {
 						Lodging accommodation = new Lodging();
 						accommodation.setName(name);
 						accommodation.setAddress(new Address(address, zip, city, country, "", longitude, latitude));
+						accommodation.getAddress().setWellFormattedAddress(addressNormalizer.wellFormattedString(latitude, longitude));
 						accommodation.setDescription(desc);
 						accommodation.setUrl(url);
 						accommodation.getImageUrls().add(imageUrl);

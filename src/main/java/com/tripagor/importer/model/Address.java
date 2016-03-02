@@ -8,6 +8,7 @@ public class Address {
 	private String streetNumber;
 	private double latitude;
 	private double longitude;
+	private String wellFormattedAddress;
 
 	public Address(String streetName, String postalCode, String city, String country, String streetNumber,
 			double longitude, double latitude) {
@@ -88,23 +89,12 @@ public class Address {
 		this.longitude = longitude;
 	}
 
-	public String toWellFormattedString() {
-		String result = "";
-		if (streetName != null) {
-			result = result.concat(streetName).concat(", ");
-		}
-		if (city != null) {
-			result = result.concat(city);
+	public String getWellFormattedAddress() {
+		return wellFormattedAddress;
+	}
 
-			if (postalCode != null) {
-				result = result.concat(" ").concat(postalCode);
-			}
-			result = result.concat(", ");
-		}
-		if (country != null) {
-			result = result.concat(country);
-		}
-		return result;
+	public void setWellFormattedAddress(String wellFormattedAddress) {
+		this.wellFormattedAddress = wellFormattedAddress;
 	}
 
 }
