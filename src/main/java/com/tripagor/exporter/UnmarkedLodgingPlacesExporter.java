@@ -5,8 +5,10 @@ import java.util.List;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.maps.model.LatLng;
+import com.google.maps.model.PlacesSearchResult;
 import com.tripagor.importer.model.Lodging;
-import com.tripagor.importer.model.Place;
+import com.tripagor.importer.model.PlaceAddRequest;
 import com.tripagor.service.PlaceService;
 
 public class UnmarkedLodgingPlacesExporter {
@@ -29,7 +31,17 @@ public class UnmarkedLodgingPlacesExporter {
 					break;
 				}
 				numOfAdds++;
-				Place place = new Place();
+
+				PlacesSearchResult[] results = placeService.find(
+						new LatLng(accommodation.getAddress().getLatitude(), accommodation.getAddress().getLatitude()),
+						100);
+				for (PlacesSearchResult result : results) {
+					if(accommodation.getName().equals(result.name) && "APP".equals(result.scope)){
+						placeService.delete(result.placeId);
+					}
+				}
+
+				PlaceAddRequest place = new PlaceAddRequest();
 				place.setName(accommodation.getName());
 				place.setFormattedAddress(accommodation.getAddress().toWellFormattedString());
 				place.setWebsite(accommodation.getUrl() + "?aid=948836");
@@ -38,7 +50,7 @@ public class UnmarkedLodgingPlacesExporter {
 				place.getLocation().setLng(accommodation.getAddress().getLongitude());
 
 				try {
-					placeService.addPlace(place);
+					placeService.add(place);
 				} catch (Exception e) {
 					System.err.println("error " + e);
 				}

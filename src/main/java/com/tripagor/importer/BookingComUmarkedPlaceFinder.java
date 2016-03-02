@@ -76,7 +76,7 @@ public class BookingComUmarkedPlaceFinder {
 					final double longitude = Double.parseDouble((String) customerMap.get("longitude"));
 					final double latitude = Double.parseDouble((String) customerMap.get("latitude"));
 
-					PlacesSearchResult[] places = placeExtractor.findPlaces(name);
+					PlacesSearchResult[] places = placeExtractor.find(name);
 					boolean isMarked = false;
 					for (PlacesSearchResult place : places) {
 						if (stringComparisonWeight.getWeightJaroWinkler(place.name, name) > 0.3) {

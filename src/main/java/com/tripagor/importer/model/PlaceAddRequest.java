@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({ "types", "formatted_address", "website", "name", "location", "phoneNumber", "accuracy" })
-public class Place {
+public class PlaceAddRequest {
 
 	@JsonProperty("types")
 	private List<String> types = new ArrayList<String>();

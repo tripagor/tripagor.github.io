@@ -1,42 +1,46 @@
 package com.tripagor.service;
 
-import javax.ws.rs.core.MediaType;
-
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.client.RestTemplate;
 
 import com.google.maps.GeoApiContext;
 import com.google.maps.PlacesApi;
 import com.google.maps.model.LatLng;
 import com.google.maps.model.PlacesSearchResponse;
 import com.google.maps.model.PlacesSearchResult;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-import com.tripagor.importer.model.Place;
+import com.tripagor.importer.model.PlaceAddRequest;
 import com.tripagor.importer.model.PlaceAddResponse;
+import com.tripagor.importer.model.PlaceDeleteRequest;
+import com.tripagor.importer.model.PlaceDeleteResponse;
 
 public class PlaceService {
 
 	private Logger logger = LoggerFactory.getLogger(PlaceService.class);
 	private final static String API_KEY = "AIzaSyC_V_8PAujfCgCSU0UOAsWJzvoIbNFKYGU";
-	private final static String GOOGLE_PLACES_API_ADD_PLACE_URL = "https://maps.googleapis.com/maps/api/place/add/json";
+	private final static String GOOGLE_MAPS_API_BASE_URL = "https://maps.googleapis.com/maps/api/";
+	private final static String GOOGLE_PLACES_API_ADD_PLACE_URL = GOOGLE_MAPS_API_BASE_URL + "place/add/json";
+	private final static String GOOGLE_PLACES_API_DELETE_PLACE_URL = GOOGLE_MAPS_API_BASE_URL + "place/delete/json";
 	private final String addPlaceApiUrl;
+	private RestTemplate restTemplate;
 	private GeoApiContext context;
+	private String deletePlaceApiUrl;
 
 	public PlaceService() {
 		context = new GeoApiContext().setApiKey(API_KEY);
 		addPlaceApiUrl = GOOGLE_PLACES_API_ADD_PLACE_URL + "?key=" + API_KEY;
+		deletePlaceApiUrl = GOOGLE_PLACES_API_DELETE_PLACE_URL + "?key=" + API_KEY;
+		restTemplate = new RestTemplate();
 
 	}
 
 	public PlaceService(String apiKey) {
 		context = new GeoApiContext().setApiKey(apiKey);
 		addPlaceApiUrl = GOOGLE_PLACES_API_ADD_PLACE_URL + "?key=" + apiKey;
+		deletePlaceApiUrl = GOOGLE_PLACES_API_DELETE_PLACE_URL + "?key=" + apiKey;
 	}
 
-	public PlacesSearchResult[] findPlaces(LatLng latLng, int radius) {
+	public PlacesSearchResult[] find(LatLng latLng, int radius) {
 		try {
 			PlacesSearchResponse response = PlacesApi.nearbySearchQuery(context, latLng).radius(radius).await();
 
@@ -47,7 +51,7 @@ public class PlaceService {
 		}
 	}
 
-	public PlacesSearchResult[] findPlaces(String query) {
+	public PlacesSearchResult[] find(String query) {
 		try {
 			PlacesSearchResponse response = PlacesApi.textSearchQuery(context, query).await();
 
@@ -58,23 +62,19 @@ public class PlaceService {
 		}
 	}
 
-	public void addPlace(Place place) {
+	public PlaceAddResponse add(PlaceAddRequest place) {
+		return restTemplate.postForObject(this.deletePlaceApiUrl, place, PlaceAddResponse.class);
+	}
 
-		Client client = Client.create();
-
-		WebResource webResource = client.resource(this.addPlaceApiUrl);
-		try {
-			ClientResponse response = webResource.type(MediaType.APPLICATION_JSON_TYPE)
-					.accept(MediaType.APPLICATION_JSON_TYPE)
-					.post(ClientResponse.class, new ObjectMapper().writeValueAsString(place));
-
-			if (response.getStatus() != 200) {
-				System.err.println("failed " + response.getStatus());
-				throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
-			}
-		} catch (Exception e) {
-			System.err.println("error " + e);
-			throw new RuntimeException(e);
+	public boolean delete(String placeId) {
+		boolean wasSuccessful = false;
+		PlaceDeleteRequest request = new PlaceDeleteRequest();
+		request.setPlaceId(placeId);
+		PlaceDeleteResponse response = restTemplate.postForObject(this.deletePlaceApiUrl, request,
+				PlaceDeleteResponse.class);
+		if ("OK".equals(response.getStatus())) {
+			wasSuccessful = true;
 		}
+		return wasSuccessful;
 	}
 }
