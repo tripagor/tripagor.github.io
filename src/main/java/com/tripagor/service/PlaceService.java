@@ -63,7 +63,8 @@ public class PlaceService {
 	}
 
 	public PlaceAddResponse add(PlaceAddRequest place) {
-		return restTemplate.postForObject(this.deletePlaceApiUrl, place, PlaceAddResponse.class);
+		PlaceAddResponse response = restTemplate.postForObject(this.addPlaceApiUrl, place, PlaceAddResponse.class);
+		return response;
 	}
 
 	public boolean delete(String placeId) {

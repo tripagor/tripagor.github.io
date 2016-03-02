@@ -9,6 +9,7 @@ import com.google.maps.model.LatLng;
 import com.google.maps.model.PlacesSearchResult;
 import com.tripagor.importer.model.Lodging;
 import com.tripagor.importer.model.PlaceAddRequest;
+import com.tripagor.importer.model.PlaceAddResponse;
 import com.tripagor.service.PlaceService;
 
 public class UnmarkedLodgingPlacesExporter {
@@ -50,7 +51,10 @@ public class UnmarkedLodgingPlacesExporter {
 				place.getLocation().setLng(accommodation.getAddress().getLongitude());
 
 				try {
-					placeService.add(place);
+					PlaceAddResponse add = placeService.add(place);
+					if(!"OK".equals(add.getStatus())){
+						System.err.println("could not add place");
+					}
 				} catch (Exception e) {
 					System.err.println("error " + e);
 				}
