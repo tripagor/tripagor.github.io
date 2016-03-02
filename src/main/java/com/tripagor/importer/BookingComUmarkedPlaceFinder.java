@@ -1,26 +1,21 @@
 package com.tripagor.importer;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.supercsv.cellprocessor.Optional;
-import org.supercsv.cellprocessor.ift.CellProcessor;
-import org.supercsv.io.CsvMapReader;
-import org.supercsv.io.ICsvMapReader;
-import org.supercsv.prefs.CsvPreference;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.maps.model.PlacesSearchResult;
+import com.tripagor.importer.model.Address;
 import com.tripagor.importer.model.Lodging;
 import com.tripagor.service.AddressNormalizer;
 import com.tripagor.service.PlaceService;
-import com.tripagor.importer.model.Address;
+import com.univocity.parsers.tsv.TsvParser;
+import com.univocity.parsers.tsv.TsvParserSettings;
 
 public class BookingComUmarkedPlaceFinder {
 
@@ -48,37 +43,37 @@ public class BookingComUmarkedPlaceFinder {
 	}
 
 	public void extract(File importFile, File exportFile) {
-		ICsvMapReader mapReader = null;
+
 		PrintWriter printWriter = null;
+		TsvParserSettings settings = new TsvParserSettings();
+		settings.getFormat().setLineSeparator("\n");
+		TsvParser parser = new TsvParser(settings);
+
+		List<String[]> rows = parser.parseAll(importFile);
+
 		try {
-			mapReader = new CsvMapReader(new FileReader(importFile), CsvPreference.TAB_PREFERENCE);
 			printWriter = new PrintWriter(exportFile);
 			printWriter.print("[");
-
-			final String[] header = mapReader.getHeader(true);
-			final CellProcessor[] processors = getProcessors();
-			Map<String, Object> customerMap;
 			boolean hasEntry = false;
 			int numberOfImportedRows = 0;
-
-			try {
-				while ((customerMap = mapReader.read(header, processors)) != null) {
+			for (int i = 0; i < rows.size(); i++) {
+				if (i > 0) {
 					if (numberOfImportedRows >= maxImports) {
 						break;
 					}
 					numberOfImportedRows++;
 
-					final String name = (String) customerMap.get("name");
-					final String city = (String) customerMap.get("city_hotel");
-					final String address = (String) customerMap.get("address");
-					final String zip = (String) customerMap.get("zip");
-					final String desc = (String) customerMap.get("desc_en");
-					final String url = (String) customerMap.get("hotel_url");
-					final String imageUrl = (String) customerMap.get("photo_url");
-					final String country = new Locale("", ((String) customerMap.get("cc1")).toUpperCase())
+					final String name = rows.get(i)[1];
+					final String address = rows.get(i)[2];
+					final String zip = rows.get(i)[3];
+					final String city = rows.get(i)[4];
+					final String country = new Locale("", (rows.get(i)[5]).toUpperCase())
 							.getDisplayCountry(new Locale("en"));
-					final double longitude = Double.parseDouble((String) customerMap.get("longitude"));
-					final double latitude = Double.parseDouble((String) customerMap.get("latitude"));
+					final String desc = rows.get(i)[18];
+					final String url = rows.get(i)[16];
+					final String imageUrl = rows.get(i)[17];
+					final double longitude = Double.parseDouble(rows.get(i)[13]);
+					final double latitude = Double.parseDouble(rows.get(i)[14]);
 
 					PlacesSearchResult[] places = placeExtractor.find(name);
 					boolean isMarked = false;
@@ -99,41 +94,23 @@ public class BookingComUmarkedPlaceFinder {
 						Lodging accommodation = new Lodging();
 						accommodation.setName(name);
 						accommodation.setAddress(new Address(address, zip, city, country, "", longitude, latitude));
-						accommodation.getAddress().setWellFormattedAddress(addressNormalizer.wellFormattedString(latitude, longitude));
+						accommodation.getAddress()
+								.setWellFormattedAddress(addressNormalizer.wellFormattedString(latitude, longitude));
 						accommodation.setDescription(desc);
 						accommodation.setUrl(url);
 						accommodation.getImageUrls().add(imageUrl);
 						printWriter.print(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(accommodation));
 					}
 				}
-			} catch (Exception e) {
-				logger.error("failed with {}", e);
-			}
 
+			}
 		} catch (Exception e) {
 			logger.error("failed with {}", e);
 		} finally {
 			printWriter.print("]");
 			printWriter.close();
-			if (mapReader != null) {
-				try {
-					mapReader.close();
-				} catch (IOException e) {
-				}
-			}
 		}
-	}
 
-	private static CellProcessor[] getProcessors() {
-		final CellProcessor[] processors = new CellProcessor[] { new Optional(), new Optional(), new Optional(),
-				new Optional(), new Optional(), new Optional(), new Optional(), new Optional(), new Optional(),
-				new Optional(), new Optional(), new Optional(), new Optional(), new Optional(), new Optional(),
-				new Optional(), new Optional(), new Optional(), new Optional(), new Optional(), new Optional(),
-				new Optional(), new Optional(), new Optional(), new Optional(), new Optional(), new Optional(),
-				new Optional(), new Optional(), new Optional(), new Optional(), new Optional(), new Optional(),
-				new Optional(), new Optional(), new Optional(), new Optional(), new Optional(), new Optional() };
-
-		return processors;
 	}
 
 	public void setMaxImports(int maxImports) {

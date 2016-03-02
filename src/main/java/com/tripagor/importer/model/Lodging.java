@@ -18,6 +18,8 @@ public class Lodging {
 	private List<String> imageUrls = new LinkedList<String>();
 
 	private List<FeatureSection> featureSections = new LinkedList<FeatureSection>();
+	
+	private boolean isMarked;
 
 	public String getName() {
 		return name;
@@ -71,6 +73,14 @@ public class Lodging {
 
 	public void setFeatureSections(List<FeatureSection> featureSections) {
 		this.featureSections = featureSections;
+	}
+
+	public boolean isMarked() {
+		return isMarked;
+	}
+
+	public void setMarked(boolean isMarked) {
+		this.isMarked = isMarked;
 	}
 
 }
