@@ -39,8 +39,10 @@ public class UnmarkedLodgingPlacesExporter {
 				boolean isApprovedByGoogle = false;
 				for (PlacesSearchResult result : results) {
 					if (accommodation.getName().equals(result.name) && "APP".equals(result.scope)) {
+						System.out.println("deleting "+accommodation.getName());
 						placeService.delete(result.placeId);
 					} else if (accommodation.getName().equals(result.name) && "GOOGLE".equals(result.scope)) {
+						System.out.println(accommodation.getName()+" APPROVED BY GOOGLE!");
 						isApprovedByGoogle = true;
 						break;
 					}
