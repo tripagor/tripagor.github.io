@@ -69,7 +69,7 @@ public class UnmarkedLodgingPlacesExporter {
 				}
 			}
 		} catch (Exception e) {
-			throw new RuntimeException("failed "+e, e);
+			throw new RuntimeException("failed " + e, e);
 		}
 
 	}
