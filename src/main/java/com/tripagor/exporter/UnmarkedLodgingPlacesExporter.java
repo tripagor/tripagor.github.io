@@ -39,13 +39,12 @@ public class UnmarkedLodgingPlacesExporter {
 						PlaceType.LODGING);
 				boolean isApprovedByGoogle = false;
 				for (PlacesSearchResult result : results) {
-					if (accommodation.getName().equals(result.name) && "APP".equals(result.scope)) {
+					if (accommodation.getName().equals(result.name) && "APP".equals(result.scope.name())) {
 						System.out.println("deleting " + accommodation.getName());
 						placeService.delete(result.placeId);
-					} else if (accommodation.getName().equals(result.name) && "GOOGLE".equals(result.scope)) {
+					} else if (accommodation.getName().equals(result.name) && "GOOGLE".equals(result.scope.name())) {
 						System.out.println(accommodation.getName() + " APPROVED BY GOOGLE!");
 						isApprovedByGoogle = true;
-						break;
 					}
 				}
 
