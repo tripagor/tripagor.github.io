@@ -142,4 +142,11 @@ public class PlaceAddRequest {
 		this.phoneNumber = phoneNumber;
 	}
 
+	@Override
+	public String toString() {
+		return "PlaceAddRequest [types=" + types + ", formattedAddress=" + formattedAddress + ", website=" + website
+				+ ", name=" + name + ", accuracy=" + accuracy + ", phoneNumber=" + phoneNumber + ", location="
+				+ location + "]";
+	}
+
 }
