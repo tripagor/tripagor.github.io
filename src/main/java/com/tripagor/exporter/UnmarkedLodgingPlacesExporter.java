@@ -35,7 +35,7 @@ public class UnmarkedLodgingPlacesExporter {
 				numOfAdds++;
 
 				PlacesSearchResult[] results = placeService.find(
-						new LatLng(accommodation.getAddress().getLatitude(), accommodation.getAddress().getLatitude()),
+						new LatLng(accommodation.getAddress().getLatitude(), accommodation.getAddress().getLongitude()),
 						PlaceType.LODGING);
 				boolean isApprovedByGoogle = false;
 				for (PlacesSearchResult result : results) {

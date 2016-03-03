@@ -73,7 +73,7 @@ public class AddressNormalizer {
 
 	public String wellFormattedString(double latitude, double longitude) throws Exception {
 		ReverseGeocodingResult result = restTemplate.getForObject(
-				GOOGLE_API_GEOCODING_REVERSE_BASE_URL + latitude + ", " + longitude + "&key=" + apiKey,
+				GOOGLE_API_GEOCODING_REVERSE_BASE_URL + latitude + "," + longitude + "&key=" + apiKey,
 				ReverseGeocodingResult.class);
 
 		if (result.getResults().size() > 0) {
