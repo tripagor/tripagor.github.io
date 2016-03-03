@@ -126,7 +126,6 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<!-- <mainClass>com.tripagor.cli.BookingComUmarkedPlaceFinderCli</mainClass> -->
 						</manifest>
 					</archive>
 					<descriptorRefs>
