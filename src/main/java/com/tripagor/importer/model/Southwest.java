@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("org.jsonschema2pojo")
 @JsonPropertyOrder({ "lat", "lng" })
-public class Location {
+public class Southwest {
 
 	@JsonProperty("lat")
 	private Double lat;

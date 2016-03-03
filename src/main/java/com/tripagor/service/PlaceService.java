@@ -7,8 +7,10 @@ import org.springframework.web.client.RestTemplate;
 import com.google.maps.GeoApiContext;
 import com.google.maps.PlacesApi;
 import com.google.maps.model.LatLng;
+import com.google.maps.model.PlaceType;
 import com.google.maps.model.PlacesSearchResponse;
 import com.google.maps.model.PlacesSearchResult;
+import com.google.maps.model.RankBy;
 import com.tripagor.importer.model.PlaceAddRequest;
 import com.tripagor.importer.model.PlaceAddResponse;
 import com.tripagor.importer.model.PlaceDeleteRequest;
@@ -47,6 +49,18 @@ public class PlaceService {
 			return response.results;
 		} catch (Exception e) {
 			logger.error("error with {} {} failed with {}", latLng, radius, e);
+			throw new RuntimeException(e);
+		}
+	}
+
+	public PlacesSearchResult[] find(LatLng latLng, PlaceType type) {
+		try {
+			PlacesSearchResponse response = PlacesApi.nearbySearchQuery(context, latLng).rankby(RankBy.DISTANCE)
+					.type(type).await();
+
+			return response.results;
+		} catch (Exception e) {
+			logger.error("error with {} {} failed with {}", latLng, type, e);
 			throw new RuntimeException(e);
 		}
 	}

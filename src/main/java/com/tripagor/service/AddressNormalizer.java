@@ -1,21 +1,28 @@
 package com.tripagor.service;
 
+import org.springframework.web.client.RestTemplate;
+
 import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
 import com.google.maps.model.AddressComponent;
 import com.google.maps.model.AddressComponentType;
 import com.google.maps.model.GeocodingResult;
-import com.google.maps.model.LatLng;
 import com.tripagor.importer.model.Address;
+import com.tripagor.importer.model.ReverseGeocodingResult;
 
 public class AddressNormalizer {
 
 	private final static String API_KEY = "AIzaSyC_V_8PAujfCgCSU0UOAsWJzvoIbNFKYGU";
+	private final String GOOGLE_API_GEOCODING_REVERSE_BASE_URL = "https://maps.googleapis.com/maps/api/geocode/json?latlng=";
+	private RestTemplate restTemplate;
+	private String apiKey;
 
 	private GeoApiContext context;
 
 	public AddressNormalizer() {
-		context = new GeoApiContext().setApiKey(API_KEY);
+		apiKey = API_KEY;
+		context = new GeoApiContext().setApiKey(apiKey);
+		restTemplate = new RestTemplate();
 	}
 
 	public Address normalize(String addressLine) throws Exception {
@@ -65,9 +72,12 @@ public class AddressNormalizer {
 	}
 
 	public String wellFormattedString(double latitude, double longitude) throws Exception {
-		GeocodingResult[] results = GeocodingApi.reverseGeocode(context, new LatLng(latitude, longitude)).await();
-		if (results.length > 0) {
-			return results[0].formattedAddress;
+		ReverseGeocodingResult result = restTemplate.getForObject(
+				GOOGLE_API_GEOCODING_REVERSE_BASE_URL + latitude + ", " + longitude + "&key=" + apiKey,
+				ReverseGeocodingResult.class);
+
+		if (result.getResults().size() > 0) {
+			return new String(result.getResults().get(0).getFormattedAddress().getBytes(),"UTF-8");
 		} else {
 			throw new RuntimeException("no address data found");
 		}

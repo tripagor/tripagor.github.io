@@ -6,6 +6,7 @@ import java.util.List;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.maps.model.LatLng;
+import com.google.maps.model.PlaceType;
 import com.google.maps.model.PlacesSearchResult;
 import com.tripagor.importer.model.Lodging;
 import com.tripagor.importer.model.PlaceAddRequest;
@@ -35,14 +36,14 @@ public class UnmarkedLodgingPlacesExporter {
 
 				PlacesSearchResult[] results = placeService.find(
 						new LatLng(accommodation.getAddress().getLatitude(), accommodation.getAddress().getLatitude()),
-						100);
+						PlaceType.LODGING);
 				boolean isApprovedByGoogle = false;
 				for (PlacesSearchResult result : results) {
 					if (accommodation.getName().equals(result.name) && "APP".equals(result.scope)) {
-						System.out.println("deleting "+accommodation.getName());
+						System.out.println("deleting " + accommodation.getName());
 						placeService.delete(result.placeId);
 					} else if (accommodation.getName().equals(result.name) && "GOOGLE".equals(result.scope)) {
-						System.out.println(accommodation.getName()+" APPROVED BY GOOGLE!");
+						System.out.println(accommodation.getName() + " APPROVED BY GOOGLE!");
 						isApprovedByGoogle = true;
 						break;
 					}
@@ -59,7 +60,7 @@ public class UnmarkedLodgingPlacesExporter {
 
 					try {
 						PlaceAddResponse add = placeService.add(place);
-						System.out.println("Added place "+place+" resulting in status="+add.getStatus());
+						System.out.println("Added place " + place + " resulting in status=" + add.getStatus());
 						if (!"OK".equals(add.getStatus())) {
 							System.err.println("could not add place");
 						}
@@ -69,7 +70,7 @@ public class UnmarkedLodgingPlacesExporter {
 				}
 			}
 		} catch (Exception e) {
-			throw new RuntimeException("failed", e);
+			throw new RuntimeException("failed "+e, e);
 		}
 
 	}
