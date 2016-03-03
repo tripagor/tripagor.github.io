@@ -36,27 +36,34 @@ public class UnmarkedLodgingPlacesExporter {
 				PlacesSearchResult[] results = placeService.find(
 						new LatLng(accommodation.getAddress().getLatitude(), accommodation.getAddress().getLatitude()),
 						100);
+				boolean isApprovedByGoogle = false;
 				for (PlacesSearchResult result : results) {
 					if (accommodation.getName().equals(result.name) && "APP".equals(result.scope)) {
 						placeService.delete(result.placeId);
+					} else if (accommodation.getName().equals(result.name) && "GOOGLE".equals(result.scope)) {
+						isApprovedByGoogle = true;
+						break;
 					}
 				}
 
-				PlaceAddRequest place = new PlaceAddRequest();
-				place.setName(accommodation.getName());
-				place.setFormattedAddress(accommodation.getAddress().getWellFormattedAddress());
-				place.setWebsite(accommodation.getUrl() + "?aid=948836");
-				place.getTypes().add("lodging");
-				place.getLocation().setLat(accommodation.getAddress().getLatitude());
-				place.getLocation().setLng(accommodation.getAddress().getLongitude());
+				if (!isApprovedByGoogle) {
+					PlaceAddRequest place = new PlaceAddRequest();
+					place.setName(accommodation.getName());
+					place.setFormattedAddress(accommodation.getAddress().getWellFormattedAddress());
+					place.setWebsite(accommodation.getUrl() + "?aid=948836");
+					place.getTypes().add("lodging");
+					place.getLocation().setLat(accommodation.getAddress().getLatitude());
+					place.getLocation().setLng(accommodation.getAddress().getLongitude());
 
-				try {
-					PlaceAddResponse add = placeService.add(place);
-					if (!"OK".equals(add.getStatus())) {
-						System.err.println("could not add place");
+					try {
+						PlaceAddResponse add = placeService.add(place);
+						System.out.println("Added place "+place+" resulting in status="+add.getStatus());
+						if (!"OK".equals(add.getStatus())) {
+							System.err.println("could not add place");
+						}
+					} catch (Exception e) {
+						System.err.println("error " + e);
 					}
-				} catch (Exception e) {
-					System.err.println("error " + e);
 				}
 			}
 		} catch (Exception e) {
