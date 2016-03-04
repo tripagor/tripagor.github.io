@@ -18,7 +18,6 @@ import com.tripagor.service.AddressNormalizer;
 public class BookingComAccommodationExtractor {
 
 	private final Logger logger = LoggerFactory.getLogger(BookingComAccommodationExtractor.class);
-	private final static String API_KEY = "AIzaSyC_V_8PAujfCgCSU0UOAsWJzvoIbNFKYGU";
 	private AddressNormalizer addressNormalizer;
 
 	public BookingComAccommodationExtractor() {
