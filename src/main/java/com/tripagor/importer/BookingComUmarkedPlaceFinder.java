@@ -63,14 +63,14 @@ public class BookingComUmarkedPlaceFinder {
 					}
 					numberOfImportedRows++;
 
-					final String name = rows.get(i)[1];
-					final String address = rows.get(i)[2];
-					final String zip = rows.get(i)[3];
-					final String city = rows.get(i)[4];
+					final String name = new String(rows.get(i)[1].getBytes(), "UTF-8");
+					final String address = new String(rows.get(i)[2].getBytes(), "UTF-8");
+					final String zip = new String(rows.get(i)[3].getBytes(), "UTF-8");
+					final String city = new String(rows.get(i)[4].getBytes(), "UTF-8");
 					final String country = new Locale("", (rows.get(i)[5]).toUpperCase())
 							.getDisplayCountry(new Locale("en"));
-					final String desc = rows.get(i)[18];
-					final String url = rows.get(i)[16];
+					final String desc = new String(rows.get(i)[18].getBytes(),"UTF-8");
+					final String url = new String(rows.get(i)[16].getBytes(),"UTF-8");
 					final String imageUrl = rows.get(i)[17];
 					final double longitude = Double.parseDouble(rows.get(i)[13]);
 					final double latitude = Double.parseDouble(rows.get(i)[14]);
