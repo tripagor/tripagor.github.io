@@ -20,6 +20,7 @@ public class BookingComExporterCli {
 		options = new Options();
 		options.addOption("s", true, "source file");
 		options.addOption("d", true, "Mongo DB to export uri");
+		options.addOption("c", true, "collection name");
 		options.addOption("h", false, "this help");
 
 		CommandLineParser parser = new DefaultParser();
@@ -31,9 +32,16 @@ public class BookingComExporterCli {
 
 			String source = "";
 			String uri = "";
+			String collection = "";
 
 			if (cmd.hasOption("s")) {
 				source = cmd.getOptionValue("s");
+
+			} else {
+				help();
+			}
+			if (cmd.hasOption("c")) {
+				collection = cmd.getOptionValue("c");
 
 			} else {
 				help();
@@ -46,7 +54,7 @@ public class BookingComExporterCli {
 			}
 
 			System.out.println("importing " + source + " > " + uri);
-			exporter.extract(new File(source), uri);
+			exporter.extract(new File(source), uri, collection);
 		} catch (Exception e) {
 			System.err.println("An problem occured:" + e);
 		}

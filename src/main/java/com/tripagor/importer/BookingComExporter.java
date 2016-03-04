@@ -4,8 +4,6 @@ import java.io.File;
 import java.util.List;
 import java.util.Locale;
 
-import javax.management.modelmbean.ModelMBeanOperationInfo;
-
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,12 +21,12 @@ public class BookingComExporter {
 	public BookingComExporter() {
 	}
 
-	public void extract(File importFile, String uri) {
+	public void extract(File importFile, String uri, String collectionname) {
 
 		MongoClientURI mongoClientURI = new MongoClientURI(uri);
 		MongoClient mongoClient = new MongoClient(mongoClientURI);
 		MongoCollection<Document> collection = mongoClient.getDatabase(mongoClientURI.getDatabase())
-				.getCollection("hotel");
+				.getCollection(collectionname);
 
 		TsvParserSettings settings = new TsvParserSettings();
 		settings.getFormat().setLineSeparator("\n");
