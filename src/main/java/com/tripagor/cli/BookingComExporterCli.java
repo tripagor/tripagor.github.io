@@ -1,6 +1,7 @@
 package com.tripagor.cli;
 
 import java.io.File;
+import java.nio.file.Paths;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -19,6 +20,7 @@ public class BookingComExporterCli {
 
 		options = new Options();
 		options.addOption("s", true, "source file");
+		options.addOption("f", true, "source folder");
 		options.addOption("d", true, "Mongo DB to export uri");
 		options.addOption("c", true, "collection name");
 		options.addOption("h", false, "this help");
@@ -31,15 +33,21 @@ public class BookingComExporterCli {
 			}
 
 			String source = "";
+			String directory = "";
 			String uri = "";
 			String collection = "";
 
 			if (cmd.hasOption("s")) {
 				source = cmd.getOptionValue("s");
+			}
+			if (cmd.hasOption("f")) {
+				directory = cmd.getOptionValue("f");
+			}
 
-			} else {
+			if ("".equals(source) && "".equals(directory)) {
 				help();
 			}
+
 			if (cmd.hasOption("c")) {
 				collection = cmd.getOptionValue("c");
 
@@ -54,7 +62,11 @@ public class BookingComExporterCli {
 			}
 
 			System.out.println("importing " + source + " > " + uri);
-			exporter.extract(new File(source), uri, collection);
+			if (!"".equals(source)) {
+				exporter.extract(new File(source), uri, collection);
+			} else if (!"".equals(directory)) {
+				exporter.extract(Paths.get(directory), uri, collection);
+			}
 		} catch (Exception e) {
 			System.err.println("An problem occured:" + e);
 		}

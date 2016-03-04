@@ -1,6 +1,7 @@
 package com.tripagor.importer;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
 
@@ -19,6 +20,15 @@ public class BookingComExporter {
 	private final Logger logger = LoggerFactory.getLogger(BookingComExporter.class);
 
 	public BookingComExporter() {
+	}
+
+	public void extract(Path path, String uri, String collectionname) {
+		File directory = path.toFile();
+		for (File file : directory.listFiles()) {
+			System.out.println("extracting file "+file.getName()+"...");
+			extract(file, uri, collectionname);
+			System.out.println("extracting file "+file.getName()+" suceeded.");
+		}
 	}
 
 	public void extract(File importFile, String uri, String collectionname) {
