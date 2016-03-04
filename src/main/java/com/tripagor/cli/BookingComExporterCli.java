@@ -1,7 +1,6 @@
 package com.tripagor.cli;
 
 import java.io.File;
-import java.net.URL;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
