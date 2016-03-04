@@ -4,11 +4,15 @@ import java.io.File;
 import java.util.List;
 import java.util.Locale;
 
+import javax.management.modelmbean.ModelMBeanOperationInfo;
+
+import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
+import com.mongodb.client.MongoCollection;
 import com.univocity.parsers.tsv.TsvParser;
 import com.univocity.parsers.tsv.TsvParserSettings;
 
@@ -23,6 +27,8 @@ public class BookingComExporter {
 
 		MongoClientURI mongoClientURI = new MongoClientURI(uri);
 		MongoClient mongoClient = new MongoClient(mongoClientURI);
+		MongoCollection<Document> collection = mongoClient.getDatabase(mongoClientURI.getDatabase())
+				.getCollection("hotel");
 
 		TsvParserSettings settings = new TsvParserSettings();
 		settings.getFormat().setLineSeparator("\n");
@@ -45,15 +51,18 @@ public class BookingComExporter {
 						final String imageUrl = rows.get(i)[17];
 						final double longitude = Double.parseDouble(rows.get(i)[13]);
 						final double latitude = Double.parseDouble(rows.get(i)[14]);
-						System.out.println(name);
+						collection.insertOne(new Document("name", name));
 					} catch (Exception e) {
 						continue;
 					}
+				} else {
+					System.out.println(rows.get(i).toString());
 				}
 			}
 		} catch (Exception e) {
 			logger.error("failed with {}", e);
 		} finally {
+			mongoClient.close();
 		}
 
 	}
