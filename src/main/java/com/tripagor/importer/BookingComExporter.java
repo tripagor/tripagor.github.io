@@ -53,7 +53,9 @@ public class BookingComExporter {
 						Document document = new Document();
 						String[] values = rows.get(i);
 						for (int j = 0; j < values.length; j++) {
-							document.append(propMap.get(j), values[j]);
+							if (values[j] != null) {
+								document.append(propMap.get(j), values[j]);
+							}
 						}
 						collection.insertOne(document);
 					} catch (Exception e) {
@@ -64,6 +66,7 @@ public class BookingComExporter {
 					for (int j = 0; j < propertyNames.length; j++) {
 						propMap.put(j, propertyNames[j]);
 					}
+					System.out.println(propMap);
 				}
 			}
 		} catch (Exception e) {
