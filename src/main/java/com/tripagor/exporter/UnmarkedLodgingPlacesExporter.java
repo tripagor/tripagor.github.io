@@ -1,75 +1,63 @@
 package com.tripagor.exporter;
 
-import java.io.File;
-import java.util.List;
+import org.bson.Document;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.maps.model.LatLng;
 import com.google.maps.model.PlaceType;
 import com.google.maps.model.PlacesSearchResult;
-import com.tripagor.importer.model.Lodging;
-import com.tripagor.importer.model.PlaceAddRequest;
-import com.tripagor.importer.model.PlaceAddResponse;
+import com.mongodb.Block;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCollection;
 import com.tripagor.service.PlaceService;
 
 public class UnmarkedLodgingPlacesExporter {
-	private PlaceService placeService;
-	private ObjectMapper objectMapper;
 	private int numberOfPlacesToAdd = 50000;
+	private PlaceService placeService;
 
 	public UnmarkedLodgingPlacesExporter() {
-		objectMapper = new ObjectMapper();
+		placeService = new PlaceService();
 	}
 
-	public void export(File importFile) {
-		placeService = new PlaceService();
+	public void export(String dbUri, String collectionName) {
+		MongoClientURI mongoClientURI = new MongoClientURI(dbUri);
+		MongoClient mongoClient = new MongoClient(mongoClientURI);
+		final MongoCollection<Document> collection = mongoClient.getDatabase(mongoClientURI.getDatabase())
+				.getCollection(collectionName);
+
+		FindIterable<Document> iterable = collection.find(new Document("is_evaluated", false))
+				.limit(numberOfPlacesToAdd);
+
 		try {
-			List<Lodging> accommodations = objectMapper.readValue(importFile, new TypeReference<List<Lodging>>() {
-			});
-			int numOfAdds = 0;
-			for (Lodging accommodation : accommodations) {
-				if (numOfAdds >= numberOfPlacesToAdd) {
-					break;
-				}
-				numOfAdds++;
 
-				PlacesSearchResult[] results = placeService.find(
-						new LatLng(accommodation.getAddress().getLatitude(), accommodation.getAddress().getLongitude()),
-						PlaceType.LODGING);
-				boolean isApprovedByGoogle = false;
-				for (PlacesSearchResult result : results) {
-					if (accommodation.getName().equals(result.name) && "APP".equals(result.scope.name())) {
-						System.out.println("deleting " + accommodation.getName());
-						placeService.delete(result.placeId);
-					} else if (accommodation.getName().equals(result.name) && "GOOGLE".equals(result.scope.name())) {
-						System.out.println(accommodation.getName() + " APPROVED BY GOOGLE!");
-						isApprovedByGoogle = true;
-					}
-				}
+			iterable.forEach(new Block<Document>() {
 
-				if (!isApprovedByGoogle) {
-					PlaceAddRequest place = new PlaceAddRequest();
-					place.setName(accommodation.getName());
-					place.setFormattedAddress(accommodation.getAddress().getWellFormattedAddress());
-					place.setWebsite(accommodation.getUrl() + "?aid=948836");
-					place.getTypes().add("lodging");
-					place.getLocation().setLat(accommodation.getAddress().getLatitude());
-					place.getLocation().setLng(accommodation.getAddress().getLongitude());
-
-					try {
-						PlaceAddResponse add = placeService.add(place);
-						System.out.println("Added place " + place + " resulting in status=" + add.getStatus());
-						if (!"OK".equals(add.getStatus())) {
-							System.err.println("could not add place");
+				public void apply(Document document) {
+					PlacesSearchResult[] results = placeService
+							.find(new LatLng(Double.parseDouble(document.getString("latitude")),
+									Double.parseDouble(document.getString("longitude"))), PlaceType.LODGING);
+					boolean isApprovedByGoogle = false;
+					boolean isMarketSet = false;
+					for (PlacesSearchResult result : results) {
+						if (document.getString("name").equals(result.name) && "APP".equals(result.scope.name())) {
+							System.out.println(document.getString("name") + " WAS MARKED!");
+						} else if (document.getString("name").equals(result.name)
+								&& "GOOGLE".equals(result.scope.name())) {
+							System.out.println(document.getString("name") + " APPROVED BY GOOGLE!");
+							isApprovedByGoogle = true;
 						}
-					} catch (Exception e) {
-						System.err.println("error " + e);
 					}
+					collection.updateOne(new Document("_id", document.get("_id")),
+							new Document("$set", new Document("is_evaluated", true).append("is_marker_set", isMarketSet)
+									.append("is_marker_approved", isApprovedByGoogle)));
 				}
-			}
+			});
+
 		} catch (Exception e) {
 			throw new RuntimeException("failed " + e, e);
+		} finally {
+			mongoClient.close();
 		}
 
 	}

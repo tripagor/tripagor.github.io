@@ -1,7 +1,5 @@
 package com.tripagor.cli;
 
-import java.io.File;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -18,7 +16,8 @@ public class UnmarkedPlacesExporterCli {
 		UnmarkedLodgingPlacesExporter exporter = new UnmarkedLodgingPlacesExporter();
 
 		options = new Options();
-		options.addOption("s", true, "source file");
+		options.addOption("d", true, "mongo uri");
+		options.addOption("c", true, "collection");
 		options.addOption("n", true, "maxium number set to be exported");
 		options.addOption("h", false, "this help");
 
@@ -29,12 +28,18 @@ public class UnmarkedPlacesExporterCli {
 				help();
 			}
 
-			String source = "";
+			String uri = "";
 			int numberOfPlacesToAdd = 0;
 
-			if (cmd.hasOption("s")) {
-				source = cmd.getOptionValue("s");
+			if (cmd.hasOption("d")) {
+				uri = cmd.getOptionValue("d");
+			} else {
+				help();
+			}
 
+			String collection = "";
+			if (cmd.hasOption("c")) {
+				collection = cmd.getOptionValue("c");
 			} else {
 				help();
 			}
@@ -46,8 +51,8 @@ public class UnmarkedPlacesExporterCli {
 			if (numberOfPlacesToAdd > 0) {
 				exporter.setNumberOfPlacesToAdd(numberOfPlacesToAdd);
 			}
-			System.out.println("Adding places for " + source);
-			exporter.export(new File(source));
+			System.out.println("Adding places for " + uri);
+			exporter.export(uri, collection);
 		} catch (Exception e) {
 			System.err.println("An problem occured:" + e);
 		}

@@ -51,6 +51,7 @@ public class BookingComExporter {
 				if (i > 0) {
 					try {
 						Document document = new Document();
+						document.append("is_evaluated", false);
 						String[] values = rows.get(i);
 						for (int j = 0; j < values.length; j++) {
 							if (values[j] != null) {
