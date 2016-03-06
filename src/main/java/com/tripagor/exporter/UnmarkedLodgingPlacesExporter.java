@@ -12,7 +12,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
-import com.tripagor.importer.StringComparisonWeight;
+import com.tripagor.importer.StringSimilarity;
 import com.tripagor.importer.model.Address;
 import com.tripagor.importer.model.Result;
 import com.tripagor.service.AddressNormalizer;
@@ -22,12 +22,12 @@ public class UnmarkedLodgingPlacesExporter {
 	private int numberOfPlacesToAdd = 50000;
 	private PlaceService placeService;
 	private AddressNormalizer addressNormalizer;
-	private StringComparisonWeight stringComparisonWeight;
+	private StringSimilarity stringSimilarity;
 
 	public UnmarkedLodgingPlacesExporter() {
 		placeService = new PlaceService();
 		addressNormalizer = new AddressNormalizer();
-		stringComparisonWeight = new StringComparisonWeight();
+		stringSimilarity = new StringSimilarity();
 	}
 
 	public void export(String dbUri, String collectionName) {
@@ -50,18 +50,19 @@ public class UnmarkedLodgingPlacesExporter {
 					boolean isApprovedByGoogle = false;
 					boolean isMarketSet = false;
 					for (PlacesSearchResult result : results) {
-						float weight = stringComparisonWeight.cosineSimilarityCompare(document.getString("name"), result.name);
+						float distance = stringSimilarity.cosineDistance(document.getString("name"), result.name);
 
-						System.out.println(document.getString("name")+"=="+result.name +"? "+weight);
-						if ( weight> 0.5
-								&& "APP".equals(result.scope.name())) {
-							System.out.println(document.getString("name") + " WAS MARKED!");
-							break;
-						} else if (weight > 0.5
-								&& "GOOGLE".equals(result.scope.name())) {
-							System.out.println(document.getString("name")+ " APPROVED BY GOOGLE!");
-							isApprovedByGoogle = true;
-							break;
+						System.out.println(document.getString("name") + "==" + result.name + "? " + distance);
+						if (distance > 0.5) {
+							if ("APP".equals(result.scope.name())) {
+								isMarketSet = true;
+								System.out.println(document.getString("name") + " WAS MARKED!");
+								break;
+							} else if ("GOOGLE".equals(result.scope.name())) {
+								isApprovedByGoogle = true;
+								System.out.println(document.getString("name") + " WAS MARKED!");
+								break;
+							}
 						}
 					}
 					String wellformattedAddress = null;
@@ -84,7 +85,7 @@ public class UnmarkedLodgingPlacesExporter {
 					Document updateDocument = new Document("is_evaluated", true).append("is_marker_set", isMarketSet)
 							.append("is_marker_approved", isApprovedByGoogle);
 					if (wellformattedAddress != null) {
-						System.out.println("Setting wellformatted "+wellformattedAddress);
+						System.out.println("Setting wellformatted " + wellformattedAddress);
 						updateDocument.append("well_formatted_address", wellformattedAddress);
 					}
 					collection.updateOne(new Document("_id", document.get("_id")),

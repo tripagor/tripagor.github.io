@@ -22,11 +22,11 @@ public class BookingComUmarkedPlaceFinder {
 	private PlaceService placeExtractor;
 	private final Logger logger = LoggerFactory.getLogger(BookingComUmarkedPlaceFinder.class);
 	private ObjectMapper mapper;
-	private StringComparisonWeight stringComparisonWeight;
+	private StringSimilarity stringComparisonWeight;
 	private AddressNormalizer addressNormalizer;
 	private int maxImports = 100000;
 
-	public BookingComUmarkedPlaceFinder(PlaceService placeExtractor, StringComparisonWeight stringComparisonWeight,
+	public BookingComUmarkedPlaceFinder(PlaceService placeExtractor, StringSimilarity stringComparisonWeight,
 			int maxImports) {
 		super();
 		this.placeExtractor = placeExtractor;
@@ -38,7 +38,7 @@ public class BookingComUmarkedPlaceFinder {
 	public BookingComUmarkedPlaceFinder() {
 		mapper = new ObjectMapper();
 		placeExtractor = new PlaceService();
-		stringComparisonWeight = new StringComparisonWeight();
+		stringComparisonWeight = new StringSimilarity();
 		this.addressNormalizer = new AddressNormalizer();
 	}
 
@@ -78,7 +78,7 @@ public class BookingComUmarkedPlaceFinder {
 					PlacesSearchResult[] places = placeExtractor.find(name);
 					boolean isMarked = false;
 					for (PlacesSearchResult place : places) {
-						if (stringComparisonWeight.cosineSimilarityCompare(place.name, name) > 0.3) {
+						if (stringComparisonWeight.cosineDistance(place.name, name) > 0.3) {
 							isMarked = true;
 							break;
 						}

@@ -9,7 +9,7 @@ import org.simmetrics.metrics.Levenshtein;
 import org.simmetrics.simplifiers.Simplifiers;
 import org.simmetrics.tokenizers.Tokenizers;
 
-public class StringComparisonWeight {
+public class StringSimilarity {
 
 	public float levenshteinCompare(String str1, String str2) {
 		StringMetric metric = StringMetricBuilder.with(new Levenshtein()).simplify(Simplifiers.removeDiacritics())
@@ -30,7 +30,7 @@ public class StringComparisonWeight {
 
 		return metric.compare(str1, str2);
 	}
-	public float cosineSimilarityCompare(String str1, String str2) {
+	public float cosineDistance(String str1, String str2) {
 		StringMetric metric = 
 				StringMetricBuilder.with(new CosineSimilarity<String>())
 				.tokenize(Tokenizers.whitespace())
