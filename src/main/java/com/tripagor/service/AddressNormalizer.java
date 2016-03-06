@@ -109,15 +109,39 @@ public class AddressNormalizer {
 		}
 	}
 
-	public List<Result> reverseGeocoding(double latitude, double longitude) {
-		return restTemplate
-				.getForObject(GOOGLE_API_GEOCODING_REVERSE_BASE_URL + latitude + "," + longitude + "&key=" + apiKey,
-						ReverseGeocodingResult.class)
-				.getResults();
+	public List<Result> reverseGeocoding(double latitude, double longitude, String[] resultTypes,
+			String[] locationTypes) {
+		String url = GOOGLE_API_GEOCODING_REVERSE_BASE_URL + latitude + "," + longitude;
+		String resultTypeString = "";
+		for (int i = 0; i < resultTypes.length; i++) {
+			resultTypeString += resultTypes[i];
+			if (i < (resultTypes.length - 1)) {
+				resultTypeString += "|";
+			}
+		}
+
+		String locationTypeString = "";
+		for (int i = 0; i < locationTypes.length; i++) {
+			locationTypeString += locationTypes[i];
+			if (i < (locationTypes.length - 1)) {
+				locationTypeString += "|";
+			}
+		}
+
+		if (resultTypeString.equals("")) {
+			url += "&result_type=" + resultTypeString;
+		}
+		if (!locationTypeString.equals("")) {
+			url += "&location_type=" + locationTypeString;
+		}
+
+		url += "&key=" + apiKey;
+		return restTemplate.getForObject(url, ReverseGeocodingResult.class).getResults();
 	}
 
-	public String wellFormattedString(double latitude, double longitude) throws Exception {
-		List<Result> results = this.reverseGeocoding(latitude, longitude);
+	public String wellFormattedString(double latitude, double longitude, String[] resultTypes, String[] locationTypes)
+			throws Exception {
+		List<Result> results = this.reverseGeocoding(latitude, longitude, resultTypes, locationTypes);
 		if (results.size() > 0) {
 			return new String(results.get(0).getFormattedAddress().getBytes(), "UTF-8");
 		} else {

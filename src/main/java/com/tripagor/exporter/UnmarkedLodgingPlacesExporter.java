@@ -67,10 +67,10 @@ public class UnmarkedLodgingPlacesExporter {
 					}
 					String wellformattedAddress = null;
 					if (!isApprovedByGoogle) {
-
 						List<Result> geoCodingResults = addressNormalizer.reverseGeocoding(
 								Double.parseDouble(document.getString("latitude")),
-								Double.parseDouble(document.getString("longitude")));
+								Double.parseDouble(document.getString("longitude")), new String[] { "street_address" },
+								new String[] { "ROOFTOP" });
 						for (Result result : geoCodingResults) {
 							Address address = addressNormalizer.getAdress(result.getAddressComponents());
 							if (address.getCity() != null && address.getCountry() != null

@@ -69,8 +69,8 @@ public class BookingComUmarkedPlaceFinder {
 					final String city = new String(rows.get(i)[4].getBytes(), "UTF-8");
 					final String country = new Locale("", (rows.get(i)[5]).toUpperCase())
 							.getDisplayCountry(new Locale("en"));
-					final String desc = new String(rows.get(i)[18].getBytes(),"UTF-8");
-					final String url = new String(rows.get(i)[16].getBytes(),"UTF-8");
+					final String desc = new String(rows.get(i)[18].getBytes(), "UTF-8");
+					final String url = new String(rows.get(i)[16].getBytes(), "UTF-8");
 					final String imageUrl = rows.get(i)[17];
 					final double longitude = Double.parseDouble(rows.get(i)[13]);
 					final double latitude = Double.parseDouble(rows.get(i)[14]);
@@ -95,7 +95,9 @@ public class BookingComUmarkedPlaceFinder {
 						accommodation.setName(name);
 						accommodation.setAddress(new Address(address, zip, city, country, "", longitude, latitude));
 						accommodation.getAddress()
-								.setWellFormattedAddress(addressNormalizer.wellFormattedString(latitude, longitude));
+								.setWellFormattedAddress(addressNormalizer.wellFormattedString(latitude, longitude,
+										new String[] { "street_address", "postal_code", "locality", "country" },
+										new String[] { "ROOFTOP" }));
 						accommodation.setDescription(desc);
 						accommodation.setUrl(url);
 						accommodation.getImageUrls().add(imageUrl);
