@@ -1,51 +1,24 @@
 package com.tripagor.importer;
 
-import java.util.Locale;
-
-import org.apache.commons.lang3.StringUtils;
+import org.simmetrics.StringMetric;
+import org.simmetrics.builders.StringMetricBuilder;
+import org.simmetrics.metrics.Levenshtein;
+import org.simmetrics.metrics.StringMetrics;
+import org.simmetrics.simplifiers.Simplifiers;
 
 public class StringComparisonWeight {
 
-	public double getWeightLevenshtein(String str1, String str2) {
-		// get the max possible levenstein distance score for string
-		int maxLen = Math.max(str1.length(), str2.length());
+	public float getWeightLevenshtein(String str1, String str2) {
+		StringMetric metric = StringMetricBuilder.with(new Levenshtein()).simplify(Simplifiers.removeDiacritics())
+				.simplify(Simplifiers.toLowerCase()).build();
 
-		// check for 0 maxLen
-		if (maxLen == 0) {
-			return 1.0; // as both strings identically zero length
-		} else {
-			final int distance = StringUtils.getLevenshteinDistance(str1, str2);
-			// return actual / possible levenstein distance to get 0-1 range
-			return 1.0 - ((double) distance / maxLen);
-		}
+		return metric.compare(str1, str2);
 	}
 
-	public double getWeightFuzzy(String str1, String str2) {
-		// get the max possible levenstein distance score for string
-		int maxLen = Math.max(str1.length(), str2.length());
+	public float getWeightJaroWinkler(String str1, String str2) {
+		StringMetric metric = StringMetrics.jaroWinkler();
 
-		// check for 0 maxLen
-		if (maxLen == 0) {
-			return 1.0; // as both strings identically zero length
-		} else {
-			final int distance = StringUtils.getFuzzyDistance(str1, str2, new Locale("en", "US"));
-			// return actual / possible levenstein distance to get 0-1 range
-			return 1.0 - ((double) distance / maxLen);
-		}
-	}
-
-	public double getWeightJaroWinkler(String str1, String str2) {
-		// get the max possible levenstein distance score for string
-		int maxLen = Math.max(str1.length(), str2.length());
-
-		// check for 0 maxLen
-		if (maxLen == 0) {
-			return 1.0; // as both strings identically zero length
-		} else {
-			final double distance = StringUtils.getJaroWinklerDistance(str1, str2);
-			// return actual / possible levenstein distance to get 0-1 range
-			return 1.0 - ((double) distance / maxLen);
-		}
+		return metric.compare(str1, str2);
 	}
 
 }

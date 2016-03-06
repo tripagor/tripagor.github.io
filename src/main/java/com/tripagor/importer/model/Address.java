@@ -70,7 +70,7 @@ public class Address {
 	public String toString() {
 		return "Address [streetName=" + streetName + ", postalCode=" + postalCode + ", city=" + city + ", country="
 				+ country + ", streetNumber=" + streetNumber + ", latitude=" + latitude + ", longitude=" + longitude
-				+ "]";
+				+ ", wellFormattedAddress=" + wellFormattedAddress + "]";
 	}
 
 	public double getLatitude() {

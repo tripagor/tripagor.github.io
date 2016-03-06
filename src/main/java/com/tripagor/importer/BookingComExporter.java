@@ -6,13 +6,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
+
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.mongodb.Block;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.InsertOneOptions;
 import com.univocity.parsers.tsv.TsvParser;
 import com.univocity.parsers.tsv.TsvParserSettings;
 
@@ -50,6 +55,7 @@ public class BookingComExporter {
 			for (int i = 0; i < rows.size(); i++) {
 				if (i > 0) {
 					try {
+
 						Document document = new Document();
 						document.append("is_evaluated", false);
 						String[] values = rows.get(i);
@@ -58,6 +64,7 @@ public class BookingComExporter {
 								document.append(propMap.get(j), values[j]);
 							}
 						}
+
 						collection.insertOne(document);
 					} catch (Exception e) {
 						continue;
