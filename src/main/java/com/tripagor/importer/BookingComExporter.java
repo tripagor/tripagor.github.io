@@ -6,18 +6,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
-
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.mongodb.Block;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
-import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.InsertOneOptions;
 import com.univocity.parsers.tsv.TsvParser;
 import com.univocity.parsers.tsv.TsvParserSettings;
 
@@ -25,8 +20,12 @@ public class BookingComExporter {
 
 	private final Logger logger = LoggerFactory.getLogger(BookingComExporter.class);
 	private final Map<Integer, String> propMap = new HashMap<Integer, String>();
+	private final Map<String, String> propertyReplaceMap = new HashMap<String, String>();
+	private final Map<String, Class> typeMap = new HashMap<String, Class>();
 
 	public BookingComExporter() {
+		propertyReplaceMap.put("id", "booking_com_id");
+		propertyReplaceMap.put("cc1", "country_code");
 	}
 
 	public void extract(Path path, String uri, String collectionname) {
@@ -44,6 +43,10 @@ public class BookingComExporter {
 		MongoClient mongoClient = new MongoClient(mongoClientURI);
 		MongoCollection<Document> collection = mongoClient.getDatabase(mongoClientURI.getDatabase())
 				.getCollection(collectionname);
+		collection.createIndex(new Document("booking_com_id", 1));
+		collection.createIndex(new Document("country_code", 1));
+		collection.createIndex(new Document("city_unique", 1));
+		collection.createIndex(new Document("continent_id", 1));
 
 		TsvParserSettings settings = new TsvParserSettings();
 		settings.getFormat().setLineSeparator("\n");
@@ -61,7 +64,7 @@ public class BookingComExporter {
 						String[] values = rows.get(i);
 						for (int j = 0; j < values.length; j++) {
 							if (values[j] != null) {
-								document.append(propMap.get(j), values[j]);
+								document.append(propMap.get(j), toObject(getType(propMap.get(j)), values[j]));
 							}
 						}
 
@@ -72,9 +75,12 @@ public class BookingComExporter {
 				} else {
 					String[] propertyNames = rows.get(i);
 					for (int j = 0; j < propertyNames.length; j++) {
-						propMap.put(j, propertyNames[j]);
+						String propertyName = propertyNames[j];
+						if (this.propertyReplaceMap.get(propertyName) != null) {
+							propertyName = this.propertyReplaceMap.get(propertyName);
+						}
+						propMap.put(j, propertyName);
 					}
-					System.out.println(propMap);
 				}
 			}
 		} catch (Exception e) {
@@ -83,6 +89,52 @@ public class BookingComExporter {
 			mongoClient.close();
 		}
 
+	}
+
+	public Class getType(String columnName) {
+		Class clazz = String.class;
+		if ("booking_com_id".equals(columnName)) {
+			return Long.class;
+		} else if ("minrate".equals(columnName)) {
+			return Float.class;
+		} else if ("nr_rooms".equals(columnName)) {
+			return Integer.class;
+		} else if ("longitude".equals(columnName)) {
+			return Double.class;
+		} else if ("latitude".equals(columnName)) {
+			return Double.class;
+		} else if ("public_ranking".equals(columnName)) {
+			return Integer.class;
+		} else if ("public_ranking".equals(columnName)) {
+			return Integer.class;
+		} else if ("continent_id".equals(columnName)) {
+			return Byte.class;
+		} else if ("review_score".equals(columnName)) {
+			return Double.class;
+		} else if ("review_nr".equals(columnName)) {
+			return Double.class;
+		}
+		return clazz;
+	}
+
+	public Object toObject(Class clazz, String value) {
+		if (Boolean.class == clazz)
+			return Boolean.parseBoolean(value);
+		if (Byte.class == clazz)
+			return Byte.parseByte(value);
+		if (Short.class == clazz)
+			return Short.parseShort(value);
+		if (Integer.class == clazz)
+			return Integer.parseInt(value);
+		if (Long.class == clazz)
+			return Long.parseLong(value);
+		if (Float.class == clazz)
+			return Float.parseFloat(value);
+		if (Double.class == clazz)
+			return Double.parseDouble(value);
+		if (String.class == clazz)
+			return value;
+		return value;
 	}
 
 }
