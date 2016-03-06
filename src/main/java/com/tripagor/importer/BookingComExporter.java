@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.UpdateOptions;
 import com.univocity.parsers.tsv.TsvParser;
 import com.univocity.parsers.tsv.TsvParserSettings;
 
@@ -21,7 +22,6 @@ public class BookingComExporter {
 	private final Logger logger = LoggerFactory.getLogger(BookingComExporter.class);
 	private final Map<Integer, String> propMap = new HashMap<Integer, String>();
 	private final Map<String, String> propertyReplaceMap = new HashMap<String, String>();
-	private final Map<String, Class> typeMap = new HashMap<String, Class>();
 
 	public BookingComExporter() {
 		propertyReplaceMap.put("id", "booking_com_id");
@@ -68,7 +68,8 @@ public class BookingComExporter {
 							}
 						}
 
-						collection.insertOne(document);
+						collection.replaceOne(new Document("booking_com_id", document.get("booking_com_id")), document,
+								(new UpdateOptions()).upsert(true));
 					} catch (Exception e) {
 						continue;
 					}
@@ -91,6 +92,7 @@ public class BookingComExporter {
 
 	}
 
+	@SuppressWarnings("rawtypes")
 	public Class getType(String columnName) {
 		Class clazz = String.class;
 		if ("booking_com_id".equals(columnName)) {
@@ -104,7 +106,7 @@ public class BookingComExporter {
 		} else if ("latitude".equals(columnName)) {
 			return Double.class;
 		} else if ("public_ranking".equals(columnName)) {
-			return Integer.class;
+			return Double.class;
 		} else if ("public_ranking".equals(columnName)) {
 			return Integer.class;
 		} else if ("continent_id".equals(columnName)) {
@@ -117,7 +119,7 @@ public class BookingComExporter {
 		return clazz;
 	}
 
-	public Object toObject(Class clazz, String value) {
+	public Object toObject(@SuppressWarnings("rawtypes") Class clazz, String value) {
 		if (Boolean.class == clazz)
 			return Boolean.parseBoolean(value);
 		if (Byte.class == clazz)
