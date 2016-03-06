@@ -50,14 +50,14 @@ public class UnmarkedLodgingPlacesExporter {
 					boolean isApprovedByGoogle = false;
 					boolean isMarketSet = false;
 					for (PlacesSearchResult result : results) {
-						float weight = stringComparisonWeight.getWeightLevenshtein(document.getString("name"), result.name);
+						float weight = stringComparisonWeight.cosineSimilarityCompare(document.getString("name"), result.name);
 
 						System.out.println(document.getString("name")+"=="+result.name +"? "+weight);
-						if ( weight> 0.7
+						if ( weight> 0.5
 								&& "APP".equals(result.scope.name())) {
 							System.out.println(document.getString("name") + " WAS MARKED!");
 							break;
-						} else if (weight > 0.7
+						} else if (weight > 0.5
 								&& "GOOGLE".equals(result.scope.name())) {
 							System.out.println(document.getString("name")+ " APPROVED BY GOOGLE!");
 							isApprovedByGoogle = true;

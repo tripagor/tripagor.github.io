@@ -78,7 +78,7 @@ public class BookingComUmarkedPlaceFinder {
 					PlacesSearchResult[] places = placeExtractor.find(name);
 					boolean isMarked = false;
 					for (PlacesSearchResult place : places) {
-						if (stringComparisonWeight.getWeightJaroWinkler(place.name, name) > 0.3) {
+						if (stringComparisonWeight.cosineSimilarityCompare(place.name, name) > 0.3) {
 							isMarked = true;
 							break;
 						}
