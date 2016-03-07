@@ -47,8 +47,8 @@ public class UnmarkedLodgingPlacesExporter {
 				public void apply(Document document) {
 					double longitude = new BigDecimal(document.getString("longitude")).doubleValue();
 					double latitude = new BigDecimal(document.getString("latitude")).doubleValue();
-					PlacesSearchResult[] results = placeService.find(new LatLng(latitude, longitude),
-							PlaceType.LODGING);
+					PlacesSearchResult[] results = placeService
+							.find(document.getString("name") + ", " + document.getString("city_hotel"));
 					boolean isApprovedByGoogle = false;
 					boolean isMarketSet = false;
 					for (PlacesSearchResult result : results) {
