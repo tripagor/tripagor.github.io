@@ -37,7 +37,7 @@ public class UnmarkedLodgingPlacesExporter {
 		final MongoCollection<Document> collection = mongoClient.getDatabase(mongoClientURI.getDatabase())
 				.getCollection(collectionName);
 
-		FindIterable<Document> iterable = collection.find(new Document("is_evaluated", false))
+		FindIterable<Document> iterable = collection.find(new Document("is_evaluated", new Document("$exists", false)))
 				.limit(numberOfPlacesToAdd).sort(new Document("booking_com_id", -1));
 
 		try {
