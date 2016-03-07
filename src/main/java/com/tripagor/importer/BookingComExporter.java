@@ -61,7 +61,6 @@ public class BookingComExporter {
 					try {
 
 						Document document = new Document();
-						document.append("is_evaluated", false);
 						String[] values = rows.get(i);
 						for (int j = 0; j < values.length; j++) {
 							if (values[j] != null) {
@@ -115,7 +114,7 @@ public class BookingComExporter {
 		} else if ("review_score".equals(columnName)) {
 			return Double.class;
 		} else if ("review_nr".equals(columnName)) {
-			return Double.class;
+			return Integer.class;
 		}
 		return clazz;
 	}
