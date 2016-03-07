@@ -1,5 +1,6 @@
 package com.tripagor.exporter;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.bson.Document;
@@ -44,8 +45,9 @@ public class UnmarkedLodgingPlacesExporter {
 			iterable.forEach(new Block<Document>() {
 
 				public void apply(Document document) {
-					PlacesSearchResult[] results = placeService.find(
-							new LatLng(document.getDouble("latitude"), document.getDouble("longitude")),
+					double longitude = new BigDecimal(document.getString("longitude")).doubleValue();
+					double latitude = new BigDecimal(document.getString("latitude")).doubleValue();
+					PlacesSearchResult[] results = placeService.find(new LatLng(latitude, longitude),
 							PlaceType.LODGING);
 					boolean isApprovedByGoogle = false;
 					boolean isMarketSet = false;
@@ -67,8 +69,7 @@ public class UnmarkedLodgingPlacesExporter {
 					}
 					String wellformattedAddress = null;
 					if (!isApprovedByGoogle) {
-						List<Result> geoCodingResults = addressNormalizer.reverseGeocoding(
-								document.getDouble("latitude"), document.getDouble("longitude"),
+						List<Result> geoCodingResults = addressNormalizer.reverseGeocoding(latitude, longitude,
 								new String[] { "street_address" }, new String[] { "ROOFTOP" });
 						for (Result result : geoCodingResults) {
 							Address address = addressNormalizer.getAdress(result.getAddressComponents());
