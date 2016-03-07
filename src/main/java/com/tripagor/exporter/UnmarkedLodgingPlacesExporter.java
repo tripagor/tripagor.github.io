@@ -55,7 +55,7 @@ public class UnmarkedLodgingPlacesExporter {
 						float distance = stringSimilarity.cosineDistance(document.getString("name"), result.name);
 
 						System.out.println(document.getString("name") + "==" + result.name + "? " + distance);
-						if (distance > 0.5) {
+						if (distance > 0.4) {
 							if ("APP".equals(result.scope.name())) {
 								isMarketSet = true;
 								System.out.println(document.getString("name") + " WAS MARKED!");
