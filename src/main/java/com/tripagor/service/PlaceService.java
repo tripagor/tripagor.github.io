@@ -53,6 +53,18 @@ public class PlaceService {
 		}
 	}
 
+	public PlacesSearchResult[] find(LatLng latLng, String keyword, RankBy rankby) {
+		try {
+			PlacesSearchResponse response = PlacesApi.nearbySearchQuery(context, latLng).rankby(rankby).keyword(keyword)
+					.await();
+
+			return response.results;
+		} catch (Exception e) {
+			logger.error("error with {} {} {} failed with {}", latLng, keyword, rankby, e);
+			throw new RuntimeException(e);
+		}
+	}
+
 	public PlacesSearchResult[] find(LatLng latLng, PlaceType type) {
 		try {
 			PlacesSearchResponse response = PlacesApi.nearbySearchQuery(context, latLng).rankby(RankBy.DISTANCE)

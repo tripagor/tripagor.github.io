@@ -5,7 +5,9 @@ import java.util.List;
 
 import org.bson.Document;
 
+import com.google.maps.model.LatLng;
 import com.google.maps.model.PlacesSearchResult;
+import com.google.maps.model.RankBy;
 import com.mongodb.Block;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
@@ -35,6 +37,7 @@ public class UnmarkedLodgingPlacesExporter {
 		final MongoCollection<Document> collection = mongoClient.getDatabase(mongoClientURI.getDatabase())
 				.getCollection(collectionName);
 
+		//
 		FindIterable<Document> iterable = collection.find(new Document("is_evaluated", new Document("$exists", false)))
 				.limit(numberOfPlacesToAdd).sort(new Document("booking_com_id", -1));
 
@@ -45,15 +48,14 @@ public class UnmarkedLodgingPlacesExporter {
 				public void apply(Document document) {
 					double longitude = new BigDecimal(document.getString("longitude")).doubleValue();
 					double latitude = new BigDecimal(document.getString("latitude")).doubleValue();
-					PlacesSearchResult[] results = placeService
-							.find(document.getString("name") + ", " + document.getString("city_hotel"));
+					PlacesSearchResult[] results = placeService.find(new LatLng(latitude, longitude), 5000);
 					boolean isApprovedByGoogle = false;
 					boolean isMarketSet = false;
 					for (PlacesSearchResult result : results) {
 						float distance = stringSimilarity.cosineDistance(document.getString("name"), result.name);
 
 						System.out.println(document.getString("name") + "==" + result.name + "? " + distance);
-						if (distance >= 0.4) {
+						if (distance >= 0.5) {
 							if ("APP".equals(result.scope.name())) {
 								isMarketSet = true;
 								System.out.println(document.getString("name") + " WAS MARKED!");
@@ -61,15 +63,16 @@ public class UnmarkedLodgingPlacesExporter {
 							} else if ("GOOGLE".equals(result.scope.name())) {
 								isMarketSet = true;
 								isApprovedByGoogle = true;
-								System.out.println(document.getString("name") + " WAS MARKED!");
+								System.out.println(document.getString("name") + " IS MARKED AND APPROVED BY GOOGLE!");
 								break;
 							}
+
 						}
 					}
 					String wellformattedAddress = null;
 					if (!isApprovedByGoogle) {
 						List<Result> geoCodingResults = addressNormalizer.reverseGeocoding(latitude, longitude,
-								new String[] { "street_address" }, new String[] { "ROOFTOP" });
+								new String[] { "street_address" }, new String[] {});
 						for (Result result : geoCodingResults) {
 							Address address = addressNormalizer.getAdress(result.getAddressComponents());
 							if (address.getCity() != null && address.getCountry() != null
