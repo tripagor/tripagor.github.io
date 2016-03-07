@@ -1,6 +1,7 @@
 package com.tripagor.importer;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
@@ -102,9 +103,9 @@ public class BookingComExporter {
 		} else if ("nr_rooms".equals(columnName)) {
 			return Integer.class;
 		} else if ("longitude".equals(columnName)) {
-			return Double.class;
+			return String.class;
 		} else if ("latitude".equals(columnName)) {
-			return Double.class;
+			return String.class;
 		} else if ("public_ranking".equals(columnName)) {
 			return Double.class;
 		} else if ("public_ranking".equals(columnName)) {
@@ -122,19 +123,21 @@ public class BookingComExporter {
 	public Object toObject(@SuppressWarnings("rawtypes") Class clazz, String value) {
 		if (Boolean.class == clazz)
 			return Boolean.parseBoolean(value);
-		if (Byte.class == clazz)
+		else if (Byte.class == clazz)
 			return Byte.parseByte(value);
-		if (Short.class == clazz)
+		else if (Short.class == clazz)
 			return Short.parseShort(value);
-		if (Integer.class == clazz)
+		else if (Integer.class == clazz)
 			return Integer.parseInt(value);
-		if (Long.class == clazz)
+		else if (Long.class == clazz)
 			return Long.parseLong(value);
-		if (Float.class == clazz)
+		else if (Float.class == clazz)
 			return Float.parseFloat(value);
-		if (Double.class == clazz)
+		else if (Double.class == clazz)
 			return Double.parseDouble(value);
-		if (String.class == clazz)
+		else if (BigDecimal.class == clazz)
+			return new BigDecimal(value).doubleValue();
+		else if (String.class == clazz)
 			return value;
 		return value;
 	}
