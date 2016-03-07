@@ -99,6 +99,8 @@ public class BookingComExporter {
 			return Long.class;
 		} else if ("minrate".equals(columnName)) {
 			return Float.class;
+		} else if ("maxrate".equals(columnName)) {
+			return Float.class;
 		} else if ("nr_rooms".equals(columnName)) {
 			return Integer.class;
 		} else if ("longitude".equals(columnName)) {
