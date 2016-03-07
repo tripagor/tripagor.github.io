@@ -103,6 +103,8 @@ public class BookingComExporter {
 			return Float.class;
 		} else if ("nr_rooms".equals(columnName)) {
 			return Integer.class;
+		} else if ("class".equals(columnName)) {
+			return Double.class;
 		} else if ("longitude".equals(columnName)) {
 			return String.class;
 		} else if ("latitude".equals(columnName)) {
