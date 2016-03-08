@@ -19,19 +19,16 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
-import com.tripagor.service.AddressNormalizer;
 import com.tripagor.service.DistanceCalculator;
 import com.tripagor.service.StringSimilarity;
 
 public class UnmarkedLodgingPlacesExporter {
 	private int numberOfPlacesToAdd = 50000;
-	private AddressNormalizer addressNormalizer;
 	private StringSimilarity stringSimilarity;
 	private DistanceCalculator distanceCalculator;
 	private final GeoApiContext context = new GeoApiContext().setApiKey("AIzaSyC_V_8PAujfCgCSU0UOAsWJzvoIbNFKYGU");
 
 	public UnmarkedLodgingPlacesExporter() {
-		addressNormalizer = new AddressNormalizer();
 		stringSimilarity = new StringSimilarity();
 		distanceCalculator = new DistanceCalculator();
 	}

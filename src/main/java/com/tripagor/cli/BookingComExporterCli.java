@@ -9,7 +9,7 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 
-import com.tripagor.importer.BookingComExporter;
+import com.tripagor.exporter.BookingComExporter;
 
 public class BookingComExporterCli {
 
