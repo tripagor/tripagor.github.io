@@ -98,9 +98,9 @@ public class BookingComExporter {
 		if ("booking_com_id".equals(columnName)) {
 			return Long.class;
 		} else if ("minrate".equals(columnName)) {
-			return Float.class;
+			return Double.class;
 		} else if ("maxrate".equals(columnName)) {
-			return Float.class;
+			return Double.class;
 		} else if ("nr_rooms".equals(columnName)) {
 			return Integer.class;
 		} else if ("class".equals(columnName)) {
