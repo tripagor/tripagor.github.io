@@ -24,6 +24,7 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.UpdateOptions;
 import com.tripagor.service.DistanceCalculator;
+import com.tripagor.service.StringSimilarity;
 
 public class SearchResultEvaluation {
 

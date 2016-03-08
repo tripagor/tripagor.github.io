@@ -60,7 +60,7 @@ public class UnmarkedPlacesExporterCli {
 
 	private static void help() {
 		HelpFormatter formater = new HelpFormatter();
-		formater.printHelp(BookingComUmarkedPlaceFinderCli.class.getName(), options);
+		formater.printHelp(UnmarkedPlacesExporterCli.class.getName(), options);
 		System.exit(0);
 	}
 

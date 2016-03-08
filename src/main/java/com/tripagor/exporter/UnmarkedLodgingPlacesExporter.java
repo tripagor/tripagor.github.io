@@ -1,13 +1,15 @@
 package com.tripagor.exporter;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Locale;
 
 import org.bson.Document;
 
 import com.google.maps.GeoApiContext;
+import com.google.maps.GeocodingApi;
 import com.google.maps.PlacesApi;
+import com.google.maps.model.AddressType;
+import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.LatLng;
 import com.google.maps.model.PlacesSearchResponse;
 import com.google.maps.model.PlacesSearchResult;
@@ -17,23 +19,18 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
-import com.tripagor.importer.StringSimilarity;
-import com.tripagor.importer.model.Address;
-import com.tripagor.importer.model.Result;
 import com.tripagor.service.AddressNormalizer;
 import com.tripagor.service.DistanceCalculator;
-import com.tripagor.service.PlaceService;
+import com.tripagor.service.StringSimilarity;
 
 public class UnmarkedLodgingPlacesExporter {
 	private int numberOfPlacesToAdd = 50000;
-	private PlaceService placeService;
 	private AddressNormalizer addressNormalizer;
 	private StringSimilarity stringSimilarity;
 	private DistanceCalculator distanceCalculator;
 	private final GeoApiContext context = new GeoApiContext().setApiKey("AIzaSyC_V_8PAujfCgCSU0UOAsWJzvoIbNFKYGU");
 
 	public UnmarkedLodgingPlacesExporter() {
-		placeService = new PlaceService();
 		addressNormalizer = new AddressNormalizer();
 		stringSimilarity = new StringSimilarity();
 		distanceCalculator = new DistanceCalculator();
@@ -59,10 +56,14 @@ public class UnmarkedLodgingPlacesExporter {
 						LatLng latLng = new LatLng(latitude, longitude);
 						String query = document.getString("name") + ", " + document.getString("city_hotel") + ", "
 								+ new Locale("", document.getString("country_code")).getDisplayCountry();
-
-						PlacesSearchResponse response = PlacesApi
-								.nearbySearchQuery(context, latLng).rankby(RankBy.DISTANCE)
-								.keyword(query).await();
+						String address = null;
+						if (document.getString("address") != null && document.getString("city_hotel") != null
+								&& document.getString("country_code") != null) {
+							address = document.getString("address") + ", " + document.getString("city_hotel") + ", "
+									+ new Locale("", document.getString("country_code")).getDisplayCountry();
+						}
+						PlacesSearchResponse response = PlacesApi.nearbySearchQuery(context, latLng)
+								.rankby(RankBy.DISTANCE).keyword(query).await();
 						boolean isApprovedByGoogle = false;
 						boolean isMarketSet = false;
 						for (PlacesSearchResult result : response.results) {
@@ -87,17 +88,12 @@ public class UnmarkedLodgingPlacesExporter {
 							}
 						}
 						String wellformattedAddress = null;
-						if (!isApprovedByGoogle) {
-							List<Result> geoCodingResults = addressNormalizer.reverseGeocoding(latitude, longitude,
-									new String[] { "street_address" }, new String[] {});
-							for (Result result : geoCodingResults) {
-								Address address = addressNormalizer.getAdress(result.getAddressComponents());
-								if (address.getCity() != null && address.getCountry() != null
-										&& address.getStreetName() != null && address.getStreetNumber() != null
-										&& address.getPostalCode() != null) {
-									wellformattedAddress = result.getFormattedAddress();
-									break;
-								}
+						if (!isApprovedByGoogle && address != null) {
+							GeocodingResult[] results = GeocodingApi.geocode(context, address)
+									.resultType(AddressType.STREET_ADDRESS).await();
+							for (GeocodingResult result : results) {
+								wellformattedAddress = result.formattedAddress;
+								break;
 							}
 
 						}
