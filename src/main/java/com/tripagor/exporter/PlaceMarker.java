@@ -30,7 +30,7 @@ public class PlaceMarker {
 		final MongoCollection<Document> collection = mongoClient.getDatabase(mongoClientURI.getDatabase())
 				.getCollection(collectionName);
 
-		FindIterable<Document> iterable = collection.find(new Document("is_evaluated", new Document("$exists", false)))
+		FindIterable<Document> iterable = collection.find(new Document("well_formatted_address", new Document("$exists", true)).append("is_marker_set", false))
 				.limit(numberOfPlacesToAdd).sort(new Document("booking_com_id", -1));
 
 		try {
@@ -39,7 +39,7 @@ public class PlaceMarker {
 
 				public void apply(Document document) {
 					try {
-						System.out.println(document.get("name"));
+						System.out.println(document.get("booking_com_id")+" "+document.get("name"));
 					} catch (Exception e) {
 					}
 				}
