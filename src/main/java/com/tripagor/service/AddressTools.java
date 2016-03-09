@@ -129,6 +129,8 @@ public class AddressTools {
 					city = addressComponent.longName;
 				} else if (addressComponentType == AddressComponentType.STREET_ADDRESS) {
 					street = addressComponent.longName;
+				}else if (addressComponentType == AddressComponentType.ROUTE) {
+					street = addressComponent.longName;
 				}
 			}
 		}
