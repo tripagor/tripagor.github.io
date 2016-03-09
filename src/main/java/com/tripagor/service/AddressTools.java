@@ -13,7 +13,7 @@ import com.tripagor.importer.model.Address;
 import com.tripagor.importer.model.Result;
 import com.tripagor.importer.model.ReverseGeocodingResult;
 
-public class AddressNormalizer {
+public class AddressTools {
 
 	private final static String API_KEY = "AIzaSyC_V_8PAujfCgCSU0UOAsWJzvoIbNFKYGU";
 	private final String GOOGLE_API_GEOCODING_REVERSE_BASE_URL = "https://maps.googleapis.com/maps/api/geocode/json?latlng=";
@@ -22,7 +22,7 @@ public class AddressNormalizer {
 
 	private GeoApiContext context;
 
-	public AddressNormalizer() {
+	public AddressTools() {
 		apiKey = API_KEY;
 		context = new GeoApiContext().setApiKey(apiKey);
 		restTemplate = new RestTemplate();
@@ -107,6 +107,37 @@ public class AddressNormalizer {
 		} else {
 			throw new RuntimeException("no address data found");
 		}
+	}
+
+	public boolean isProperStreetAddress(GeocodingResult result) {
+		boolean isProperStreetAddress = false;
+
+		String country = null;
+		String street = null;
+		String streetNumber = null;
+		String city = null;
+		for (AddressComponent addressComponent : result.addressComponents) {
+			AddressComponentType[] types = addressComponent.types;
+			for (AddressComponentType addressComponentType : types) {
+				if (addressComponentType == AddressComponentType.COUNTRY) {
+					country = addressComponent.longName;
+					break;
+				} else if (addressComponentType == AddressComponentType.STREET_NUMBER) {
+					streetNumber = addressComponent.longName;
+					break;
+				} else if (addressComponentType == AddressComponentType.LOCALITY) {
+					city = addressComponent.longName;
+				} else if (addressComponentType == AddressComponentType.STREET_ADDRESS) {
+					street = addressComponent.longName;
+				}
+			}
+		}
+
+		if (country != null && street != null && streetNumber != null && city != null) {
+			isProperStreetAddress = true;
+		}
+
+		return isProperStreetAddress;
 	}
 
 	public List<Result> reverseGeocoding(double latitude, double longitude, String[] resultTypes,

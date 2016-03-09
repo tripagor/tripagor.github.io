@@ -19,6 +19,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
+import com.tripagor.service.AddressTools;
 import com.tripagor.service.DistanceCalculator;
 import com.tripagor.service.StringSimilarity;
 
@@ -27,10 +28,12 @@ public class UnmarkedLodgingPlacesExporter {
 	private StringSimilarity stringSimilarity;
 	private DistanceCalculator distanceCalculator;
 	private final GeoApiContext context = new GeoApiContext().setApiKey("AIzaSyC_V_8PAujfCgCSU0UOAsWJzvoIbNFKYGU");
+	private AddressTools addressTools;
 
 	public UnmarkedLodgingPlacesExporter() {
 		stringSimilarity = new StringSimilarity();
 		distanceCalculator = new DistanceCalculator();
+		addressTools = new AddressTools();
 	}
 
 	public void export(String dbUri, String collectionName) {
@@ -89,8 +92,10 @@ public class UnmarkedLodgingPlacesExporter {
 							GeocodingResult[] results = GeocodingApi.geocode(context, address)
 									.resultType(AddressType.STREET_ADDRESS).await();
 							for (GeocodingResult result : results) {
-								wellformattedAddress = result.formattedAddress;
-								break;
+								if (addressTools.isProperStreetAddress(result)) {
+									wellformattedAddress = result.formattedAddress;
+									break;
+								}
 							}
 
 						}

@@ -13,15 +13,15 @@ import org.slf4j.LoggerFactory;
 
 import com.tripagor.importer.model.FeatureSection;
 import com.tripagor.importer.model.Lodging;
-import com.tripagor.service.AddressNormalizer;
+import com.tripagor.service.AddressTools;
 
 public class BookingComAccommodationExtractor {
 
 	private final Logger logger = LoggerFactory.getLogger(BookingComAccommodationExtractor.class);
-	private AddressNormalizer addressNormalizer;
+	private AddressTools addressNormalizer;
 
 	public BookingComAccommodationExtractor() {
-		addressNormalizer = new AddressNormalizer();
+		addressNormalizer = new AddressTools();
 	}
 
 	public Lodging extract(String url) {
