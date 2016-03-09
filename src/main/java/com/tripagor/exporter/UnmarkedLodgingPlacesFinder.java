@@ -23,14 +23,14 @@ import com.tripagor.service.AddressTools;
 import com.tripagor.service.DistanceCalculator;
 import com.tripagor.service.StringSimilarity;
 
-public class UnmarkedLodgingPlacesExporter {
+public class UnmarkedLodgingPlacesFinder {
 	private int numberOfPlacesToAdd = 50000;
 	private StringSimilarity stringSimilarity;
 	private DistanceCalculator distanceCalculator;
 	private final GeoApiContext context = new GeoApiContext().setApiKey("AIzaSyC_V_8PAujfCgCSU0UOAsWJzvoIbNFKYGU");
 	private AddressTools addressTools;
 
-	public UnmarkedLodgingPlacesExporter() {
+	public UnmarkedLodgingPlacesFinder() {
 		stringSimilarity = new StringSimilarity();
 		distanceCalculator = new DistanceCalculator();
 		addressTools = new AddressTools();

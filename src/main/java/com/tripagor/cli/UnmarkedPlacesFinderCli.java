@@ -6,14 +6,14 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 
-import com.tripagor.exporter.UnmarkedLodgingPlacesExporter;
+import com.tripagor.exporter.UnmarkedLodgingPlacesFinder;
 
-public class UnmarkedPlacesExporterCli {
+public class UnmarkedPlacesFinderCli {
 
 	private static Options options;
 
 	public static void main(String[] args) {
-		UnmarkedLodgingPlacesExporter exporter = new UnmarkedLodgingPlacesExporter();
+		UnmarkedLodgingPlacesFinder exporter = new UnmarkedLodgingPlacesFinder();
 
 		options = new Options();
 		options.addOption("d", true, "mongo uri");
@@ -60,7 +60,7 @@ public class UnmarkedPlacesExporterCli {
 
 	private static void help() {
 		HelpFormatter formater = new HelpFormatter();
-		formater.printHelp(UnmarkedPlacesExporterCli.class.getName(), options);
+		formater.printHelp(UnmarkedPlacesFinderCli.class.getName(), options);
 		System.exit(0);
 	}
 
