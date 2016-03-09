@@ -18,6 +18,7 @@ public class PlaceMarkerCli {
 		options = new Options();
 		options.addOption("d", true, "mongo uri");
 		options.addOption("c", true, "collection");
+		options.addOption("a", true, "apennd string");
 		options.addOption("n", true, "maxium number of markers to be placed");
 		options.addOption("h", false, "this help");
 
@@ -47,9 +48,16 @@ public class PlaceMarkerCli {
 			if (cmd.hasOption("n")) {
 				numberOfPlacesToAdd = Integer.parseInt(cmd.getOptionValue("n"));
 			}
+			String appendStr = null;
+			if (cmd.hasOption("a")) {
+				appendStr = cmd.getOptionValue("a");
+			}
 
 			if (numberOfPlacesToAdd > 0) {
 				exporter.setNumberOfPlacesToAdd(numberOfPlacesToAdd);
+			}
+			if (appendStr != null) {
+				exporter.setAppendStr(appendStr);
 			}
 			System.out.println("Adding places for " + uri);
 			exporter.doMark(uri, collection);
