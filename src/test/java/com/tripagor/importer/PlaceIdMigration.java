@@ -1,20 +1,22 @@
 package com.tripagor.importer;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
+import java.util.Locale;
 
 import org.bson.Document;
 import org.junit.Test;
 
 import com.google.maps.GeoApiContext;
+import com.google.maps.PlacesApi;
+import com.google.maps.model.LatLng;
+import com.google.maps.model.PlacesSearchResponse;
+import com.google.maps.model.PlacesSearchResult;
+import com.google.maps.model.RankBy;
 import com.mongodb.Block;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
-import com.tripagor.importer.model.Location;
-import com.tripagor.importer.model.PlaceAddRequest;
-import com.tripagor.importer.model.PlaceAddResponse;
 import com.tripagor.service.PlaceAddApi;
 
 public class PlaceIdMigration {
@@ -22,8 +24,7 @@ public class PlaceIdMigration {
 	@Test
 	public void migrate() throws Exception {
 
-		GeoApiContext context = new GeoApiContext().setApiKey("AIzaSyC_V_8PAujfCgCSU0UOAsWJzvoIbNFKYGU");
-		PlaceAddApi placeAddApi = new PlaceAddApi("AIzaSyC_V_8PAujfCgCSU0UOAsWJzvoIbNFKYGU");
+		final GeoApiContext context = new GeoApiContext().setApiKey("AIzaSyC_V_8PAujfCgCSU0UOAsWJzvoIbNFKYGU");
 
 		MongoClientURI mongoClientURI = new MongoClientURI("mongodb://localhost:27017/hotels");
 		MongoClient mongoClient = new MongoClient(mongoClientURI);
@@ -41,9 +42,26 @@ public class PlaceIdMigration {
 
 				public void apply(Document document) {
 					try {
-
+						double longitude = new BigDecimal(document.getString("longitude")).doubleValue();
+						double latitude = new BigDecimal(document.getString("latitude")).doubleValue();
+						LatLng latLng = new LatLng(latitude, longitude);
+						String query = document.getString("name") + ", " + document.getString("city_hotel") + ", "
+								+ new Locale("", document.getString("country_code")).getDisplayCountry();
 						System.out.println(document.get("booking_com_id") + " " + document.get("name"));
-
+						PlacesSearchResponse response = PlacesApi.nearbySearchQuery(context, latLng)
+								.rankby(RankBy.DISTANCE).keyword(query).await();
+						String placeId = null;
+						for (PlacesSearchResult result : response.results) {
+							if ("APP".equals(result.scope.name())) {
+								placeId = result.placeId;
+								break;
+							}
+						}
+						if (placeId != null) {
+							Document updateDocument = new Document("is_marker_set", true).append("place_id", placeId);
+							collection.updateOne(new Document("_id", document.get("_id")),
+									new Document("$set", updateDocument));
+						}
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
