@@ -1,7 +1,6 @@
 package com.tripagor.importer;
 
 import java.math.BigDecimal;
-import java.util.Locale;
 
 import org.bson.Document;
 import org.junit.Test;
@@ -12,7 +11,6 @@ import com.google.maps.model.LatLng;
 import com.google.maps.model.PlaceType;
 import com.google.maps.model.PlacesSearchResponse;
 import com.google.maps.model.PlacesSearchResult;
-import com.google.maps.model.RankBy;
 import com.mongodb.Block;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
@@ -45,8 +43,8 @@ public class PlaceIdMigration {
 						double longitude = new BigDecimal(document.getString("longitude")).doubleValue();
 						double latitude = new BigDecimal(document.getString("latitude")).doubleValue();
 						LatLng latLng = new LatLng(latitude, longitude);
-						PlacesSearchResponse response = PlacesApi.nearbySearchQuery(context, latLng)
-								.radius(2000).type(PlaceType.LODGING).await();
+						PlacesSearchResponse response = PlacesApi.nearbySearchQuery(context, latLng).radius(2000)
+								.type(PlaceType.LODGING).await();
 						String placeId = null;
 						for (PlacesSearchResult result : response.results) {
 							if ("APP".equals(result.scope.name())) {

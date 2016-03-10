@@ -82,7 +82,8 @@ public class SearchResultEvaluation {
 						searches.add(getDocumentForSearchResult(document.getString("name"), latLng, query, response));
 
 						Document searchDocument = new Document();
-						searchDocument.append("name", document.getString("name")).append("address", document.getString("address"))
+						searchDocument.append("name", document.getString("name"))
+								.append("address", document.getString("address"))
 								.append("latitude_longitude", latLng.toString())
 								.append("searches", Arrays.asList(searches));
 						searchData.replaceOne(new Document("name", document.get("name")), searchDocument,
@@ -101,6 +102,7 @@ public class SearchResultEvaluation {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	private Document getDocumentForSearchResult(String originName, LatLng orgin, String id,
 			PlacesSearchResponse response) {
 		StringSimilarity similarity = new StringSimilarity();
