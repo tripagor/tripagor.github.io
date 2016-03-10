@@ -58,7 +58,7 @@ public class PlaceMarker {
 						
 						PlaceAddResponse response = placeAddApi.add(place);
 						if ("OK".equals(response.getStatus())) {
-							Document updateDocument = new Document("is_marker_set", true);
+							Document updateDocument = new Document("is_marker_set", true).append("place_id", response.getPlaceId());
 							collection.updateOne(new Document("_id", document.get("_id")),
 									new Document("$set", updateDocument));
 						}
