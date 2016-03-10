@@ -9,6 +9,7 @@ import org.junit.Test;
 import com.google.maps.GeoApiContext;
 import com.google.maps.PlacesApi;
 import com.google.maps.model.LatLng;
+import com.google.maps.model.PlaceType;
 import com.google.maps.model.PlacesSearchResponse;
 import com.google.maps.model.PlacesSearchResult;
 import com.google.maps.model.RankBy;
@@ -44,11 +45,8 @@ public class PlaceIdMigration {
 						double longitude = new BigDecimal(document.getString("longitude")).doubleValue();
 						double latitude = new BigDecimal(document.getString("latitude")).doubleValue();
 						LatLng latLng = new LatLng(latitude, longitude);
-						String query = document.getString("name") + ", " + document.getString("city_hotel") + ", "
-								+ new Locale("", document.getString("country_code")).getDisplayCountry();
-						System.out.println(document.get("booking_com_id") + " " + document.get("name"));
 						PlacesSearchResponse response = PlacesApi.nearbySearchQuery(context, latLng)
-								.rankby(RankBy.DISTANCE).keyword(query).await();
+								.radius(2000).type(PlaceType.LODGING).await();
 						String placeId = null;
 						for (PlacesSearchResult result : response.results) {
 							if ("APP".equals(result.scope.name())) {
