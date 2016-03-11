@@ -3,9 +3,6 @@ package com.tripagor.cli.importer.model;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.beanio.annotation.Record;
-
-@Record
 public class Lodging {
 	private String name;
 
@@ -18,7 +15,7 @@ public class Lodging {
 	private List<String> imageUrls = new LinkedList<String>();
 
 	private List<FeatureSection> featureSections = new LinkedList<FeatureSection>();
-	
+
 	private boolean isMarked;
 
 	public String getName() {
