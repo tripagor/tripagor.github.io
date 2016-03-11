@@ -1,4 +1,4 @@
-package com.tripagor.importer;
+package com.tripagor;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

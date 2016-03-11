@@ -1,4 +1,4 @@
-package com.tripagor.importer;
+package com.tripagor;
 
 import org.bson.Document;
 import org.junit.Test;
