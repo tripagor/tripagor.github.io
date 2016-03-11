@@ -10,10 +10,10 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
-import com.tripagor.cli.importer.model.Location;
-import com.tripagor.cli.importer.model.PlaceAddRequest;
-import com.tripagor.cli.importer.model.PlaceAddResponse;
 import com.tripagor.cli.service.PlaceAddApi;
+import com.tripagor.model.Location;
+import com.tripagor.model.PlaceAddRequest;
+import com.tripagor.model.PlaceAddResponse;
 
 public class PlaceMarker {
 

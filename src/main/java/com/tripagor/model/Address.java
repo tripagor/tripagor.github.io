@@ -1,4 +1,4 @@
-package com.tripagor.cli.importer.model;
+package com.tripagor.model;
 
 public class Address {
 	private String streetName;

@@ -1,5 +1,5 @@
 
-package com.tripagor.cli.importer.model;
+package com.tripagor.model;
 
 import javax.annotation.Generated;
 
@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("org.jsonschema2pojo")
 @JsonPropertyOrder({ "lat", "lng" })
-public class Northeast {
+public class Southwest {
 
 	@JsonProperty("lat")
 	private Double lat;

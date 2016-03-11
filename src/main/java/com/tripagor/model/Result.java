@@ -1,5 +1,5 @@
 
-package com.tripagor.cli.importer.model;
+package com.tripagor.model;
 
 import java.util.ArrayList;
 import java.util.List;

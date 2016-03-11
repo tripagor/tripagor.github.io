@@ -9,9 +9,9 @@ import com.google.maps.GeocodingApi;
 import com.google.maps.model.AddressComponent;
 import com.google.maps.model.AddressComponentType;
 import com.google.maps.model.GeocodingResult;
-import com.tripagor.cli.importer.model.Address;
-import com.tripagor.cli.importer.model.Result;
-import com.tripagor.cli.importer.model.ReverseGeocodingResult;
+import com.tripagor.model.Address;
+import com.tripagor.model.Result;
+import com.tripagor.model.ReverseGeocodingResult;
 
 public class AddressTools {
 
@@ -37,10 +37,10 @@ public class AddressTools {
 		}
 	}
 
-	public Address getAdress(List<com.tripagor.cli.importer.model.AddressComponent> components) {
+	public Address getAdress(List<com.tripagor.model.AddressComponent> components) {
 
 		Address address = new Address();
-		for (com.tripagor.cli.importer.model.AddressComponent addressComponent : components) {
+		for (com.tripagor.model.AddressComponent addressComponent : components) {
 			List<String> types = addressComponent.getTypes();
 			for (String addressComponentType : types) {
 				if ("country".equals(addressComponentType)) {
