@@ -1,4 +1,4 @@
-package com.tripagor.importer.model;
+package com.tripagor.cli.importer.model;
 
 import org.beanio.annotation.Field;
 import org.beanio.annotation.Record;

@@ -1,11 +1,11 @@
-package com.tripagor.service;
+package com.tripagor.cli.service;
 
 import org.springframework.web.client.RestTemplate;
 
-import com.tripagor.importer.model.PlaceAddRequest;
-import com.tripagor.importer.model.PlaceAddResponse;
-import com.tripagor.importer.model.PlaceDeleteRequest;
-import com.tripagor.importer.model.PlaceDeleteResponse;
+import com.tripagor.cli.importer.model.PlaceAddRequest;
+import com.tripagor.cli.importer.model.PlaceAddResponse;
+import com.tripagor.cli.importer.model.PlaceDeleteRequest;
+import com.tripagor.cli.importer.model.PlaceDeleteResponse;
 
 public class PlaceAddApi {
 

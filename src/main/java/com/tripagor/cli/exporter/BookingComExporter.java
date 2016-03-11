@@ -1,4 +1,4 @@
-package com.tripagor.exporter;
+package com.tripagor.cli.exporter;
 
 import java.io.File;
 import java.math.BigDecimal;

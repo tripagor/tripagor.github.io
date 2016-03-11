@@ -1,4 +1,4 @@
-package com.tripagor.importer;
+package com.tripagor.cli.importer;
 
 import java.net.URL;
 import java.util.List;
@@ -11,9 +11,9 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.tripagor.importer.model.FeatureSection;
-import com.tripagor.importer.model.Lodging;
-import com.tripagor.service.AddressTools;
+import com.tripagor.cli.importer.model.FeatureSection;
+import com.tripagor.cli.importer.model.Lodging;
+import com.tripagor.cli.service.AddressTools;
 
 public class BookingComAccommodationExtractor {
 

@@ -1,5 +1,5 @@
 
-package com.tripagor.importer.model;
+package com.tripagor.cli.importer.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

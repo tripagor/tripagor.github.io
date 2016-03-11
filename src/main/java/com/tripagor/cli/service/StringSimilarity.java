@@ -1,4 +1,4 @@
-package com.tripagor.service;
+package com.tripagor.cli.service;
 
 import org.simmetrics.StringMetric;
 import org.simmetrics.builders.StringMetricBuilder;

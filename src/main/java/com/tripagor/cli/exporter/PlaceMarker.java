@@ -1,4 +1,4 @@
-package com.tripagor.exporter;
+package com.tripagor.cli.exporter;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -10,10 +10,10 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
-import com.tripagor.importer.model.Location;
-import com.tripagor.importer.model.PlaceAddRequest;
-import com.tripagor.importer.model.PlaceAddResponse;
-import com.tripagor.service.PlaceAddApi;
+import com.tripagor.cli.importer.model.Location;
+import com.tripagor.cli.importer.model.PlaceAddRequest;
+import com.tripagor.cli.importer.model.PlaceAddResponse;
+import com.tripagor.cli.service.PlaceAddApi;
 
 public class PlaceMarker {
 

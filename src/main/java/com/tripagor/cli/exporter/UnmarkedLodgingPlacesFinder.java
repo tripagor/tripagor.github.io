@@ -1,4 +1,4 @@
-package com.tripagor.exporter;
+package com.tripagor.cli.exporter;
 
 import java.math.BigDecimal;
 import java.util.Locale;
@@ -19,9 +19,9 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
-import com.tripagor.service.AddressTools;
-import com.tripagor.service.DistanceCalculator;
-import com.tripagor.service.StringSimilarity;
+import com.tripagor.cli.service.AddressTools;
+import com.tripagor.cli.service.DistanceCalculator;
+import com.tripagor.cli.service.StringSimilarity;
 
 public class UnmarkedLodgingPlacesFinder {
 	private int numberOfPlacesToAdd = 50000;

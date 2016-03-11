@@ -1,4 +1,4 @@
-package com.tripagor.service;
+package com.tripagor.cli.service;
 
 import com.google.maps.model.LatLng;
 

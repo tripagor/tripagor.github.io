@@ -23,8 +23,8 @@ import com.mongodb.MongoClientURI;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.UpdateOptions;
-import com.tripagor.service.DistanceCalculator;
-import com.tripagor.service.StringSimilarity;
+import com.tripagor.cli.service.DistanceCalculator;
+import com.tripagor.cli.service.StringSimilarity;
 
 public class SearchResultEvaluation {
 
@@ -102,7 +102,6 @@ public class SearchResultEvaluation {
 
 	}
 
-	@SuppressWarnings("unchecked")
 	private Document getDocumentForSearchResult(String originName, LatLng orgin, String id,
 			PlacesSearchResponse response) {
 		StringSimilarity similarity = new StringSimilarity();

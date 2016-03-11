@@ -1,4 +1,4 @@
-package com.tripagor.importer.model;
+package com.tripagor.cli.importer.model;
 
 import java.util.LinkedList;
 import java.util.List;

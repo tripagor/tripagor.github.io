@@ -6,7 +6,7 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 
-import com.tripagor.exporter.UnmarkedLodgingPlacesFinder;
+import com.tripagor.cli.exporter.UnmarkedLodgingPlacesFinder;
 
 public class UnmarkedPlacesFinderCli {
 
