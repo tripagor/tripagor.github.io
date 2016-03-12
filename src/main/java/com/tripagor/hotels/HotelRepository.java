@@ -15,20 +15,16 @@ public interface HotelRepository extends MongoRepository<Hotel, String> {
 
 	Hotel findByBookingComId(@Param("bookingId") long id);
 
-	Page<List<Hotel>> findByIsEvaluatedExists(@Param("isExisting") boolean isExisting, Pageable pageable);
+	Page<List<Hotel>> findByIsEvaluatedAndIsMarkerSetAndIsMarkerApprovedAndFormattedAddressExists(
+			@Param("isEvaluated") boolean isEvaluated, @Param("isMarkerSet") boolean isMarkerSet,
+			@Param("isMarkerApproved") boolean isMarkerApproved,
+			@Param("isFormattedAddressExisting") boolean formattedAddressExists, Pageable pageable);
 
-	long countByIsEvaluatedExists(@Param("isExisting") boolean isExisting);
+	long countByIsEvaluatedAndIsMarkerSetAndIsMarkerApprovedAndFormattedAddressExists(
+			@Param("isEvaluated") boolean isEvaluated, @Param("isMarkerSet") boolean isMarkerSet,
+			@Param("isMarkerApproved") boolean isMarkerApproved,
+			@Param("isFormattedAddressExisting") boolean formattedAddressExists);
 
-	Page<List<Hotel>> findByIsEvaluated(@Param("isEvaluated") boolean isEvaluted, Pageable pageable);
-
-	long countByIsEvaluated(@Param("isEvaluated") boolean isEvaluted);
-
-	Page<List<Hotel>> findByFormattedAddressExistsAndIsMarkerSet(@Param("isExisting") boolean isExisting,
-			@Param("isMarkerSet") boolean isMarkerSet, Pageable pageable);
-
-	long countByFormattedAddressExistsAndIsMarkerSet(@Param("isExisting") boolean isExisting,
-			@Param("isMarkerSet") boolean isMarkerSet);
 	long countBy();
-
 
 }
