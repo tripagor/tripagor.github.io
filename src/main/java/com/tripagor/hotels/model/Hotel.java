@@ -1,8 +1,10 @@
 package com.tripagor.hotels.model;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+@Document
 public class Hotel {
 	@Id
 	private String id;
