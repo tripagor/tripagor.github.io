@@ -6,15 +6,21 @@ import org.springframework.data.mongodb.core.mapping.Field;
 public class Hotel {
 	@Id
 	private String id;
+
 	@Field("booking_com_id")
-	private int bookingComId;
+	private long bookingComId;
+	private String name;
+	private String address;
+	private String zip;
+	@Field("city_hotel")
+	private String city;
 	@Field("country_code")
 	private String countryCode;
 	private String ufi;
 	@Field("class")
-	private String hotelClass;
+	private double hotelClass;
 	@Field("currencycode")
-	private String currencyCode;
+	private String currencycode;
 	private double minrate;
 	private double maxrate;
 	private String preferred;
@@ -30,11 +36,52 @@ public class Hotel {
 	private String imageUrl;
 	@Field("desc_en")
 	private String descEn;
-
-	private String name;
-	private String address;
-	@Field("city_hotel")
-	private String city;
+	@Field("desc_fr")
+	private String descFr;
+	@Field("desc_es")
+	private String descEs;
+	@Field("desc_de")
+	private String descDe;
+	@Field("desc_nl")
+	private String descNl;
+	@Field("desc_it")
+	private String descIt;
+	@Field("desc_pt")
+	private String descPt;
+	@Field("desc_ja")
+	private String descJa;
+	@Field("desc_zh")
+	private String descZh;
+	@Field("desc_pl")
+	private String descPl;
+	@Field("desc_ru")
+	private String descRu;
+	@Field("desc_sv")
+	private String descSv;
+	@Field("desc_ar")
+	private String descAr;
+	@Field("desc_el")
+	private String descEl;
+	@Field("desc_no")
+	private String descNo;
+	@Field("city_unique")
+	private String cityUnique;
+	@Field("city_preferred")
+	private String cityPreferred;
+	@Field("continent_id")
+	private int continentId;
+	@Field("review_score")
+	private double reviewScore;
+	@Field("review_nr")
+	private int reviewNr;
+	@Field("is_evaluated")
+	private boolean isEvaluated;
+	@Field("is_marker_set")
+	private boolean isMarkerSet;
+	@Field("is_marker_approved")
+	private boolean isMarkerApproved;
+	@Field("well_formatted_address")
+	private String formattedAddress;
 
 	public String getId() {
 		return id;
@@ -42,6 +89,14 @@ public class Hotel {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public long getBookingComId() {
+		return bookingComId;
+	}
+
+	public void setBookingComId(long bookingComId) {
+		this.bookingComId = bookingComId;
 	}
 
 	public String getName() {
@@ -60,20 +115,20 @@ public class Hotel {
 		this.address = address;
 	}
 
+	public String getZip() {
+		return zip;
+	}
+
+	public void setZip(String zip) {
+		this.zip = zip;
+	}
+
 	public String getCity() {
 		return city;
 	}
 
 	public void setCity(String city) {
 		this.city = city;
-	}
-
-	public int getBookingComId() {
-		return bookingComId;
-	}
-
-	public void setBookingComId(int bookingComId) {
-		this.bookingComId = bookingComId;
 	}
 
 	public String getCountryCode() {
@@ -92,20 +147,20 @@ public class Hotel {
 		this.ufi = ufi;
 	}
 
-	public String getHotelClass() {
+	public double getHotelClass() {
 		return hotelClass;
 	}
 
-	public void setHotelClass(String hotelClass) {
+	public void setHotelClass(double hotelClass) {
 		this.hotelClass = hotelClass;
 	}
 
-	public String getCurrencyCode() {
-		return currencyCode;
+	public String getCurrencycode() {
+		return currencycode;
 	}
 
-	public void setCurrencyCode(String currencyCode) {
-		this.currencyCode = currencyCode;
+	public void setCurrencycode(String currencycode) {
+		this.currencycode = currencycode;
 	}
 
 	public double getMinrate() {
@@ -130,6 +185,14 @@ public class Hotel {
 
 	public void setPreferred(String preferred) {
 		this.preferred = preferred;
+	}
+
+	public int getNrRooms() {
+		return nrRooms;
+	}
+
+	public void setNrRooms(int nrRooms) {
+		this.nrRooms = nrRooms;
 	}
 
 	public String getLongitude() {
@@ -180,12 +243,188 @@ public class Hotel {
 		this.descEn = descEn;
 	}
 
-	public int getNrRooms() {
-		return nrRooms;
+	public String getDescFr() {
+		return descFr;
 	}
 
-	public void setNrRooms(int nrRooms) {
-		this.nrRooms = nrRooms;
+	public void setDescFr(String descFr) {
+		this.descFr = descFr;
+	}
+
+	public String getDescEs() {
+		return descEs;
+	}
+
+	public void setDescEs(String descEs) {
+		this.descEs = descEs;
+	}
+
+	public String getDescDe() {
+		return descDe;
+	}
+
+	public void setDescDe(String descDe) {
+		this.descDe = descDe;
+	}
+
+	public String getDescNl() {
+		return descNl;
+	}
+
+	public void setDescNl(String descNl) {
+		this.descNl = descNl;
+	}
+
+	public String getDescIt() {
+		return descIt;
+	}
+
+	public void setDescIt(String descIt) {
+		this.descIt = descIt;
+	}
+
+	public String getDescPt() {
+		return descPt;
+	}
+
+	public void setDescPt(String descPt) {
+		this.descPt = descPt;
+	}
+
+	public String getDescJa() {
+		return descJa;
+	}
+
+	public void setDescJa(String descJa) {
+		this.descJa = descJa;
+	}
+
+	public String getDescZh() {
+		return descZh;
+	}
+
+	public void setDescZh(String descZh) {
+		this.descZh = descZh;
+	}
+
+	public String getDescPl() {
+		return descPl;
+	}
+
+	public void setDescPl(String descPl) {
+		this.descPl = descPl;
+	}
+
+	public String getDescRu() {
+		return descRu;
+	}
+
+	public void setDescRu(String descRu) {
+		this.descRu = descRu;
+	}
+
+	public String getDescSv() {
+		return descSv;
+	}
+
+	public void setDescSv(String descSv) {
+		this.descSv = descSv;
+	}
+
+	public String getDescAr() {
+		return descAr;
+	}
+
+	public void setDescAr(String descAr) {
+		this.descAr = descAr;
+	}
+
+	public String getDescEl() {
+		return descEl;
+	}
+
+	public void setDescEl(String descEl) {
+		this.descEl = descEl;
+	}
+
+	public String getDescNo() {
+		return descNo;
+	}
+
+	public void setDescNo(String descNo) {
+		this.descNo = descNo;
+	}
+
+	public String getCityUnique() {
+		return cityUnique;
+	}
+
+	public void setCityUnique(String cityUnique) {
+		this.cityUnique = cityUnique;
+	}
+
+	public String getCityPreferred() {
+		return cityPreferred;
+	}
+
+	public void setCityPreferred(String cityPreferred) {
+		this.cityPreferred = cityPreferred;
+	}
+
+	public int getContinentId() {
+		return continentId;
+	}
+
+	public void setContinentId(int continentId) {
+		this.continentId = continentId;
+	}
+
+	public double getReviewScore() {
+		return reviewScore;
+	}
+
+	public void setReviewScore(double reviewScore) {
+		this.reviewScore = reviewScore;
+	}
+
+	public int getReviewNr() {
+		return reviewNr;
+	}
+
+	public void setReviewNr(int reviewNr) {
+		this.reviewNr = reviewNr;
+	}
+
+	public boolean isEvaluated() {
+		return isEvaluated;
+	}
+
+	public void setEvaluated(boolean isEvaluated) {
+		this.isEvaluated = isEvaluated;
+	}
+
+	public boolean isMarkerSet() {
+		return isMarkerSet;
+	}
+
+	public void setMarkerSet(boolean isMarkerSet) {
+		this.isMarkerSet = isMarkerSet;
+	}
+
+	public boolean isMarkerApproved() {
+		return isMarkerApproved;
+	}
+
+	public void setMarkerApproved(boolean isMarkerApproved) {
+		this.isMarkerApproved = isMarkerApproved;
+	}
+
+	public String getFormattedAddress() {
+		return formattedAddress;
+	}
+
+	public void setFormattedAddress(String formattedAddress) {
+		this.formattedAddress = formattedAddress;
 	}
 
 }
