@@ -37,11 +37,14 @@
         </div>
     </footer>
     <!-- jQuery -->
-    <script src="<#if (content.rootpath)??>${content.rootpath}<#else></#if>js/jquery.js"></script>
-    <!-- Bootstrap Core JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.3/angular.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.3/angular-resource.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.3/angular-route.js"></script>
     <script src="<#if (content.rootpath)??>${content.rootpath}<#else></#if>js/bootstrap.min.js"></script>
-    <!-- Custom Theme JavaScript -->
     <script src="<#if (content.rootpath)??>${content.rootpath}<#else></#if>js/clean-blog.min.js"></script>
+    <script src="<#if (content.rootpath)??>${content.rootpath}<#else></#if>hotel/app.js"></script>
+    <script src="<#if (content.rootpath)??>${content.rootpath}<#else></#if>hotel/controller.js"></script>
 </body>
 
 </html>
