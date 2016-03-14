@@ -4,21 +4,9 @@ type=page
 status=published
 ~~~~~~
 
+
 <div ng-app="hotel">
     <div ng-view>
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                    <p>{{item.name}}</p>
-                    <p>{{item.city}} </p>
-                    <p>{{item.descEn}} </p>
-                    <p>{{item.minrate}}-{{item.maxrate}} {{item.currencyCode}} </p>
-                    <p>{{item.reviewNr}} {{item.reviewScore}} </p>
-                    <p>{{item.imageUrl}} {{item.url}} </p>
-                    <p>{{item.nrRooms}} </p>
-                    <p>{{item.formattedAddress}} </p>
-                </div>
-            </div>
-        </div>
+        {{item.name}} {{item.city}} {{item.descEn}} {{item.minrate}}-{{item.maxrate}} {{item.currencyCode}} {{item.reviewNr}} {{item.reviewScore}} {{item.imageUrl}} {{item.url}} {{item.nrRooms}} {{item.formattedAddress}}
     </div>
-
+</div>

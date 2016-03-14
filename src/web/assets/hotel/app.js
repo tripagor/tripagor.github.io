@@ -2,8 +2,7 @@
 
 angular.module('hotel', ['ngRoute', 'hotelCtrls']).config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/:id/:name', {
-        //templateUrl: 'hotel/html/details.html',
-        template: ' ',
+        templateUrl: 'hotel/html/details.html',
         controller: 'hotelDetailsCtrl'
     });
 }]).config(['$locationProvider', function($locationProvider) {
