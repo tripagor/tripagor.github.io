@@ -27,3 +27,23 @@
     "is_marker_approved" : false,
     "well_formatted_address" : "R. Crescêncio Till, 174, Gramado - RS, 95670-000, Brazil"
 }
+
+{
+  "location": {
+    "lat": 51.50857828801368,
+    "lng": -0.15137894047552436
+  },
+  "accuracy": 20,
+  "name": "Private Apartment - Mayfair - 103",
+  "address": "69 S Audley St, Mayfair, London W1K 2QZ, UK",
+  "types": ["lodging"],
+  "website": "http://www.booking.com/hotel/gb/private-apartment-mayfair-103.html",
+  "language": "en"
+}
+{
+"id": "2de214f66721d9a3a33d92346dab6b5589760d09"
+"place_id": "qgYvCi0wMDAwMDAwMjQzMzdmMmZlOjQ4NzYwNTJlMTRmOjU5OTUwYzFhYmQwODQ4NDA"
+"reference": "CkQxAAAA7d1vOtMP-zW-YZxaAFtW5fB4jIwS1el3hWitAOJpdXmxhBk5VWypd7zLLRFz6yE_H9upO-kC9SbiNhGiyuGdMhIQWA9HTluQE0kL5GdteWcVqRoUTON5amaY1H2S6Wyi2xz-x27dYzc"
+"scope": "APP"
+"status": "OK"
+}
