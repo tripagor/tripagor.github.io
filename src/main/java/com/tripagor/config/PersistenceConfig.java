@@ -13,8 +13,6 @@ public class PersistenceConfig extends AbstractMongoConfiguration {
 
 	private @Value("${db.uri}") String dbUri;
 	private @Value("${db.name}") String dbName;
-	private @Value("${db.username}") String dbUsername;
-	private @Value("${db.password}") String dbPassword;
 
 	@Override
 	public Mongo mongo() throws Exception {
@@ -23,7 +21,7 @@ public class PersistenceConfig extends AbstractMongoConfiguration {
 
 	@Override
 	protected String getDatabaseName() {
-		return this.dbName;
+		return dbName;
 	}
 
 }
