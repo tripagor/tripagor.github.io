@@ -1,0 +1,25 @@
+<header class="intro-header" style="background-image: url('{{item.imageUrl}}')">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="page-heading">
+                    <h1>{{item.name}}</h1>
+                    <a type="button" class="btn btn-lg btn-danger" href="{{item.url}}?aid=948836">Book now!</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <br> {{item.city}}
+            <br> {{item.formattedAddress}}
+            <br> {{item.nrRooms}} Rooms
+            <br> {{item.descEn}}
+            <br> {{item.currencycode}} {{item.minrate}}-{{item.maxrate}}
+            <br> {{item.reviewNr}} Reviews Score: {{item.reviewScore}}
+            <br>
+        </div>
+    </div>
+</div>
