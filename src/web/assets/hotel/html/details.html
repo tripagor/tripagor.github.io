@@ -13,12 +13,10 @@
 <div class="container">
     <div class="row">
         <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-            <br> {{item.city}}
-            <br> {{item.formattedAddress}}
+            <br><span ng-show="item.formattedAddress">{{item.formattedAddress}}</span><span ng-show="!item.formattedAddress">{{item.address}}, {{item.city}}</span>
             <br> {{item.nrRooms}} Rooms
             <br> {{item.descEn}}
-            <br> {{item.currencycode}} {{item.minrate}}-{{item.maxrate}}
-            <br> {{item.reviewNr}} Reviews Score: {{item.reviewScore}}
+            <br> {{item.minrate | currency:item.currencycode+" "}}<span ng-show="item.maxrate">-{{item.maxrate | currency:item.currencycode+" "}}</span>
             <br>
         </div>
     </div>
