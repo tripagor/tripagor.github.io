@@ -84,6 +84,8 @@ public class Hotel {
 	private boolean isMarkerApproved;
 	@Field("well_formatted_address")
 	private String formattedAddress;
+	@Field("place_id")
+	private String placeId;
 
 	public String getId() {
 		return id;
@@ -427,6 +429,14 @@ public class Hotel {
 
 	public void setFormattedAddress(String formattedAddress) {
 		this.formattedAddress = formattedAddress;
+	}
+
+	public String getPlaceId() {
+		return placeId;
+	}
+
+	public void setPlaceId(String placeId) {
+		this.placeId = placeId;
 	}
 
 }
