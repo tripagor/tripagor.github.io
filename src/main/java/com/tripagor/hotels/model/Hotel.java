@@ -4,13 +4,17 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 @Document
+@JsonInclude(Include.NON_NULL)
 public class Hotel {
 	@Id
 	private String id;
 
 	@Field("booking_com_id")
-	private long bookingComId;
+	private Long bookingComId;
 	private String name;
 	private String address;
 	private String zip;
@@ -20,18 +24,18 @@ public class Hotel {
 	private String countryCode;
 	private String ufi;
 	@Field("class")
-	private double hotelClass;
+	private Integer hotelClass;
 	@Field("currencycode")
 	private String currencycode;
-	private double minrate;
-	private double maxrate;
+	private Double minrate;
+	private Double maxrate;
 	private String preferred;
 	@Field("nr_rooms")
-	private int nrRooms;
+	private Integer nrRooms;
 	private String longitude;
 	private String latitude;
 	@Field("public_ranking")
-	private double publicRanking;
+	private Double publicRanking;
 	@Field("hotel_url")
 	private String url;
 	@Field("photo_url")
@@ -71,17 +75,17 @@ public class Hotel {
 	@Field("city_preferred")
 	private String cityPreferred;
 	@Field("continent_id")
-	private int continentId;
+	private Integer continentId;
 	@Field("review_score")
-	private double reviewScore;
+	private Double reviewScore;
 	@Field("review_nr")
-	private int reviewNr;
+	private Integer reviewNr;
 	@Field("is_evaluated")
-	private boolean isEvaluated;
+	private Boolean isEvaluated;
 	@Field("is_marker_set")
-	private boolean isMarkerSet;
+	private Boolean isMarkerSet;
 	@Field("is_marker_approved")
-	private boolean isMarkerApproved;
+	private Boolean isMarkerApproved;
 	@Field("well_formatted_address")
 	private String formattedAddress;
 	@Field("place_id")
@@ -95,11 +99,11 @@ public class Hotel {
 		this.id = id;
 	}
 
-	public long getBookingComId() {
+	public Long getBookingComId() {
 		return bookingComId;
 	}
 
-	public void setBookingComId(long bookingComId) {
+	public void setBookingComId(Long bookingComId) {
 		this.bookingComId = bookingComId;
 	}
 
@@ -151,11 +155,11 @@ public class Hotel {
 		this.ufi = ufi;
 	}
 
-	public double getHotelClass() {
+	public Integer getHotelClass() {
 		return hotelClass;
 	}
 
-	public void setHotelClass(double hotelClass) {
+	public void setHotelClass(Integer hotelClass) {
 		this.hotelClass = hotelClass;
 	}
 
@@ -167,19 +171,19 @@ public class Hotel {
 		this.currencycode = currencycode;
 	}
 
-	public double getMinrate() {
+	public Double getMinrate() {
 		return minrate;
 	}
 
-	public void setMinrate(double minrate) {
+	public void setMinrate(Double minrate) {
 		this.minrate = minrate;
 	}
 
-	public double getMaxrate() {
+	public Double getMaxrate() {
 		return maxrate;
 	}
 
-	public void setMaxrate(double maxrate) {
+	public void setMaxrate(Double maxrate) {
 		this.maxrate = maxrate;
 	}
 
@@ -191,11 +195,11 @@ public class Hotel {
 		this.preferred = preferred;
 	}
 
-	public int getNrRooms() {
+	public Integer getNrRooms() {
 		return nrRooms;
 	}
 
-	public void setNrRooms(int nrRooms) {
+	public void setNrRooms(Integer nrRooms) {
 		this.nrRooms = nrRooms;
 	}
 
@@ -215,11 +219,11 @@ public class Hotel {
 		this.latitude = latitude;
 	}
 
-	public double getPublicRanking() {
+	public Double getPublicRanking() {
 		return publicRanking;
 	}
 
-	public void setPublicRanking(double publicRanking) {
+	public void setPublicRanking(Double publicRanking) {
 		this.publicRanking = publicRanking;
 	}
 
@@ -375,51 +379,51 @@ public class Hotel {
 		this.cityPreferred = cityPreferred;
 	}
 
-	public int getContinentId() {
+	public Integer getContinentId() {
 		return continentId;
 	}
 
-	public void setContinentId(int continentId) {
+	public void setContinentId(Integer continentId) {
 		this.continentId = continentId;
 	}
 
-	public double getReviewScore() {
+	public Double getReviewScore() {
 		return reviewScore;
 	}
 
-	public void setReviewScore(double reviewScore) {
+	public void setReviewScore(Double reviewScore) {
 		this.reviewScore = reviewScore;
 	}
 
-	public int getReviewNr() {
+	public Integer getReviewNr() {
 		return reviewNr;
 	}
 
-	public void setReviewNr(int reviewNr) {
+	public void setReviewNr(Integer reviewNr) {
 		this.reviewNr = reviewNr;
 	}
 
-	public boolean isEvaluated() {
+	public Boolean getIsEvaluated() {
 		return isEvaluated;
 	}
 
-	public void setEvaluated(boolean isEvaluated) {
+	public void setIsEvaluated(Boolean isEvaluated) {
 		this.isEvaluated = isEvaluated;
 	}
 
-	public boolean isMarkerSet() {
+	public Boolean getIsMarkerSet() {
 		return isMarkerSet;
 	}
 
-	public void setMarkerSet(boolean isMarkerSet) {
+	public void setIsMarkerSet(Boolean isMarkerSet) {
 		this.isMarkerSet = isMarkerSet;
 	}
 
-	public boolean isMarkerApproved() {
+	public Boolean getIsMarkerApproved() {
 		return isMarkerApproved;
 	}
 
-	public void setMarkerApproved(boolean isMarkerApproved) {
+	public void setIsMarkerApproved(Boolean isMarkerApproved) {
 		this.isMarkerApproved = isMarkerApproved;
 	}
 
