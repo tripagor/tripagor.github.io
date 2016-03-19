@@ -17,10 +17,9 @@ public class PlaceDetails {
 
 		final GeoApiContext context = new GeoApiContext().setApiKey("AIzaSyC_V_8PAujfCgCSU0UOAsWJzvoIbNFKYGU");
 
-		MongoClientURI mongoClientURI = new MongoClientURI("mongodb://localhost:27017/hotels");
+		MongoClientURI mongoClientURI = new MongoClientURI("mongodb://admin:vsjl1801@db.tripagor.com");
 		MongoClient mongoClient = new MongoClient(mongoClientURI);
-		final MongoCollection<Document> collection = mongoClient.getDatabase(mongoClientURI.getDatabase())
-				.getCollection("hotel");
+		final MongoCollection<Document> collection = mongoClient.getDatabase("hotels").getCollection("hotel");
 
 		FindIterable<Document> iterable = collection.find(new Document("place_id", new Document("$exists", true)));
 
