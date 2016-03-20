@@ -1,6 +1,9 @@
 package com.tripagor.hotels.model;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -9,19 +12,19 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @Document
 @JsonInclude(Include.NON_NULL)
+@CompoundIndexes({
+		@CompoundIndex(name = "place_idex", def = "{'is_evaluated': 1, 'is_marker_set': 1, 'is_marker_approved': 1}"),
+		@CompoundIndex(name = "country_city_idex", def = "{'country_code': 1, 'city_unique': 1}") })
 public class Hotel {
 	@Id
 	private String id;
-
-	@Field("booking_com_id")
-	private Long bookingComId;
+	private @Indexed @Field("booking_com_id") Long bookingComId;
+	@Indexed
 	private String name;
 	private String address;
 	private String zip;
-	@Field("city_hotel")
-	private String city;
-	@Field("country_code")
-	private String countryCode;
+	private @Indexed @Field("city_hotel") String city;
+	private @Indexed @Field("country_code") String countryCode;
 	private String ufi;
 	@Field("class")
 	private Integer hotelClass;
@@ -70,12 +73,9 @@ public class Hotel {
 	private String descEl;
 	@Field("desc_no")
 	private String descNo;
-	@Field("city_unique")
-	private String cityUnique;
-	@Field("city_preferred")
-	private String cityPreferred;
-	@Field("continent_id")
-	private Integer continentId;
+	private @Field("city_unique") String cityUnique;
+	private @Indexed @Field("city_preferred") String cityPreferred;
+	private @Indexed @Field("continent_id") Integer continentId;
 	@Field("review_score")
 	private Double reviewScore;
 	@Field("review_nr")
