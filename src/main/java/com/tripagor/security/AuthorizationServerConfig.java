@@ -18,6 +18,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 	@Autowired
 	private AuthenticationManager authenticationManager;
 	private @Value("${client.api.normal.secret}") String apiNormalSecret;
+	private @Value("${client.api.su.secret}") String apiSuSecret;
 
 	@Override
 	public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
@@ -33,5 +34,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 	public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
 		clients.inMemory().withClient("api").resourceIds("auth").scopes("get")
 				.authorizedGrantTypes("client_credentials").secret(this.apiNormalSecret);
+		clients.inMemory().withClient("suapi").resourceIds("auth").scopes("get", "create", "change", "remove")
+				.authorizedGrantTypes("client_credentials").secret(this.apiSuSecret);
 	}
 }
