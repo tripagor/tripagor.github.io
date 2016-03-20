@@ -33,6 +33,8 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 	@Override
 	public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
 		clients.inMemory().withClient("api").resourceIds("auth").scopes("get")
-				.authorizedGrantTypes("client_credentials").secret(this.apiNormalSecret);
+				.authorizedGrantTypes("client_credentials").secret(this.apiNormalSecret).and().withClient("suapi")
+				.resourceIds("auth").scopes("get", "create", "change", "remove")
+				.authorizedGrantTypes("client_credentials").secret(this.apiSuSecret);
 	}
 }
