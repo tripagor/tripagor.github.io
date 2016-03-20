@@ -17,8 +17,7 @@ import org.springframework.security.oauth2.provider.token.store.InMemoryTokenSto
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 	@Autowired
 	private AuthenticationManager authenticationManager;
-	private @Value("${client.api.normal.secret}") String apiNormalSecret;
-	private @Value("${client.api.su.secret}") String apiSuSecret;
+	private @Value("${client.api.priviledged.secret}") String apiPriviledgedSecret;
 
 	@Override
 	public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
@@ -32,9 +31,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
 	@Override
 	public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-		clients.inMemory().withClient("api").resourceIds("auth").scopes("get")
-				.authorizedGrantTypes("client_credentials").secret(this.apiNormalSecret).and().withClient("suapi")
-				.resourceIds("auth").scopes("get", "create", "change", "remove")
-				.authorizedGrantTypes("client_credentials").secret(this.apiSuSecret);
+		clients.inMemory().withClient("priviledged").resourceIds("auth").scopes("get", "create", "change", "remove")
+				.authorizedGrantTypes("client_credentials").secret(this.apiPriviledgedSecret);
 	}
 }
