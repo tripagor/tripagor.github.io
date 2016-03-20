@@ -24,8 +24,8 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests().antMatchers(HttpMethod.DELETE, "/hotels/**").access("#oauth2.hasScope('remove')")
-				.antMatchers(HttpMethod.GET, "/hotels/**").access("#oauth2.hasScope('get')")
+		http.authorizeRequests().antMatchers(HttpMethod.GET, "/hotels/**").permitAll()
+				.antMatchers(HttpMethod.DELETE, "/hotels/**").access("#oauth2.hasScope('remove')")
 				.antMatchers(HttpMethod.POST, "/hotels/**").access("#oauth2.hasScope('create')")
 				.antMatchers(HttpMethod.PUT, "/hotels/**").access("#oauth2.hasScope('change')")
 				.antMatchers(HttpMethod.PATCH, "/hotels/**").access("#oauth2.hasScope('change')");
