@@ -7,6 +7,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -32,7 +33,6 @@ public class Hotel {
 	private String currencycode;
 	private Double minrate;
 	private Double maxrate;
-	private String preferred;
 	@Field("nr_rooms")
 	private Integer nrRooms;
 	private String longitude;
@@ -75,7 +75,7 @@ public class Hotel {
 	private String descNo;
 	private @Field("city_unique") String cityUnique;
 	private @Indexed @Field("city_preferred") String cityPreferred;
-	private @Indexed(name = "continent_id") @Field("continent_id") Integer continentId;
+	private @Indexed @Field("continent_id") @JsonIgnore Integer continentId;
 	@Field("review_score")
 	private Double reviewScore;
 	@Field("review_nr")
@@ -90,6 +90,7 @@ public class Hotel {
 	private String formattedAddress;
 	@Field("place_id")
 	private String placeId;
+	private @Field("preferred") @JsonIgnore int preferredBookingComPartner;
 
 	public String getId() {
 		return id;
@@ -185,14 +186,6 @@ public class Hotel {
 
 	public void setMaxrate(Double maxrate) {
 		this.maxrate = maxrate;
-	}
-
-	public String getPreferred() {
-		return preferred;
-	}
-
-	public void setPreferred(String preferred) {
-		this.preferred = preferred;
 	}
 
 	public Integer getNrRooms() {
@@ -435,12 +428,40 @@ public class Hotel {
 		this.placeId = placeId;
 	}
 
+	public WorldRegion getWorldRegion() {
+		return WorldRegion.fromValue(this.continentId);
+	}
+
+	public void setWorldRegion(WorldRegion worldRegion) {
+		this.continentId = worldRegion.toValue();
+	}
+
 	public Integer getContinentId() {
 		return continentId;
 	}
 
 	public void setContinentId(Integer continentId) {
 		this.continentId = continentId;
+	}
+
+	public int getPreferredBookingComPartner() {
+		return preferredBookingComPartner;
+	}
+
+	public void setPreferredBookingComPartner(int preferredBookingComPartner) {
+		this.preferredBookingComPartner = preferredBookingComPartner;
+	}
+
+	public boolean isPreferred() {
+		return this.preferredBookingComPartner == 1;
+	}
+
+	public void setPreferred(boolean isPreferred) {
+		if (isPreferred) {
+			this.preferredBookingComPartner = 1;
+		} else {
+			this.preferredBookingComPartner = 1;
+		}
 	}
 
 }

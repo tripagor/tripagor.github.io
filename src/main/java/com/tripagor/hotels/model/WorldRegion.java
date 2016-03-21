@@ -5,9 +5,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-
 public enum WorldRegion {
 	NORTH_AMERICA(1), MIDDLE_AMERICA(2), SOUTH_AMERICA(3), OTHER(4), AFRICA(5), EUROPE(6), MIDDLE_EAST(7), ASIA(
 			8), AUSTRALIA_OCEANIA(9), CARIBBEAN(10), UNKNOWN(0);
@@ -23,13 +20,6 @@ public enum WorldRegion {
 		return this.continentId;
 	}
 
-	@JsonValue
-	@Override
-	public String toString() {
-		return "" + continentId;
-	}
-
-	@JsonCreator
 	public static WorldRegion fromValue(Integer value) {
 		WorldRegion region = map.get(value);
 		if (region == null) {
@@ -38,5 +28,6 @@ public enum WorldRegion {
 			return region;
 		}
 	}
+
 
 }
