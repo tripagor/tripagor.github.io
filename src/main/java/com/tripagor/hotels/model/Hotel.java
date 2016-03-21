@@ -75,7 +75,7 @@ public class Hotel {
 	private String descNo;
 	private @Field("city_unique") String cityUnique;
 	private @Indexed @Field("city_preferred") String cityPreferred;
-	private @Indexed @Field("continent_id") Integer continentId;
+	private @Indexed(name = "continent_id") @Field("continent_id") Integer continentId;
 	@Field("review_score")
 	private Double reviewScore;
 	@Field("review_nr")
@@ -379,14 +379,6 @@ public class Hotel {
 		this.cityPreferred = cityPreferred;
 	}
 
-	public Integer getContinentId() {
-		return continentId;
-	}
-
-	public void setContinentId(Integer continentId) {
-		this.continentId = continentId;
-	}
-
 	public Double getReviewScore() {
 		return reviewScore;
 	}
@@ -441,6 +433,14 @@ public class Hotel {
 
 	public void setPlaceId(String placeId) {
 		this.placeId = placeId;
+	}
+
+	public Integer getContinentId() {
+		return continentId;
+	}
+
+	public void setContinentId(Integer continentId) {
+		this.continentId = continentId;
 	}
 
 }
