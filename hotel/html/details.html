@@ -1,0 +1,60 @@
+<header class="intro-header" style="background-image: url('{{item.imageUrl}}')">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="page-heading">
+                    <h1>{{item.name}}</h1>
+                    <a type="button" class="btn btn-danger" href="{{item.url}}?aid=948836">Check Availability!</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<section id="desc">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 col-lg-offset-3">
+                <!--<div class="row">
+                <div class="col-lg-4">
+                    <span ng-show="item.formattedAddress">{{item.formattedAddress}}</span><span ng-show="!item.formattedAddress">{{item.address}}, {{item.city}}</span>
+                </div>
+                <div class="col-lg-4">
+                    {{item.minrate | currency:item.currencycode+" "}}<span ng-show="item.maxrate">-{{item.maxrate | currency:item.currencycode+" "}}</span>
+                </div>
+                <div class="col-lg-4">
+                    {{item.nrRooms}} Rooms
+                </div>
+            </div>-->
+                {{item.descEn}}
+            </div>
+        </div>
+    </div>
+</section>
+<section id="df">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-5">
+                <div id="mapwrap">
+                    <img width="100%" src="http://maps.googleapis.com/maps/api/staticmap?center={{item.latitude}},{{item.longitude}}&zoom=8&scale=2&size=600x300&maptype=roadmap&format=png&visual_refresh=true&markers=size:mid%7Ccolor:0xff0000%7Clabel:%7C{{item.latitude}},{{item.longitude}}">
+                </div>
+            </div>
+            <!--col-lg-8-->
+            <div class="col-lg-2">
+                <h4>ADDRESS</h4>
+                <br>
+                <p>{{item.name}}</p>
+                <p ng-show="item.formattedAddress" ng-bind-html="item.formattedAddress | break"></p>
+                <p ng-show="!item.formattedAddress">{{item.address}}
+                    <br> {{item.city}}
+                </p>
+            </div>
+            <div class="col-lg-5">
+                <div id="mapwrap">
+                    <img width="100%" src="http://maps.googleapis.com/maps/api/staticmap?center={{item.latitude}},{{item.longitude}}&zoom=14&scale=2&size=600x300&maptype=roadmap&format=png&visual_refresh=true&markers=size:mid%7Ccolor:0xff0000%7Clabel:%7C{{item.latitude}},{{item.longitude}}">
+                </div>
+            </div>
+            <!--col-lg-4-->
+        </div>
+        <!-- row -->
+    </div>
+</section>
