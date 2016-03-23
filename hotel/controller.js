@@ -7,4 +7,4 @@ angular.module('hotelCtrls', ['ngResource']).controller('hotelDetailsCtrl', ['$s
         .get({
             id: $routeParams.id
         });
-}])
+}]);
