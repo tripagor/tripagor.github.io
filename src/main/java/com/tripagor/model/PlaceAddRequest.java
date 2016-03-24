@@ -6,82 +6,63 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({ "types", "formatted_address", "website", "name", "location", "phoneNumber", "accuracy" })
 public class PlaceAddRequest {
 
-	@JsonProperty("types")
-	private List<String> types = new ArrayList<String>();
-	@JsonProperty("formatted_address")
-	private String formattedAddress;
-	@JsonProperty("website")
-	private String website;
-	@JsonProperty("name")
-	private String name;
+	@JsonProperty("location")
+	private Location location;
 	@JsonProperty("accuracy")
 	private Integer accuracy;
+	@JsonProperty("name")
+	private String name;
 	@JsonProperty("phone_number")
 	private String phoneNumber;
+	@JsonProperty("address")
+	private String address;
+	@JsonProperty("types")
+	private List<String> types = new ArrayList<String>();
+	@JsonProperty("website")
+	private String website;
+	@JsonProperty("language")
+	private String language;
+
+	/**
+	 * 
+	 * @return The location
+	 */
 	@JsonProperty("location")
-	private Location location = new Location();
-
-	/**
-	 * 
-	 * @return The types
-	 */
-	@JsonProperty("types")
-	public List<String> getTypes() {
-		return types;
+	public Location getLocation() {
+		return location;
 	}
 
 	/**
 	 * 
-	 * @param types
-	 *            The types
+	 * @param location
+	 *            The location
 	 */
-	@JsonProperty("types")
-	public void setTypes(List<String> types) {
-		this.types = types;
+	@JsonProperty("location")
+	public void setLocation(Location location) {
+		this.location = location;
 	}
 
 	/**
 	 * 
-	 * @return The formattedAddress
+	 * @return The accuracy
 	 */
-	@JsonProperty("formatted_address")
-	public String getFormattedAddress() {
-		return formattedAddress;
+	@JsonProperty("accuracy")
+	public Integer getAccuracy() {
+		return accuracy;
 	}
 
 	/**
 	 * 
-	 * @param formattedAddress
-	 *            The formatted_address
+	 * @param accuracy
+	 *            The accuracy
 	 */
-	@JsonProperty("formatted_address")
-	public void setFormattedAddress(String formattedAddress) {
-		this.formattedAddress = formattedAddress;
-	}
-
-	/**
-	 * 
-	 * @return The website
-	 */
-	@JsonProperty("website")
-	public String getWebsite() {
-		return website;
-	}
-
-	/**
-	 * 
-	 * @param website
-	 *            The website
-	 */
-	@JsonProperty("website")
-	public void setWebsite(String website) {
-		this.website = website;
+	@JsonProperty("accuracy")
+	public void setAccuracy(Integer accuracy) {
+		this.accuracy = accuracy;
 	}
 
 	/**
@@ -105,48 +86,97 @@ public class PlaceAddRequest {
 
 	/**
 	 * 
-	 * @return The location
+	 * @return The phoneNumber
 	 */
-	@JsonProperty("location")
-	public Location getLocation() {
-		return location;
-	}
-
-	/**
-	 * 
-	 * @param location
-	 *            The location
-	 */
-	@JsonProperty("location")
-	public void setLocation(Location location) {
-		this.location = location;
-	}
-
-	@JsonProperty("accuracy")
-	public Integer getAccuracy() {
-		return accuracy;
-	}
-
-	@JsonProperty("accuracy")
-	public void setAccuracy(Integer accuracy) {
-		this.accuracy = accuracy;
-	}
-
 	@JsonProperty("phone_number")
 	public String getPhoneNumber() {
 		return phoneNumber;
 	}
 
+	/**
+	 * 
+	 * @param phoneNumber
+	 *            The phone_number
+	 */
 	@JsonProperty("phone_number")
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
 
-	@Override
-	public String toString() {
-		return "PlaceAddRequest [types=" + types + ", formattedAddress=" + formattedAddress + ", website=" + website
-				+ ", name=" + name + ", accuracy=" + accuracy + ", phoneNumber=" + phoneNumber + ", location="
-				+ location + "]";
+	/**
+	 * 
+	 * @return The address
+	 */
+	@JsonProperty("address")
+	public String getAddress() {
+		return address;
+	}
+
+	/**
+	 * 
+	 * @param address
+	 *            The address
+	 */
+	@JsonProperty("address")
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	/**
+	 * 
+	 * @return The types
+	 */
+	@JsonProperty("types")
+	public List<String> getTypes() {
+		return types;
+	}
+
+	/**
+	 * 
+	 * @param types
+	 *            The types
+	 */
+	@JsonProperty("types")
+	public void setTypes(List<String> types) {
+		this.types = types;
+	}
+
+	/**
+	 * 
+	 * @return The website
+	 */
+	@JsonProperty("website")
+	public String getWebsite() {
+		return website;
+	}
+
+	/**
+	 * 
+	 * @param website
+	 *            The website
+	 */
+	@JsonProperty("website")
+	public void setWebsite(String website) {
+		this.website = website;
+	}
+
+	/**
+	 * 
+	 * @return The language
+	 */
+	@JsonProperty("language")
+	public String getLanguage() {
+		return language;
+	}
+
+	/**
+	 * 
+	 * @param language
+	 *            The language
+	 */
+	@JsonProperty("language")
+	public void setLanguage(String language) {
+		this.language = language;
 	}
 
 }

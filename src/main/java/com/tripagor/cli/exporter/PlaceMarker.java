@@ -19,7 +19,7 @@ public class PlaceMarker {
 
 	private int numberOfPlacesToAdd;
 	private PlaceAddApi placeAddApi;
-	private static final String GOOGLE_MAPS_API_KEY = "AIzaSyC_V_8PAujfCgCSU0UOAsWJzvoIbNFKYGU";
+	private static final String GOOGLE_MAPS_API_KEY = "" + "";
 	private String appendStr = "";
 
 	public PlaceMarker() {
@@ -47,7 +47,7 @@ public class PlaceMarker {
 						PlaceAddRequest place = new PlaceAddRequest();
 
 						place.setName(document.getString("name"));
-						place.setFormattedAddress(document.getString("well_formatted_address"));
+						place.setAddress(document.getString("well_formatted_address"));
 						Location location = new Location();
 						location.setLat(new BigDecimal(document.getString("latitude")).doubleValue());
 						location.setLng(new BigDecimal(document.getString("longitude")).doubleValue());
@@ -55,10 +55,11 @@ public class PlaceMarker {
 						place.setAccuracy(30);
 						place.setWebsite(document.getString("hotel_url") + appendStr);
 						place.setTypes(Arrays.asList(new String[] { "lodging" }));
-						
+
 						PlaceAddResponse response = placeAddApi.add(place);
 						if ("OK".equals(response.getStatus())) {
-							Document updateDocument = new Document("is_marker_set", true).append("place_id", response.getPlaceId());
+							Document updateDocument = new Document("is_marker_set", true).append("place_id",
+									response.getPlaceId());
 							collection.updateOne(new Document("_id", document.get("_id")),
 									new Document("$set", updateDocument));
 						}
