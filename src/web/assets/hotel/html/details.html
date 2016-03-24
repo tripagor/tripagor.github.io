@@ -10,21 +10,42 @@
         </div>
     </div>
 </header>
+<!--<section id="features">
+    <div class="row">
+        <div class="col-lg-4 callout">
+            <span class="fa fa-map-marker fa-3x"></span>
+            <h2>{{item.formattedAddress}}</span><span ng-show="!item.formattedAddress">{{item.address}}, {{item.city}}</h2>
+        </div>
+        <div class="col-lg-4 callout">
+            <span class="fa fa-money fa-2x"></span>
+            <h2>{{item.minrate | currency:item.currencycode+" "}}<span ng-show="item.maxrate">-{{item.marate | currency:item.currencycode+" "}}</span></h2>
+        </div>
+        <div class="col-lg-4 callout">
+            <span class="fa fa-bed fa-2x"></span>
+            <h2>{{item.nrRooms}} Rooms</h2>
+        </div>
+    </div>
+</section>-->
+<section id="greywrap">
+    <div class="row">
+        <div class="col-lg-4 callout">
+            <span class="fa fa-money fa-3x"></span>
+            <h2>{{item.minrate | currency:item.currencycode+" "}}<span ng-show="item.maxrate">-{{item.maxrate | currency:item.currencycode+" "}}</span></h2>
+        </div>
+        <div class="col-lg-4 callout">
+            <span class="fa fa-bed fa-3x"></span>
+            <h2>{{item.nrRooms}} Rooms</h2>
+        </div>
+        <div class="col-lg-4 callout">
+            <span class="fa fa-star-half-o fa-3x"></span>
+            <h2>{{item.publicRanking}}</h2>
+        </div>
+    </div>
+</section>
 <section id="desc">
     <div class="container">
         <div class="row">
-            <div class="col-lg-6 col-lg-offset-3">
-                <!--<div class="row">
-                <div class="col-lg-4">
-                    <span ng-show="item.formattedAddress">{{item.formattedAddress}}</span><span ng-show="!item.formattedAddress">{{item.address}}, {{item.city}}</span>
-                </div>
-                <div class="col-lg-4">
-                    {{item.minrate | currency:item.currencycode+" "}}<span ng-show="item.maxrate">-{{item.maxrate | currency:item.currencycode+" "}}</span>
-                </div>
-                <div class="col-lg-4">
-                    {{item.nrRooms}} Rooms
-                </div>
-            </div>-->
+            <div class="col-lg-4 col-lg-offset-4">
                 {{item.descEn}}
             </div>
         </div>

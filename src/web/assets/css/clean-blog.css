@@ -154,7 +154,7 @@ hr.small {
     -moz-background-size: cover;
     background-size: cover;
     -o-background-size: cover;
-    margin-bottom: 50px;
+    margin-bottom: 0px;
 }
 
 .intro-header .site-heading,
@@ -484,4 +484,36 @@ body {
     font-weight: 500;
     padding-top: 40px;
     padding-bottom: 80px;
+}
+
+#greywrap {
+    background: #f5f5f5;
+    margin-top: 0px;
+    padding-top: 30px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+}
+
+#greywrap .callout {
+    margin-bottom: 20px;
+}
+
+#greywrap p {
+    margin-left: 30px;
+    margin-right: 30px;
+    letter-spacing: 1px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+#greywrap h2 {
+    font-weight: 400;
+    font-size: 23px;
+    margin-bottom: 10px;
+}
+
+#greywrap .icon {
+    font-size: 60px;
+    line-height: 30px;
+    margin-bottom: 10px;
 }
