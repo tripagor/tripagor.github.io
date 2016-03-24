@@ -10,23 +10,7 @@
         </div>
     </div>
 </header>
-<!--<section id="features">
-    <div class="row">
-        <div class="col-lg-4 callout">
-            <span class="fa fa-map-marker fa-3x"></span>
-            <h2>{{item.formattedAddress}}</span><span ng-show="!item.formattedAddress">{{item.address}}, {{item.city}}</h2>
-        </div>
-        <div class="col-lg-4 callout">
-            <span class="fa fa-money fa-2x"></span>
-            <h2>{{item.minrate | currency:item.currencycode+" "}}<span ng-show="item.maxrate">-{{item.marate | currency:item.currencycode+" "}}</span></h2>
-        </div>
-        <div class="col-lg-4 callout">
-            <span class="fa fa-bed fa-2x"></span>
-            <h2>{{item.nrRooms}} Rooms</h2>
-        </div>
-    </div>
-</section>-->
-<section id="greywrap">
+<section id="short-features">
     <div class="row">
         <div class="col-lg-4 callout">
             <span class="fa fa-money fa-3x"></span>
@@ -51,7 +35,7 @@
         </div>
     </div>
 </section>
-<section id="df">
+<section id="address">
     <div class="container">
         <div class="row">
             <div class="col-lg-5">
@@ -64,7 +48,9 @@
                 <h4>ADDRESS</h4>
                 <br>
                 <p>{{item.name}}</p>
-                <p ng-show="item.formattedAddress" ng-bind-html="item.formattedAddress | break"></p>
+                <span ng-show="item.formattedAddress">
+                   <p  ng-bind-html="item.formattedAddress|break"></p>
+                </span>
                 <p ng-show="!item.formattedAddress">{{item.address}}
                     <br> {{item.city}}
                 </p>

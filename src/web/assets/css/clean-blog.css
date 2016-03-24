@@ -452,41 +452,41 @@ body {
     webkit-tap-highlight-color: #0085a1;
 }
 
-#df {
+#address {
     background: #2f2f2f;
 }
 
-#df h4 {
+#address h4 {
     color: #fff;
     margin-left: 15px;
     margin-top: 30px;
     font-size: 30px;
 }
 
-#df p {
+#address p {
     color: #fff;
     font-size: 20px;
     line-height: 18px;
     margin-left: 15px;
 }
 
-#df .container {
+#address .container {
     width: 100%
 }
 
-#df .col-lg-5 {
+#address .col-lg-5 {
     margin: 0;
     padding: 0;
 }
 
 #desc .container {
-    font-size: 25px;
+    font-size: 28px;
     font-weight: 500;
     padding-top: 40px;
     padding-bottom: 80px;
 }
 
-#greywrap {
+#short-features {
     background: #f5f5f5;
     margin-top: 0px;
     padding-top: 30px;
@@ -494,11 +494,11 @@ body {
     text-align: center;
 }
 
-#greywrap .callout {
+#short-features .callout {
     margin-bottom: 20px;
 }
 
-#greywrap p {
+#short-features p {
     margin-left: 30px;
     margin-right: 30px;
     letter-spacing: 1px;
@@ -506,13 +506,13 @@ body {
     padding-bottom: 15px;
 }
 
-#greywrap h2 {
+#short-features h2 {
     font-weight: 400;
     font-size: 23px;
     margin-bottom: 10px;
 }
 
-#greywrap .icon {
+#short-features .icon {
     font-size: 60px;
     line-height: 30px;
     margin-bottom: 10px;
