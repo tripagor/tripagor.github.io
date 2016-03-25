@@ -19,7 +19,7 @@ public class PlaceMarker {
 
 	private int numberOfPlacesToAdd;
 	private PlaceAddApi placeAddApi;
-	private static final String GOOGLE_MAPS_API_KEY = "" + "";
+	private static final String GOOGLE_MAPS_API_KEY = "AIzaSyC_V_8PAujfCgCSU0UOAsWJzvoIbNFKYGU";
 	private String appendStr = "";
 
 	public PlaceMarker() {
