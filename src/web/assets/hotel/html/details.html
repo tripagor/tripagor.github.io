@@ -12,24 +12,28 @@
 </header>
 <section id="short-features">
     <div class="row">
-        <div class="col-lg-4 callout">
+        <div class="col-lg-3 callout">
             <span class="fa fa-money fa-3x"></span>
             <h2>{{item.minrate | currency:item.currencycode+" "}}<span ng-show="item.maxrate">-{{item.maxrate | currency:item.currencycode+" "}}</span></h2>
         </div>
-        <div class="col-lg-4 callout">
+        <div class="col-lg-3 callout">
             <span class="fa fa-bed fa-3x"></span>
             <h2>{{item.nrRooms}} Rooms</h2>
         </div>
-        <div class="col-lg-4 callout">
-            <span class="fa fa-star-half-o fa-3x"></span>
-            <h2>{{item.publicRanking}}</h2>
+        <div class="col-lg-3 callout">
+            <span class="fa fa-star fa-3x"></span>
+            <h2><uib-rating ng-model="rate" max="max" read-only="true" on-hover="hoveringOver(value)" on-leave="overStar = null" titles="['one','two','three']" aria-labelledby="default-rating"></uib-rating></h2>
+        </div>
+        <div class="col-lg-3 callout">
+            <span class="fa fa-trophy fa-3x"></span>
+            <h2>{{item.hotelClass}}</h2>
         </div>
     </div>
 </section>
 <section id="desc">
     <div class="container">
         <div class="row">
-            <div class="col-lg-4 col-lg-offset-4">
+            <div class="col-lg-8 col-lg-offset-2">
                 {{item.descEn}}
             </div>
         </div>

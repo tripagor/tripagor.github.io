@@ -43,6 +43,7 @@
     <script src="https://code.angularjs.org/1.5.2/angular-resource.js"></script>
     <script src="https://code.angularjs.org/1.5.2/angular-route.js"></script></script>
     <script src="https://code.angularjs.org/1.5.2/angular-sanitize.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/1.2.5/ui-bootstrap-tpls.min.js"></script>
     <script src="<#if (content.rootpath)??>${content.rootpath}<#else></#if>js/clean-blog.min.js"></script>
     <script src="<#if (content.rootpath)??>${content.rootpath}<#else></#if>hotel/app.js"></script>
     <script src="<#if (content.rootpath)??>${content.rootpath}<#else></#if>hotel/controller.js"></script>
