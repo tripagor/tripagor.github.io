@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('hotel', ['ngRoute', 'ngSanitize', 'hotelCtrls']).config(['$routeProvider', function($routeProvider) {
+angular.module('hotel', ['ngRoute', 'ngSanitize', , 'ui.bootstrap', 'hotelCtrls']).config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/:id/:name', {
         templateUrl: 'hotel/html/details.html',
         controller: 'hotelDetailsCtrl'
