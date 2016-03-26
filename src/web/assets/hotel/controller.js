@@ -9,22 +9,13 @@ angular.module('hotelCtrls', ['ngResource']).controller('hotelDetailsCtrl', ['$s
         });
     $scope.item.$promise.then(function(result) {
         $scope.item = result;
-        $scope.rate = result.hotelClass + 1;
+
+        $scope.class = result.hotelClass;
+        if (result.hotelClass == 0) {
+            $scope.class = 1;
+        }
+
+        $scope.rate = Math.floor(Math.random() * 8) + 6;
     });
 
-    $scope.max = 6;
-    $scope.isReadonly = false;
-
-    $scope.hoveringOver = function(value) {
-        $scope.overStar = value;
-        $scope.percent = 100 * (value / $scope.max);
-    };
-
-    $scope.ratingStates = [
-        { stateOn: 'glyphicon-ok-sign', stateOff: 'glyphicon-ok-circle' },
-        { stateOn: 'glyphicon-star', stateOff: 'glyphicon-star-empty' },
-        { stateOn: 'glyphicon-heart', stateOff: 'glyphicon-ban-circle' },
-        { stateOn: 'glyphicon-heart' },
-        { stateOff: 'glyphicon-off' }
-    ];
 }]);

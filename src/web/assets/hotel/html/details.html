@@ -22,11 +22,11 @@
         </div>
         <div class="col-lg-3 callout">
             <span class="fa fa-star fa-3x"></span>
-            <h2><uib-rating ng-model="rate" max="max" read-only="true" on-hover="hoveringOver(value)" on-leave="overStar = null" titles="['one','two','three']" aria-labelledby="default-rating"></uib-rating></h2>
+            <h2><uib-rating ng-model="class" max="5" read-only="true"></uib-rating></h2>
         </div>
         <div class="col-lg-3 callout">
             <span class="fa fa-trophy fa-3x"></span>
-            <h2>{{item.hotelClass}}</h2>
+            <h2><uib-rating ng-model="rate" max="8" read-only="true" state-on="'glyphicon-heart'"></uib-rating></h2>
         </div>
     </div>
 </section>
