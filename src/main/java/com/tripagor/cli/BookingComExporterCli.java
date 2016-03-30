@@ -25,6 +25,10 @@ public class BookingComExporterCli {
 		options.addOption("c", true, "collection name");
 		options.addOption("h", false, "this help");
 
+		options.addOption("u", true, "Url RestService");
+		options.addOption("i", true, "clientId");
+		options.addOption("p", true, "client Secret");
+
 		CommandLineParser parser = new DefaultParser();
 		try {
 			CommandLine cmd = parser.parse(options, args);
@@ -32,10 +36,13 @@ public class BookingComExporterCli {
 				help();
 			}
 
-			String source = "";
-			String directory = "";
-			String uri = "";
-			String collection = "";
+			String source = null;
+			String directory = null;
+			String mongoUri = null;
+			String collection = null;
+			String restUri = null;
+			String clientId = null;
+			String clientSecret = null;
 
 			if (cmd.hasOption("s")) {
 				source = cmd.getOptionValue("s");
@@ -43,30 +50,42 @@ public class BookingComExporterCli {
 			if (cmd.hasOption("f")) {
 				directory = cmd.getOptionValue("f");
 			}
-
-			if ("".equals(source) && "".equals(directory)) {
-				help();
-			}
-
 			if (cmd.hasOption("c")) {
 				collection = cmd.getOptionValue("c");
-
-			} else {
-				help();
 			}
 			if (cmd.hasOption("d")) {
-				uri = cmd.getOptionValue("d");
+				mongoUri = cmd.getOptionValue("d");
+			}
+			if (cmd.hasOption("u")) {
+				restUri = cmd.getOptionValue("u");
+			}
+			if (cmd.hasOption("i")) {
+				clientId = cmd.getOptionValue("i");
+			}
+			if (cmd.hasOption("p")) {
+				clientSecret = cmd.getOptionValue("p");
+			}
 
+			if (source == null && directory == null) {
+				help();
+			}
+
+			if (restUri != null && clientId != null && clientSecret != null) {
+				if (source != null) {
+					exporter.extract(new File(source), restUri, clientId, clientSecret);
+				} else if (directory != null) {
+					exporter.extract(Paths.get(directory), restUri, clientId, clientSecret);
+				}
+			} else if (mongoUri != null && collection != null) {
+				if (source != null) {
+					exporter.extract(new File(source), mongoUri, collection);
+				} else if (directory != null) {
+					exporter.extract(Paths.get(directory), mongoUri, collection);
+				}
 			} else {
 				help();
 			}
 
-			System.out.println("importing " + source + " > " + uri);
-			if (!"".equals(source)) {
-				exporter.extract(new File(source), uri, collection);
-			} else if (!"".equals(directory)) {
-				exporter.extract(Paths.get(directory), uri, collection);
-			}
 		} catch (Exception e) {
 			System.err.println("An problem occured:" + e);
 		}
