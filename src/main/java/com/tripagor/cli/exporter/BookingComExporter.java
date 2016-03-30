@@ -6,8 +6,6 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.bson.Document;
@@ -86,14 +84,14 @@ public class BookingComExporter {
 						hotel.setImageUrl(valueMap.get("photoUrl").toString());
 
 						Hotel loaded = restTemplate.getForObject(
-								restUri.concat("/search/findByBookingComId?bookingComId={bookingComId}"), Hotel.class,
+								restUri.concat("/search/findByBookingComId?bookingId={bookingComId}"), Hotel.class,
 								hotel.getBookingComId());
 						if (loaded == null) {
 							restTemplate.postForObject(restUri, hotel, Hotel.class);
 						} else {
 							HttpEntity<Hotel> requestEntity = new HttpEntity<>(hotel);
-							restTemplate.exchange(restUri.concat("/{bookingComId}"), HttpMethod.PATCH, requestEntity,
-									Void.class);
+							restTemplate.exchange(restUri.concat("/{id}"), HttpMethod.PATCH, requestEntity, Void.class,
+									loaded.getId());
 						}
 
 					} catch (Exception e) {
