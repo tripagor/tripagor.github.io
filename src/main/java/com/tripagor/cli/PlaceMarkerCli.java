@@ -82,7 +82,6 @@ public class PlaceMarkerCli {
 				help();
 			}
 			if (mongoUri != null && collection != null) {
-				System.out.println("Adding places for " + mongoUri);
 				exporter.doMark(mongoUri, collection, key);
 			} else if (restUri != null && clientId != null && clientSecret != null) {
 				exporter.doMark(restUri, clientId, clientSecret, key);

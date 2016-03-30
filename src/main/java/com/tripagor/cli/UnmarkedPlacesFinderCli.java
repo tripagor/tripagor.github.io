@@ -71,7 +71,6 @@ public class UnmarkedPlacesFinderCli {
 			if (numberOfPlacesToAdd > 0) {
 				exporter.setNumberOfPlacesToAdd(numberOfPlacesToAdd);
 			}
-			System.out.println("Adding places for " + mongoUri);
 			if (mongoUri != null && collection != null) {
 				exporter.export(mongoUri, collection, key);
 			} else if (restUri != null && clientId != null && clientSecret != null) {
