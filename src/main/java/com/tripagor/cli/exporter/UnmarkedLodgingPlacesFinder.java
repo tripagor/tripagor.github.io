@@ -27,7 +27,6 @@ public class UnmarkedLodgingPlacesFinder {
 	private int numberOfPlacesToAdd = 50000;
 	private StringSimilarity stringSimilarity;
 	private DistanceCalculator distanceCalculator;
-	private final GeoApiContext context = new GeoApiContext().setApiKey("AIzaSyC_V_8PAujfCgCSU0UOAsWJzvoIbNFKYGU");
 	private AddressTools addressTools;
 
 	public UnmarkedLodgingPlacesFinder() {
@@ -36,7 +35,9 @@ public class UnmarkedLodgingPlacesFinder {
 		addressTools = new AddressTools();
 	}
 
-	public void export(String dbUri, String collectionName) {
+	public void export(String dbUri, String collectionName, String key) {
+		// AIzaSyC_V_8PAujfCgCSU0UOAsWJzvoIbNFKYGU
+		GeoApiContext context = new GeoApiContext().setApiKey(key);
 		MongoClientURI mongoClientURI = new MongoClientURI(dbUri);
 		MongoClient mongoClient = new MongoClient(mongoClientURI);
 		final MongoCollection<Document> collection = mongoClient.getDatabase(mongoClientURI.getDatabase())
@@ -122,6 +123,11 @@ public class UnmarkedLodgingPlacesFinder {
 
 	public void setNumberOfPlacesToAdd(int numberOfPlacesToAdd) {
 		this.numberOfPlacesToAdd = numberOfPlacesToAdd;
+	}
+
+	public void export(String restUri, String clientId, String clientSecret, String key) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

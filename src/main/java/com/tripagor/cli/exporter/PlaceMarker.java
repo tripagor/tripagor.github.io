@@ -18,15 +18,13 @@ import com.tripagor.model.PlaceAddResponse;
 public class PlaceMarker {
 
 	private int numberOfPlacesToAdd;
-	private PlaceAddApi placeAddApi;
-	private static final String GOOGLE_MAPS_API_KEY = "AIzaSyC_V_8PAujfCgCSU0UOAsWJzvoIbNFKYGU";
 	private String appendStr = "";
 
 	public PlaceMarker() {
-		placeAddApi = new PlaceAddApi(GOOGLE_MAPS_API_KEY);
 	}
 
-	public void doMark(String uri, String collectionName) {
+	public void doMark(String uri, String collectionName, String key) {
+		PlaceAddApi placeAddApi = new PlaceAddApi(key);
 
 		MongoClientURI mongoClientURI = new MongoClientURI(uri);
 		MongoClient mongoClient = new MongoClient(mongoClientURI);
@@ -76,6 +74,13 @@ public class PlaceMarker {
 		}
 
 	}
+	
+
+	public void doMark(String restUri, String clientId, String clientSecret, String key) {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 	public void setNumberOfPlacesToAdd(int numberOfPlacesToAdd) {
 		this.numberOfPlacesToAdd = numberOfPlacesToAdd;

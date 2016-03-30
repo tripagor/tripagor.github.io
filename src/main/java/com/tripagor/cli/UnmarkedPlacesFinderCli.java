@@ -16,43 +16,71 @@ public class UnmarkedPlacesFinderCli {
 		UnmarkedLodgingPlacesFinder exporter = new UnmarkedLodgingPlacesFinder();
 
 		options = new Options();
+
+		options.addOption("h", false, "this help");
+
 		options.addOption("d", true, "mongo uri");
 		options.addOption("c", true, "collection");
+
+		options.addOption("u", true, "Url RestService");
+		options.addOption("i", true, "clientId");
+		options.addOption("p", true, "client Secret");
+
 		options.addOption("n", true, "maxium number set to be exported");
-		options.addOption("h", false, "this help");
 
 		CommandLineParser parser = new DefaultParser();
 		try {
 			CommandLine cmd = parser.parse(options, args);
+
+			String mongoUri = null;
+			String collection = null;
+			int numberOfPlacesToAdd = 0;
+			String clientId = null;
+			String clientSecret = null;
+			String restUri = null;
+			String key = null;
+
 			if (cmd.hasOption("h")) {
 				help();
 			}
-
-			String uri = "";
-			int numberOfPlacesToAdd = 0;
-
 			if (cmd.hasOption("d")) {
-				uri = cmd.getOptionValue("d");
-			} else {
-				help();
+				mongoUri = cmd.getOptionValue("d");
 			}
-
-			String collection = "";
 			if (cmd.hasOption("c")) {
 				collection = cmd.getOptionValue("c");
-			} else {
-				help();
 			}
-
+			if (cmd.hasOption("u")) {
+				restUri = cmd.getOptionValue("u");
+			}
+			if (cmd.hasOption("i")) {
+				clientId = cmd.getOptionValue("i");
+			}
+			if (cmd.hasOption("p")) {
+				clientSecret = cmd.getOptionValue("p");
+			}
+			if (cmd.hasOption("k")) {
+				key = cmd.getOptionValue("k");
+			}
 			if (cmd.hasOption("n")) {
 				numberOfPlacesToAdd = Integer.parseInt(cmd.getOptionValue("n"));
 			}
 
+			if (key != null) {
+				help();
+			}
 			if (numberOfPlacesToAdd > 0) {
 				exporter.setNumberOfPlacesToAdd(numberOfPlacesToAdd);
 			}
-			System.out.println("Adding places for " + uri);
-			exporter.export(uri, collection);
+			System.out.println("Adding places for " + mongoUri);
+			if (mongoUri != null && collection != null) {
+				exporter.export(mongoUri, collection, key);
+			} else if (restUri != null && clientId != null && clientSecret != null) {
+				exporter.export(restUri, clientId, clientSecret, key);
+			}
+
+			else {
+				help();
+			}
 		} catch (Exception e) {
 			System.err.println("An problem occured:" + e);
 		}

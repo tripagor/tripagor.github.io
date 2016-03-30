@@ -14,43 +14,61 @@ public class PlaceMarkerCli {
 
 	public static void main(String[] args) {
 		PlaceMarker exporter = new PlaceMarker();
+		CommandLineParser parser = new DefaultParser();
 
 		options = new Options();
-		options.addOption("d", true, "mongo uri");
-		options.addOption("c", true, "collection");
-		options.addOption("a", true, "apennd string");
-		options.addOption("n", true, "maxium number of markers to be placed");
 		options.addOption("h", false, "this help");
 
-		CommandLineParser parser = new DefaultParser();
+		options.addOption("a", true, "append string");
+		options.addOption("n", true, "maxium number of markers to be placed");
+
+		options.addOption("k", true, "google api key");
+
+		options.addOption("d", true, "mongo uri");
+		options.addOption("c", true, "collection");
+
+		options.addOption("u", true, "Url RestService");
+		options.addOption("i", true, "clientId");
+		options.addOption("p", true, "client Secret");
+
 		try {
 			CommandLine cmd = parser.parse(options, args);
+
+			String restUri = null;
+			String clientId = null;
+			String clientSecret = null;
+			String mongoUri = null;
+			String collection = null;
+			String key = null;
+			int numberOfPlacesToAdd = 0;
+			String appendStr = null;
+
 			if (cmd.hasOption("h")) {
 				help();
 			}
-
-			String uri = "";
-			int numberOfPlacesToAdd = 0;
-
 			if (cmd.hasOption("d")) {
-				uri = cmd.getOptionValue("d");
-			} else {
-				help();
+				mongoUri = cmd.getOptionValue("d");
 			}
-
-			String collection = "";
 			if (cmd.hasOption("c")) {
 				collection = cmd.getOptionValue("c");
-			} else {
-				help();
 			}
-
 			if (cmd.hasOption("n")) {
 				numberOfPlacesToAdd = Integer.parseInt(cmd.getOptionValue("n"));
 			}
-			String appendStr = null;
 			if (cmd.hasOption("a")) {
 				appendStr = cmd.getOptionValue("a");
+			}
+			if (cmd.hasOption("u")) {
+				restUri = cmd.getOptionValue("u");
+			}
+			if (cmd.hasOption("i")) {
+				clientId = cmd.getOptionValue("i");
+			}
+			if (cmd.hasOption("p")) {
+				clientSecret = cmd.getOptionValue("p");
+			}
+			if (cmd.hasOption("k")) {
+				key = cmd.getOptionValue("k");
 			}
 
 			if (numberOfPlacesToAdd > 0) {
@@ -59,8 +77,18 @@ public class PlaceMarkerCli {
 			if (appendStr != null) {
 				exporter.setAppendStr(appendStr);
 			}
-			System.out.println("Adding places for " + uri);
-			exporter.doMark(uri, collection);
+
+			if (key == null) {
+				help();
+			}
+			if (mongoUri != null && collection != null) {
+				System.out.println("Adding places for " + mongoUri);
+				exporter.doMark(mongoUri, collection, key);
+			} else if (restUri != null && clientId != null && clientSecret != null) {
+				exporter.doMark(restUri, clientId, clientSecret, key);
+			} else {
+				help();
+			}
 		} catch (Exception e) {
 			System.err.println("An problem occured:" + e);
 		}

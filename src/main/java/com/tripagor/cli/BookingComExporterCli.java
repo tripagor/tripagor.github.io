@@ -19,11 +19,14 @@ public class BookingComExporterCli {
 		BookingComExporter exporter = new BookingComExporter();
 
 		options = new Options();
+
+		options.addOption("h", false, "this help");
+		
 		options.addOption("s", true, "source file");
 		options.addOption("f", true, "source folder");
+		
 		options.addOption("d", true, "Mongo DB to export uri");
 		options.addOption("c", true, "collection name");
-		options.addOption("h", false, "this help");
 
 		options.addOption("u", true, "Url RestService");
 		options.addOption("i", true, "clientId");
@@ -32,10 +35,6 @@ public class BookingComExporterCli {
 		CommandLineParser parser = new DefaultParser();
 		try {
 			CommandLine cmd = parser.parse(options, args);
-			if (cmd.hasOption("h")) {
-				help();
-			}
-
 			String source = null;
 			String directory = null;
 			String mongoUri = null;
@@ -44,6 +43,10 @@ public class BookingComExporterCli {
 			String clientId = null;
 			String clientSecret = null;
 
+
+			if (cmd.hasOption("h")) {
+				help();
+			}
 			if (cmd.hasOption("s")) {
 				source = cmd.getOptionValue("s");
 			}
