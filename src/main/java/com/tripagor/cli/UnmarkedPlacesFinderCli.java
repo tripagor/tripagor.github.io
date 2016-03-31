@@ -22,7 +22,7 @@ public class UnmarkedPlacesFinderCli {
 		options.addOption("d", true, "mongo uri");
 		options.addOption("c", true, "collection");
 
-		options.addOption("u", true, "Url RestService");
+		options.addOption("r", true, "Host RestService");
 		options.addOption("i", true, "clientId");
 		options.addOption("p", true, "client Secret");
 
@@ -37,7 +37,7 @@ public class UnmarkedPlacesFinderCli {
 			int numberOfPlacesToAdd = 0;
 			String clientId = null;
 			String clientSecret = null;
-			String restUri = null;
+			String host = null;
 			String key = null;
 
 			if (cmd.hasOption("h")) {
@@ -49,8 +49,8 @@ public class UnmarkedPlacesFinderCli {
 			if (cmd.hasOption("c")) {
 				collection = cmd.getOptionValue("c");
 			}
-			if (cmd.hasOption("u")) {
-				restUri = cmd.getOptionValue("u");
+			if (cmd.hasOption("r")) {
+				host = cmd.getOptionValue("r");
 			}
 			if (cmd.hasOption("i")) {
 				clientId = cmd.getOptionValue("i");
@@ -73,8 +73,8 @@ public class UnmarkedPlacesFinderCli {
 			}
 			if (mongoUri != null && collection != null) {
 				exporter.export(mongoUri, collection, key);
-			} else if (restUri != null && clientId != null && clientSecret != null) {
-				exporter.export(restUri, clientId, clientSecret, key);
+			} else if (host != null && clientId != null && clientSecret != null) {
+				exporter.export(host, clientId, clientSecret, key);
 			}
 
 			else {

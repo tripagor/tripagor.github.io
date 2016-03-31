@@ -3,7 +3,6 @@ package com.tripagor.cli.exporter;
 import java.io.File;
 import java.math.BigDecimal;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +18,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.security.oauth2.client.OAuth2RestTemplate;
 import org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails;
-import org.springframework.security.oauth2.client.token.grant.password.ResourceOwnerPasswordResourceDetails;
 
 import com.google.common.base.CaseFormat;
 import com.mongodb.MongoClient;
@@ -35,28 +33,17 @@ public class BookingComExporter {
 	private final Logger logger = LoggerFactory.getLogger(BookingComExporter.class);
 	private final Map<Integer, String> propMap = new HashMap<Integer, String>();
 	private final Map<String, String> propertyReplaceMap = new HashMap<String, String>();
-	private OAuth2RestTemplate restTemplate;
 
 	public BookingComExporter() {
 		propertyReplaceMap.put("id", "booking_com_id");
 		propertyReplaceMap.put("cc1", "country_code");
-		ClientCredentialsResourceDetails resource = new ClientCredentialsResourceDetails();
-
-		resource.setAccessTokenUri("http://localhost:8080/oauth/token");
-		resource.setClientId("privileged");
-		resource.setClientSecret("s67a+6TwkwsZ");
-		restTemplate = new OAuth2RestTemplate(resource);
-		
-		HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
-
-		restTemplate.setRequestFactory(requestFactory);
 	}
 
-	public void extract(Path path, String uri, String collectionname) {
+	public void extract(Path path, String host, String collectionname) {
 		File directory = path.toFile();
 		for (File file : directory.listFiles()) {
 			System.out.println("extracting file " + file.getName() + "...");
-			extract(file, uri, collectionname);
+			extract(file, host, collectionname);
 			System.out.println("extracting file " + file.getName() + " suceeded.");
 		}
 	}
@@ -70,7 +57,15 @@ public class BookingComExporter {
 		}
 	}
 
-	public void extract(File importFile, String restUri, String clientId, String clientSecret) {
+	public void extract(File importFile, String host, String clientId, String clientSecret) {
+		ClientCredentialsResourceDetails resource = new ClientCredentialsResourceDetails();
+		resource.setAccessTokenUri(host.concat("/oauth/token"));
+		resource.setClientId(clientId);
+		resource.setClientSecret(clientSecret);
+		resource.setId("auth");
+		OAuth2RestTemplate restTemplate = new OAuth2RestTemplate(resource);		
+		HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
+		restTemplate.setRequestFactory(requestFactory);
 
 		TsvParserSettings settings = new TsvParserSettings();
 		settings.getFormat().setLineSeparator("\n");
@@ -99,15 +94,15 @@ public class BookingComExporter {
 						hotel.setImageUrl(valueMap.get("photoUrl").toString());
 
 						Hotel loaded = restTemplate.getForObject(
-								restUri.concat("/search/findByBookingComId?bookingId={bookingComId}"), Hotel.class,
+								host.concat("/hotels/search/findByBookingComId?bookingId={bookingComId}"), Hotel.class,
 								hotel.getBookingComId());
 						if (loaded == null) {
-							restTemplate.postForObject(restUri, hotel, Hotel.class);
+							restTemplate.postForObject(host, hotel, Hotel.class);
 						} else {
 							HttpHeaders headers = new HttpHeaders();
 							headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString());
 							HttpEntity<Hotel> requestEntity = new HttpEntity<>(hotel, headers);
-							restTemplate.exchange(restUri.concat("/{id}"), HttpMethod.PATCH, requestEntity,
+							restTemplate.exchange(host.concat("/hotels/{id}"), HttpMethod.PATCH, requestEntity,
 									String.class, loaded.getId());
 						}
 

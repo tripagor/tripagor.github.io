@@ -27,14 +27,14 @@ public class PlaceMarkerCli {
 		options.addOption("d", true, "mongo uri");
 		options.addOption("c", true, "collection");
 
-		options.addOption("u", true, "Url RestService");
+		options.addOption("r", true, "Host RestService");
 		options.addOption("i", true, "clientId");
 		options.addOption("p", true, "client Secret");
 
 		try {
 			CommandLine cmd = parser.parse(options, args);
 
-			String restUri = null;
+			String host = null;
 			String clientId = null;
 			String clientSecret = null;
 			String mongoUri = null;
@@ -58,8 +58,8 @@ public class PlaceMarkerCli {
 			if (cmd.hasOption("a")) {
 				appendStr = cmd.getOptionValue("a");
 			}
-			if (cmd.hasOption("u")) {
-				restUri = cmd.getOptionValue("u");
+			if (cmd.hasOption("r")) {
+				host = cmd.getOptionValue("r");
 			}
 			if (cmd.hasOption("i")) {
 				clientId = cmd.getOptionValue("i");
@@ -83,8 +83,8 @@ public class PlaceMarkerCli {
 			}
 			if (mongoUri != null && collection != null) {
 				exporter.doMark(mongoUri, collection, key);
-			} else if (restUri != null && clientId != null && clientSecret != null) {
-				exporter.doMark(restUri, clientId, clientSecret, key);
+			} else if (host != null && clientId != null && clientSecret != null) {
+				exporter.doMark(host, clientId, clientSecret, key);
 			} else {
 				help();
 			}
