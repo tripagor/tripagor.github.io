@@ -3,6 +3,7 @@ package com.tripagor.cli.exporter;
 import java.io.File;
 import java.math.BigDecimal;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +17,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.security.oauth2.client.OAuth2RestTemplate;
+import org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails;
+import org.springframework.security.oauth2.client.token.grant.password.ResourceOwnerPasswordResourceDetails;
 
 import com.google.common.base.CaseFormat;
 import com.mongodb.MongoClient;
@@ -32,12 +35,18 @@ public class BookingComExporter {
 	private final Logger logger = LoggerFactory.getLogger(BookingComExporter.class);
 	private final Map<Integer, String> propMap = new HashMap<Integer, String>();
 	private final Map<String, String> propertyReplaceMap = new HashMap<String, String>();
-	private RestTemplate restTemplate;
+	private OAuth2RestTemplate restTemplate;
 
 	public BookingComExporter() {
 		propertyReplaceMap.put("id", "booking_com_id");
 		propertyReplaceMap.put("cc1", "country_code");
-		restTemplate = new RestTemplate();
+		ClientCredentialsResourceDetails resource = new ClientCredentialsResourceDetails();
+
+		resource.setAccessTokenUri("http://localhost:8080/oauth/token");
+		resource.setClientId("privileged");
+		resource.setClientSecret("s67a+6TwkwsZ");
+		restTemplate = new OAuth2RestTemplate(resource);
+		
 		HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
 
 		restTemplate.setRequestFactory(requestFactory);
@@ -97,7 +106,6 @@ public class BookingComExporter {
 						} else {
 							HttpHeaders headers = new HttpHeaders();
 							headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString());
-							headers.add("Authorization", "Bearer 4027530d-8105-4ba4-b707-3a501d1f7a3c");
 							HttpEntity<Hotel> requestEntity = new HttpEntity<>(hotel, headers);
 							restTemplate.exchange(restUri.concat("/{id}"), HttpMethod.PATCH, requestEntity,
 									String.class, loaded.getId());
