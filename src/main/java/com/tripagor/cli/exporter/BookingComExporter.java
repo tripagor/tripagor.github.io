@@ -12,7 +12,10 @@ import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
 import com.google.common.base.CaseFormat;
@@ -35,6 +38,9 @@ public class BookingComExporter {
 		propertyReplaceMap.put("id", "booking_com_id");
 		propertyReplaceMap.put("cc1", "country_code");
 		restTemplate = new RestTemplate();
+		HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
+
+		restTemplate.setRequestFactory(requestFactory);
 	}
 
 	public void extract(Path path, String uri, String collectionname) {
@@ -89,9 +95,12 @@ public class BookingComExporter {
 						if (loaded == null) {
 							restTemplate.postForObject(restUri, hotel, Hotel.class);
 						} else {
-							HttpEntity<Hotel> requestEntity = new HttpEntity<>(hotel);
-							restTemplate.exchange(restUri.concat("/{id}"), HttpMethod.PATCH, requestEntity, Void.class,
-									loaded.getId());
+							HttpHeaders headers = new HttpHeaders();
+							headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString());
+							headers.add("Authorization", "Bearer 4027530d-8105-4ba4-b707-3a501d1f7a3c");
+							HttpEntity<Hotel> requestEntity = new HttpEntity<>(hotel, headers);
+							restTemplate.exchange(restUri.concat("/{id}"), HttpMethod.PATCH, requestEntity,
+									String.class, loaded.getId());
 						}
 
 					} catch (Exception e) {
