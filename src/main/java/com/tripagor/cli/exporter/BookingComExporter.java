@@ -3,6 +3,7 @@ package com.tripagor.cli.exporter;
 import java.io.File;
 import java.math.BigDecimal;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,8 +17,16 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.DefaultOAuth2ClientContext;
 import org.springframework.security.oauth2.client.OAuth2RestTemplate;
 import org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails;
+import org.springframework.security.oauth2.common.AuthenticationScheme;
+import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
+import org.springframework.web.client.RestTemplate;
 
 import com.google.common.base.CaseFormat;
 import com.mongodb.MongoClient;
@@ -58,12 +67,11 @@ public class BookingComExporter {
 	}
 
 	public void extract(File importFile, String host, String clientId, String clientSecret) {
-		ClientCredentialsResourceDetails resource = new ClientCredentialsResourceDetails();
+		final ClientCredentialsResourceDetails resource = new ClientCredentialsResourceDetails();
 		resource.setAccessTokenUri(host.concat("/oauth/token"));
 		resource.setClientId(clientId);
 		resource.setClientSecret(clientSecret);
-		resource.setId("auth");
-		OAuth2RestTemplate restTemplate = new OAuth2RestTemplate(resource);		
+		OAuth2RestTemplate restTemplate = new OAuth2RestTemplate(resource);
 		HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
 		restTemplate.setRequestFactory(requestFactory);
 
