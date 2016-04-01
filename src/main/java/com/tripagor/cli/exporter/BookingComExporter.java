@@ -96,7 +96,7 @@ public class BookingComExporter {
 								host.concat("/hotels/search/findByBookingComId?bookingId={bookingComId}"), Hotel.class,
 								hotel.getBookingComId());
 						if (loaded == null) {
-							restTemplate.postForObject(host, hotel, Hotel.class);
+							restTemplate.postForObject(host.concat("/hotels"), hotel, Hotel.class);
 						} else {
 							HttpHeaders headers = new HttpHeaders();
 							headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString());
