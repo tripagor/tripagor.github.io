@@ -42,9 +42,9 @@ public class PlaceDetails {
 		final GeoApiContext context = new GeoApiContext().setApiKey("AIzaSyC_V_8PAujfCgCSU0UOAsWJzvoIbNFKYGU");
 
 		Collection<Hotel> hotels = restTemplate.exchange(
-				"http://api.tripagor.com/hotels/search/findByIsEvaluatedAndIsMarkerSetAndIsMarkerApprovedAndFormattedAddressExists?isEvaluated=true&isMarkerSet=true&isMarkerApproved=false&isFormattedAddressExisting=true",
+				"http://api.tripagor.com/hotels/search/findByIsEvaluatedAndIsMarkerSetAndIsMarkerApprovedAndFormattedAddressExists?page={page}&size={size}&isEvaluated=true&isMarkerSet=true&isMarkerApproved=false&isFormattedAddressExisting=true",
 				HttpMethod.GET, null, new ParameterizedTypeReference<PagedResources<Hotel>>() {
-				}).getBody().getContent();
+				}, 0, 100).getBody().getContent();
 		for (Hotel hotel : hotels) {
 			com.google.maps.model.PlaceDetails result = PlacesApi.placeDetails(context, hotel.getPlaceId().toString())
 					.await();
