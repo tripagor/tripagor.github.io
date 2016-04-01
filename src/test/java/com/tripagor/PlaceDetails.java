@@ -2,14 +2,13 @@ package com.tripagor;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map.Entry;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.hateoas.PagedResources;
 import org.springframework.hateoas.hal.Jackson2HalModule;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -42,15 +41,17 @@ public class PlaceDetails {
 
 		final GeoApiContext context = new GeoApiContext().setApiKey("AIzaSyC_V_8PAujfCgCSU0UOAsWJzvoIbNFKYGU");
 
-		@SuppressWarnings("unchecked")
-		Collection<LinkedHashMap<Object, Object>> hotelmap = restTemplate.getForObject(
+		Collection<Hotel> hotels = restTemplate.exchange(
 				"http://api.tripagor.com/hotels/search/findByIsEvaluatedAndIsMarkerSetAndIsMarkerApprovedAndFormattedAddressExists?isEvaluated=true&isMarkerSet=true&isMarkerApproved=false&isFormattedAddressExisting=true",
-				PagedResources.class).getContent();
+				HttpMethod.GET, null, new ParameterizedTypeReference<PagedResources<Hotel>>() {
+				}).getBody().getContent();
+		for (Hotel hotel : hotels) {
+			com.google.maps.model.PlaceDetails result = PlacesApi.placeDetails(context, hotel.getPlaceId().toString())
+					.await();
+			System.out.println("booking_com_id=" + hotel.getBookingComId() + " name=" + result.name + " location="
+					+ result.geometry.location + " placeId=" + result.placeId + " scope=" + result.scope
+					+ " wellformattedAddress=" + result.formattedAddress);
 
-		for (LinkedHashMap<Object, Object> map: hotelmap) {
-			com.google.maps.model.PlaceDetails result = PlacesApi.placeDetails(context, map.get("placeId").toString()).await();
-			System.out.println("booking_com_id=" +  map.get("bookingComId").toString() + " name=" + result.name + " location="
-					+ result.geometry.location + " placeId=" + result.placeId + " scope=" + result.scope);
 		}
 
 	}
