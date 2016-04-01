@@ -48,9 +48,7 @@ public class PlaceDetails {
 		for (Hotel hotel : hotels) {
 			com.google.maps.model.PlaceDetails result = PlacesApi.placeDetails(context, hotel.getPlaceId().toString())
 					.await();
-			System.out.println("booking_com_id=" + hotel.getBookingComId() + " name=" + result.name + " location="
-					+ result.geometry.location + " placeId=" + result.placeId + " scope=" + result.scope
-					+ " wellformattedAddress=" + result.formattedAddress);
+			System.out.println("name=" + result.name + " placeId=" + result.placeId + " scope=" + result.scope);
 
 		}
 
