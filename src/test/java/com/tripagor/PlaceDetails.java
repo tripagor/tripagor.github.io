@@ -19,13 +19,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.maps.GeoApiContext;
 import com.google.maps.PlacesApi;
 import com.tripagor.hotels.model.Hotel;
+import com.tripagor.rest.RestTemplateFactory;
 
 public class PlaceDetails {
 
-	RestTemplate restTemplate;
+	private RestTemplate restTemplate;
 
 	@Before
 	public void before() {
+		RestTemplateFactory restTemplateFactory =new RestTemplateFactory();
+
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		mapper.registerModule(new Jackson2HalModule());
@@ -33,7 +36,8 @@ public class PlaceDetails {
 		MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
 		converter.setSupportedMediaTypes(MediaType.parseMediaTypes("application/hal+json"));
 		converter.setObjectMapper(mapper);
-		restTemplate = new RestTemplate(Collections.<HttpMessageConverter<?>> singletonList(converter));
+
+		restTemplate = restTemplateFactory.get(converter);
 	}
 
 	@Test

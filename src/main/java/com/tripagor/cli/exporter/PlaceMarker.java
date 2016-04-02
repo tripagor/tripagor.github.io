@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 
 import org.bson.Document;
+import org.springframework.web.client.RestTemplate;
 
 import com.mongodb.Block;
 import com.mongodb.MongoClient;
@@ -14,13 +15,16 @@ import com.tripagor.cli.service.PlaceAddApi;
 import com.tripagor.model.Location;
 import com.tripagor.model.PlaceAddRequest;
 import com.tripagor.model.PlaceAddResponse;
+import com.tripagor.rest.RestTemplateFactory;
 
 public class PlaceMarker {
 
 	private int numberOfPlacesToAdd;
 	private String appendStr = "";
+	private RestTemplateFactory restTemplateFactory;
 
 	public PlaceMarker() {
+		this.restTemplateFactory = new RestTemplateFactory();
 	}
 
 	public void doMark(String uri, String collectionName, String key) {

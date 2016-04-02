@@ -15,9 +15,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.security.oauth2.client.OAuth2RestTemplate;
-import org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails;
+import org.springframework.web.client.RestTemplate;
 
 import com.google.common.base.CaseFormat;
 import com.mongodb.MongoClient;
@@ -25,6 +23,7 @@ import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.UpdateOptions;
 import com.tripagor.hotels.model.Hotel;
+import com.tripagor.rest.RestTemplateFactory;
 import com.univocity.parsers.tsv.TsvParser;
 import com.univocity.parsers.tsv.TsvParserSettings;
 
@@ -33,10 +32,17 @@ public class BookingComExporter {
 	private final Logger logger = LoggerFactory.getLogger(BookingComExporter.class);
 	private final Map<Integer, String> propMap = new HashMap<Integer, String>();
 	private final Map<String, String> propertyReplaceMap = new HashMap<String, String>();
+	private RestTemplateFactory restTemplateFactory;
+	private TsvParser parser;
 
 	public BookingComExporter() {
 		propertyReplaceMap.put("id", "booking_com_id");
 		propertyReplaceMap.put("cc1", "country_code");
+		restTemplateFactory = new RestTemplateFactory();
+
+		TsvParserSettings settings = new TsvParserSettings();
+		settings.getFormat().setLineSeparator("\n");
+		parser = new TsvParser(settings);
 	}
 
 	public void extract(Path path, String host, String collectionname) {
@@ -44,7 +50,7 @@ public class BookingComExporter {
 		for (File file : directory.listFiles()) {
 			System.out.println("extracting file " + file.getName() + "...");
 			extract(file, host, collectionname);
-			System.out.println("extracting file " + file.getName() + " suceeded.");
+			System.out.println("extracting file " + file.getName() + " succeeded.");
 		}
 	}
 
@@ -53,22 +59,12 @@ public class BookingComExporter {
 		for (File file : directory.listFiles()) {
 			System.out.println("extracting file " + file.getName() + "...");
 			extract(file, restUri, clientId, clientSecret);
-			System.out.println("extracting file " + file.getName() + " suceeded.");
+			System.out.println("extracting file " + file.getName() + " succeeded.");
 		}
 	}
 
 	public void extract(File importFile, String host, String clientId, String clientSecret) {
-		final ClientCredentialsResourceDetails resource = new ClientCredentialsResourceDetails();
-		resource.setAccessTokenUri(host.concat("/oauth/token"));
-		resource.setClientId(clientId);
-		resource.setClientSecret(clientSecret);
-		OAuth2RestTemplate restTemplate = new OAuth2RestTemplate(resource);
-		HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
-		restTemplate.setRequestFactory(requestFactory);
-
-		TsvParserSettings settings = new TsvParserSettings();
-		settings.getFormat().setLineSeparator("\n");
-		TsvParser parser = new TsvParser(settings);
+		RestTemplate restTemplate = restTemplateFactory.get(host, clientId, clientSecret);
 
 		List<String[]> rows = parser.parseAll(importFile);
 
