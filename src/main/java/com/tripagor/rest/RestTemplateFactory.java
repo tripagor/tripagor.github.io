@@ -16,11 +16,14 @@ public class RestTemplateFactory {
 		resource.setAccessTokenUri(host.concat("/oauth/token"));
 		resource.setClientId(clientId);
 		resource.setClientSecret(clientSecret);
+
 		OAuth2RestTemplate restTemplate = new OAuth2RestTemplate(resource);
 		HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
 		restTemplate.setRequestFactory(requestFactory);
 
-		restTemplate.getMessageConverters().addAll(asList(messageConverters));
+		if (messageConverters.length > 0) {
+			restTemplate.setMessageConverters(asList(messageConverters));
+		}
 
 		return restTemplate;
 	}
@@ -30,7 +33,9 @@ public class RestTemplateFactory {
 		HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
 		restTemplate.setRequestFactory(requestFactory);
 
-		restTemplate.getMessageConverters().addAll(asList(messageConverters));
+		if (messageConverters.length > 0) {
+			restTemplate.setMessageConverters(asList(messageConverters));
+		}
 
 		return restTemplate;
 	}
