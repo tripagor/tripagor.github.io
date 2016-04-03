@@ -37,7 +37,7 @@ public class UnmarkedLodgingPlacesFinder {
 	private AddressTools addressTools;
 	private RestTemplateFactory restTemplateFactory;
 	private MappingJackson2HttpMessageConverter converter;
-	private Object pageSize = 40;
+	private Object pageSize = 50;
 
 	public UnmarkedLodgingPlacesFinder() {
 		stringSimilarity = new StringSimilarity();
@@ -63,10 +63,13 @@ public class UnmarkedLodgingPlacesFinder {
 	public void export(String host, String clientId, String clientSecret, String key) {
 		GeoApiContext context = new GeoApiContext().setApiKey(key);
 
+		boolean isMaxiumimNumber = false;
+		int currentNumberProcessed = 0;
+
 		int currentPage = 0;
 		long totalPages = 1;
 
-		while (currentPage < totalPages) {
+		while (currentPage < totalPages && !isMaxiumimNumber) {
 			PagedResources<Hotel> pagedResources = restTemplateFactory.get(converter)
 					.exchange(
 							host.concat(
@@ -78,6 +81,12 @@ public class UnmarkedLodgingPlacesFinder {
 			Collection<Hotel> hotels = pagedResources.getContent();
 
 			for (Hotel hotel : hotels) {
+
+				if (numberOfPlacesToAdd != 0 && currentNumberProcessed >= numberOfPlacesToAdd) {
+					isMaxiumimNumber = true;
+					break;
+				}
+
 				try {
 					double longitude = new BigDecimal(hotel.getLongitude()).doubleValue();
 					double latitude = new BigDecimal(hotel.getLatitude()).doubleValue();
@@ -139,6 +148,8 @@ public class UnmarkedLodgingPlacesFinder {
 					HttpEntity<Hotel> requestEntity = new HttpEntity<>(hotel, headers);
 					restTemplateFactory.get(host, clientId, clientSecret).exchange(host.concat("/hotels/{id}"),
 							HttpMethod.PATCH, requestEntity, String.class, hotel.getId());
+					currentNumberProcessed++;
+
 				} catch (Exception e) {
 				}
 

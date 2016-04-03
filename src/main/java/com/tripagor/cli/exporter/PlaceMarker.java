@@ -45,6 +45,7 @@ public class PlaceMarker {
 
 	public void doMark(String host, String clientId, String clientSecret, String key) {
 		PlaceAddApi placeAddApi = new PlaceAddApi(key);
+		
 		boolean isMaxiumimNumber = false;
 		int currentNumberAdded = 0;
 
