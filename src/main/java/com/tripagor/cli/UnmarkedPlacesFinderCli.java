@@ -19,13 +19,10 @@ public class UnmarkedPlacesFinderCli {
 
 		options.addOption("h", false, "this help");
 
-		options.addOption("d", true, "mongo uri");
-		options.addOption("c", true, "collection");
-
 		options.addOption("r", true, "Host RestService");
 		options.addOption("i", true, "clientId");
 		options.addOption("p", true, "client Secret");
-		
+
 		options.addOption("k", true, "Google API key");
 
 		options.addOption("n", true, "maxium number set to be exported");
@@ -34,8 +31,6 @@ public class UnmarkedPlacesFinderCli {
 		try {
 			CommandLine cmd = parser.parse(options, args);
 
-			String mongoUri = null;
-			String collection = null;
 			int numberOfPlacesToAdd = 0;
 			String clientId = null;
 			String clientSecret = null;
@@ -44,12 +39,6 @@ public class UnmarkedPlacesFinderCli {
 
 			if (cmd.hasOption("h")) {
 				help();
-			}
-			if (cmd.hasOption("d")) {
-				mongoUri = cmd.getOptionValue("d");
-			}
-			if (cmd.hasOption("c")) {
-				collection = cmd.getOptionValue("c");
 			}
 			if (cmd.hasOption("r")) {
 				host = cmd.getOptionValue("r");
@@ -73,9 +62,7 @@ public class UnmarkedPlacesFinderCli {
 			if (numberOfPlacesToAdd > 0) {
 				exporter.setNumberOfPlacesToAdd(numberOfPlacesToAdd);
 			}
-			if (mongoUri != null && collection != null) {
-				exporter.export(mongoUri, collection, key);
-			} else if (host != null && clientId != null && clientSecret != null) {
+			if (host != null && clientId != null && clientSecret != null) {
 				exporter.export(host, clientId, clientSecret, key);
 			}
 

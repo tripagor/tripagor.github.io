@@ -22,14 +22,11 @@ public class PlaceMarkerCli {
 		options.addOption("a", true, "append string");
 		options.addOption("n", true, "maxium number of markers to be placed");
 
-		options.addOption("k", true, "google api key");
-
-		options.addOption("d", true, "mongo uri");
-		options.addOption("c", true, "collection");
-
-		options.addOption("r", true, "Host RestService");
+		options.addOption("r", true, "Host Rest Service");
 		options.addOption("i", true, "clientId");
 		options.addOption("p", true, "client Secret");
+
+		options.addOption("k", true, "google api key");
 
 		try {
 			CommandLine cmd = parser.parse(options, args);
@@ -37,8 +34,6 @@ public class PlaceMarkerCli {
 			String host = null;
 			String clientId = null;
 			String clientSecret = null;
-			String mongoUri = null;
-			String collection = null;
 			String key = null;
 			int numberOfPlacesToAdd = 0;
 			String appendStr = null;
@@ -46,12 +41,7 @@ public class PlaceMarkerCli {
 			if (cmd.hasOption("h")) {
 				help();
 			}
-			if (cmd.hasOption("d")) {
-				mongoUri = cmd.getOptionValue("d");
-			}
-			if (cmd.hasOption("c")) {
-				collection = cmd.getOptionValue("c");
-			}
+
 			if (cmd.hasOption("n")) {
 				numberOfPlacesToAdd = Integer.parseInt(cmd.getOptionValue("n"));
 			}
@@ -81,9 +71,7 @@ public class PlaceMarkerCli {
 			if (key == null) {
 				help();
 			}
-			if (mongoUri != null && collection != null) {
-				exporter.doMark(mongoUri, collection, key);
-			} else if (host != null && clientId != null && clientSecret != null) {
+			if (host != null && clientId != null && clientSecret != null) {
 				exporter.doMark(host, clientId, clientSecret, key);
 			} else {
 				help();

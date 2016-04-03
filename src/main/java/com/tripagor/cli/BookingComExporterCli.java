@@ -21,12 +21,9 @@ public class BookingComExporterCli {
 		options = new Options();
 
 		options.addOption("h", false, "this help");
-		
+
 		options.addOption("s", true, "source file");
 		options.addOption("f", true, "source folder");
-		
-		options.addOption("d", true, "Mongo DB to export uri");
-		options.addOption("c", true, "collection name");
 
 		options.addOption("r", true, "Host Rest Service");
 		options.addOption("i", true, "clientId");
@@ -37,12 +34,9 @@ public class BookingComExporterCli {
 			CommandLine cmd = parser.parse(options, args);
 			String source = null;
 			String directory = null;
-			String mongoUri = null;
-			String collection = null;
 			String host = null;
 			String clientId = null;
 			String clientSecret = null;
-
 
 			if (cmd.hasOption("h")) {
 				help();
@@ -52,12 +46,6 @@ public class BookingComExporterCli {
 			}
 			if (cmd.hasOption("f")) {
 				directory = cmd.getOptionValue("f");
-			}
-			if (cmd.hasOption("c")) {
-				collection = cmd.getOptionValue("c");
-			}
-			if (cmd.hasOption("d")) {
-				mongoUri = cmd.getOptionValue("d");
 			}
 			if (cmd.hasOption("r")) {
 				host = cmd.getOptionValue("r");
@@ -78,12 +66,6 @@ public class BookingComExporterCli {
 					exporter.extract(new File(source), host, clientId, clientSecret);
 				} else if (directory != null) {
 					exporter.extract(Paths.get(directory), host, clientId, clientSecret);
-				}
-			} else if (mongoUri != null && collection != null) {
-				if (source != null) {
-					exporter.extract(new File(source), mongoUri, collection);
-				} else if (directory != null) {
-					exporter.extract(Paths.get(directory), mongoUri, collection);
 				}
 			} else {
 				help();

@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -18,10 +17,6 @@ import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
 
 import com.google.common.base.CaseFormat;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.UpdateOptions;
 import com.tripagor.hotels.model.Hotel;
 import com.tripagor.rest.RestTemplateFactory;
 import com.univocity.parsers.tsv.TsvParser;
@@ -43,15 +38,6 @@ public class BookingComExporter {
 		TsvParserSettings settings = new TsvParserSettings();
 		settings.getFormat().setLineSeparator("\n");
 		parser = new TsvParser(settings);
-	}
-
-	public void extract(Path path, String host, String collectionname) {
-		File directory = path.toFile();
-		for (File file : directory.listFiles()) {
-			System.out.println("extracting file " + file.getName() + "...");
-			extract(file, host, collectionname);
-			System.out.println("extracting file " + file.getName() + " succeeded.");
-		}
 	}
 
 	public void extract(Path path, String restUri, String clientId, String clientSecret) {
@@ -118,60 +104,6 @@ public class BookingComExporter {
 		} catch (Exception e) {
 			logger.error("failed with {}", e);
 		}
-	}
-
-	public void extract(File importFile, String uri, String collectionname) {
-
-		MongoClientURI mongoClientURI = new MongoClientURI(uri);
-		MongoClient mongoClient = new MongoClient(mongoClientURI);
-		MongoCollection<Document> collection = mongoClient.getDatabase(mongoClientURI.getDatabase())
-				.getCollection(collectionname);
-		collection.createIndex(new Document("booking_com_id", 1));
-		collection.createIndex(new Document("country_code", 1));
-		collection.createIndex(new Document("city_unique", 1));
-		collection.createIndex(new Document("continent_id", 1));
-
-		TsvParserSettings settings = new TsvParserSettings();
-		settings.getFormat().setLineSeparator("\n");
-		TsvParser parser = new TsvParser(settings);
-
-		List<String[]> rows = parser.parseAll(importFile);
-
-		try {
-			for (int i = 0; i < rows.size(); i++) {
-				if (i > 0) {
-					try {
-
-						Document document = new Document();
-						String[] values = rows.get(i);
-						for (int j = 0; j < values.length; j++) {
-							if (values[j] != null) {
-								document.append(propMap.get(j), toObject(getType(propMap.get(j)), values[j]));
-							}
-						}
-
-						collection.replaceOne(new Document("booking_com_id", document.get("booking_com_id")), document,
-								(new UpdateOptions()).upsert(true));
-					} catch (Exception e) {
-						continue;
-					}
-				} else {
-					String[] propertyNames = rows.get(i);
-					for (int j = 0; j < propertyNames.length; j++) {
-						String propertyName = propertyNames[j];
-						if (this.propertyReplaceMap.get(propertyName) != null) {
-							propertyName = this.propertyReplaceMap.get(propertyName);
-						}
-						propMap.put(j, propertyName);
-					}
-				}
-			}
-		} catch (Exception e) {
-			logger.error("failed with {}", e);
-		} finally {
-			mongoClient.close();
-		}
-
 	}
 
 	@SuppressWarnings("rawtypes")
