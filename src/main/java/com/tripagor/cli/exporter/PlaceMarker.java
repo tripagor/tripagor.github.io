@@ -33,23 +33,21 @@ public class PlaceMarker {
 
 	private int numberOfPlacesToAdd;
 	private String appendStr = "";
-	private RestTemplate hateoasRestTemplate;
 	private int pageSize = 40;
-	private RestTemplate patchRestTemplate;
 	private RestTemplateFactory restTemplateFactory;
+	private MappingJackson2HttpMessageConverter converter;
 
 	public PlaceMarker() {
-		 restTemplateFactory = new RestTemplateFactory();
+		restTemplateFactory = new RestTemplateFactory();
 
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		mapper.registerModule(new Jackson2HalModule());
 
-		MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+		converter = new MappingJackson2HttpMessageConverter();
 		converter.setSupportedMediaTypes(MediaType.parseMediaTypes("application/hal+json"));
 		converter.setObjectMapper(mapper);
 
-		hateoasRestTemplate = restTemplateFactory.get(converter);
 	}
 
 	public void doMark(String uri, String collectionName, String key) {
@@ -107,16 +105,17 @@ public class PlaceMarker {
 	public void doMark(String host, String clientId, String clientSecret, String key) {
 		PlaceAddApi placeAddApi = new PlaceAddApi(key);
 
-		patchRestTemplate = restTemplateFactory.get(host,clientId, clientSecret);
 		int currentPage = 0;
 		long totalPages = 1;
 
-		
 		while (currentPage < totalPages) {
-			PagedResources<Hotel> pagedResources = hateoasRestTemplate.exchange(
-					host.concat("hotels/search/findByIsEvaluatedAndIsMarkerSetAndIsMarkerApprovedAndFormattedAddressExists?page={page}&size={size}&isEvaluated=true&isMarkerSet=false&isMarkerApproved=false&isFormattedAddressExisting=true"),
-					HttpMethod.GET, null, new ParameterizedTypeReference<PagedResources<Hotel>>() {
-					}, currentPage++, pageSize).getBody();
+			PagedResources<Hotel> pagedResources = restTemplateFactory.get(converter)
+					.exchange(
+							host.concat(
+									"hotels/search/findByIsEvaluatedAndIsMarkerSetAndIsMarkerApprovedAndFormattedAddressExists?limit=2&page={page}&size={size}&isEvaluated=true&isMarkerSet=false&isMarkerApproved=false&isFormattedAddressExisting=true"),
+							HttpMethod.GET, null, new ParameterizedTypeReference<PagedResources<Hotel>>() {
+							}, currentPage++, pageSize)
+					.getBody();
 			totalPages = pagedResources.getMetadata().getTotalPages();
 			Collection<Hotel> hotels = pagedResources.getContent();
 
@@ -145,8 +144,8 @@ public class PlaceMarker {
 						HttpHeaders headers = new HttpHeaders();
 						headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString());
 						HttpEntity<Hotel> requestEntity = new HttpEntity<>(hotel, headers);
-						patchRestTemplate.exchange(host.concat("/hotels/{id}"), HttpMethod.PATCH, requestEntity,
-								String.class, hotel.getId());
+						restTemplateFactory.get(host, clientId, clientSecret).exchange(host.concat("/hotels/{id}"),
+								HttpMethod.PATCH, requestEntity, String.class, hotel.getId());
 					}
 				} catch (Exception e) {
 					e.printStackTrace();

@@ -25,6 +25,8 @@ public class UnmarkedPlacesFinderCli {
 		options.addOption("r", true, "Host RestService");
 		options.addOption("i", true, "clientId");
 		options.addOption("p", true, "client Secret");
+		
+		options.addOption("k", true, "Google API key");
 
 		options.addOption("n", true, "maxium number set to be exported");
 
@@ -65,7 +67,7 @@ public class UnmarkedPlacesFinderCli {
 				numberOfPlacesToAdd = Integer.parseInt(cmd.getOptionValue("n"));
 			}
 
-			if (key != null) {
+			if (key == null) {
 				help();
 			}
 			if (numberOfPlacesToAdd > 0) {
