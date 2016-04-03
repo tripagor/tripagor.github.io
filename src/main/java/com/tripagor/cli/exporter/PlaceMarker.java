@@ -26,7 +26,7 @@ public class PlaceMarker {
 
 	private int numberOfPlacesToAdd;
 	private String appendStr = "";
-	private int pageSize = 2;
+	private int pageSize = 50;
 	private RestTemplateFactory restTemplateFactory;
 	private MappingJackson2HttpMessageConverter converter;
 
