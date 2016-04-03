@@ -26,7 +26,7 @@ public class PlaceMarker {
 
 	private int numberOfPlacesToAdd;
 	private String appendStr = "";
-	private int pageSize = 40;
+	private int pageSize = 2;
 	private RestTemplateFactory restTemplateFactory;
 	private MappingJackson2HttpMessageConverter converter;
 
@@ -45,11 +45,13 @@ public class PlaceMarker {
 
 	public void doMark(String host, String clientId, String clientSecret, String key) {
 		PlaceAddApi placeAddApi = new PlaceAddApi(key);
+		boolean isMaxiumimNumber = false;
+		int currentNumberAdded = 0;
 
 		int currentPage = 0;
 		long totalPages = 1;
 
-		while (currentPage < totalPages) {
+		while (currentPage < totalPages && !isMaxiumimNumber) {
 			PagedResources<Hotel> pagedResources = restTemplateFactory.get(converter)
 					.exchange(
 							host.concat(
@@ -61,6 +63,10 @@ public class PlaceMarker {
 			Collection<Hotel> hotels = pagedResources.getContent();
 
 			for (Hotel hotel : hotels) {
+				if (numberOfPlacesToAdd != 0 && currentNumberAdded >= numberOfPlacesToAdd) {
+					isMaxiumimNumber = true;
+					break;
+				}
 				try {
 					System.out.println(hotel.getBookingComId() + " " + hotel.getName());
 					PlaceAddRequest place = new PlaceAddRequest();
@@ -75,9 +81,7 @@ public class PlaceMarker {
 					place.setWebsite(hotel.getUrl() + appendStr);
 					place.setTypes(Arrays.asList(new String[] { "lodging" }));
 
-					PlaceAddResponse response = new PlaceAddResponse();// placeAddApi.add(place);
-					response.setStatus("OK");
-					response.setPlaceId("AAA99292");
+					PlaceAddResponse response = placeAddApi.add(place);
 					if ("OK".equals(response.getStatus())) {
 						hotel.setPlaceId(response.getPlaceId());
 						hotel.setIsMarkerSet(true);
@@ -87,6 +91,7 @@ public class PlaceMarker {
 						HttpEntity<Hotel> requestEntity = new HttpEntity<>(hotel, headers);
 						restTemplateFactory.get(host, clientId, clientSecret).exchange(host.concat("/hotels/{id}"),
 								HttpMethod.PATCH, requestEntity, String.class, hotel.getId());
+						currentNumberAdded++;
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
