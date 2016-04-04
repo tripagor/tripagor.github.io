@@ -35,7 +35,6 @@ public class UnmarkedLodgingPlacesFinder {
 		addressTools = new AddressTools();
 
 		this.hotelService = hotelService;
-
 	}
 
 	public void setNumberOfPlacesToAdd(int numberOfPlacesToAdd) {
@@ -121,10 +120,8 @@ public class UnmarkedLodgingPlacesFinder {
 
 					hotelService.update(hotel);
 					currentNumberProcessed++;
-
 				} catch (Exception e) {
 				}
-
 			}
 		}
 
