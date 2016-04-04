@@ -52,6 +52,7 @@ public class UnmarkedLodgingPlacesFinder {
 
 		while (currentPage < totalPages && !isMaxiumimNumber) {
 			PagedResources<Hotel> pagedResources = hotelService.findByIsEvaluatedExists(currentPage++, pageSize, true);
+			
 			totalPages = pagedResources.getMetadata().getTotalPages();
 			Collection<Hotel> hotels = pagedResources.getContent();
 
