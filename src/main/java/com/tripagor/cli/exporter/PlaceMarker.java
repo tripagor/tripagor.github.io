@@ -4,25 +4,14 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.hateoas.PagedResources;
-import org.springframework.hateoas.hal.Jackson2HalModule;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tripagor.cli.service.PlaceAddApi;
 import com.tripagor.hotels.HotelService;
-import com.tripagor.hotels.HotelServiceRemoteImpl;
 import com.tripagor.hotels.model.Hotel;
 import com.tripagor.model.Location;
 import com.tripagor.model.PlaceAddRequest;
 import com.tripagor.model.PlaceAddResponse;
-import com.tripagor.rest.RestTemplateFactory;
 
 public class PlaceMarker {
 
@@ -47,8 +36,8 @@ public class PlaceMarker {
 
 		while (currentPage < totalPages && !isMaxiumimNumber) {
 			PagedResources<Hotel> pagedResources = hotelService
-					.findByIsEvaluatedAndIsMarkerSetAndIsMarkerApprovedAndFormattedAddressExists(currentPage++, pageSize, true, false, false,
-							true);
+					.findByIsEvaluatedAndIsMarkerSetAndIsMarkerApprovedAndFormattedAddressExists(currentPage++,
+							pageSize, true, false, false, true);
 			totalPages = pagedResources.getMetadata().getTotalPages();
 			Collection<Hotel> hotels = pagedResources.getContent();
 
