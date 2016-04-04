@@ -17,6 +17,8 @@ import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
 
 import com.google.common.base.CaseFormat;
+import com.tripagor.hotels.HotelService;
+import com.tripagor.hotels.HotelServiceRemoteImpl;
 import com.tripagor.hotels.model.Hotel;
 import com.tripagor.rest.RestTemplateFactory;
 import com.univocity.parsers.tsv.TsvParser;
@@ -27,17 +29,17 @@ public class BookingComExporter {
 	private final Logger logger = LoggerFactory.getLogger(BookingComExporter.class);
 	private final Map<Integer, String> propMap = new HashMap<Integer, String>();
 	private final Map<String, String> propertyReplaceMap = new HashMap<String, String>();
-	private RestTemplateFactory restTemplateFactory;
 	private TsvParser parser;
+	private HotelService hotelService;
 
-	public BookingComExporter() {
+	public BookingComExporter(HotelService hotelService) {
 		propertyReplaceMap.put("id", "booking_com_id");
 		propertyReplaceMap.put("cc1", "country_code");
-		restTemplateFactory = new RestTemplateFactory();
 
 		TsvParserSettings settings = new TsvParserSettings();
 		settings.getFormat().setLineSeparator("\n");
 		parser = new TsvParser(settings);
+		this.hotelService = hotelService;
 	}
 
 	public void extract(Path path, String restUri, String clientId, String clientSecret) {
@@ -50,7 +52,6 @@ public class BookingComExporter {
 	}
 
 	public void extract(File importFile, String host, String clientId, String clientSecret) {
-		RestTemplate restTemplate = restTemplateFactory.get(host, clientId, clientSecret);
 
 		List<String[]> rows = parser.parseAll(importFile);
 
@@ -74,17 +75,11 @@ public class BookingComExporter {
 						hotel.setUrl(valueMap.get("hotelUrl").toString());
 						hotel.setImageUrl(valueMap.get("photoUrl").toString());
 
-						Hotel loaded = restTemplate.getForObject(
-								host.concat("/hotels/search/findByBookingComId?bookingId={bookingComId}"), Hotel.class,
-								hotel.getBookingComId());
+						Hotel loaded = hotelService.getByBookingComId(hotel.getBookingComId());
 						if (loaded == null) {
-							restTemplate.postForObject(host.concat("/hotels"), hotel, Hotel.class);
+							hotelService.create(hotel);
 						} else {
-							HttpHeaders headers = new HttpHeaders();
-							headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString());
-							HttpEntity<Hotel> requestEntity = new HttpEntity<>(hotel, headers);
-							restTemplate.exchange(host.concat("/hotels/{id}"), HttpMethod.PATCH, requestEntity,
-									String.class, loaded.getId());
+							hotelService.update(hotel);
 						}
 
 					} catch (Exception e) {

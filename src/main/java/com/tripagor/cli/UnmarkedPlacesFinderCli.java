@@ -7,13 +7,13 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 
 import com.tripagor.cli.exporter.UnmarkedLodgingPlacesFinder;
+import com.tripagor.hotels.HotelServiceRemoteImpl;
 
 public class UnmarkedPlacesFinderCli {
 
 	private static Options options;
 
 	public static void main(String[] args) {
-		UnmarkedLodgingPlacesFinder exporter = new UnmarkedLodgingPlacesFinder();
 
 		options = new Options();
 
@@ -59,6 +59,9 @@ public class UnmarkedPlacesFinderCli {
 			if (key == null) {
 				help();
 			}
+
+			UnmarkedLodgingPlacesFinder exporter = new UnmarkedLodgingPlacesFinder(
+					new HotelServiceRemoteImpl(host, clientId, clientSecret));
 			if (numberOfPlacesToAdd > 0) {
 				exporter.setNumberOfPlacesToAdd(numberOfPlacesToAdd);
 			}

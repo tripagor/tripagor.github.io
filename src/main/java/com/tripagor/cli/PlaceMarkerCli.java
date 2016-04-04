@@ -7,13 +7,13 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 
 import com.tripagor.cli.exporter.PlaceMarker;
+import com.tripagor.hotels.HotelServiceRemoteImpl;
 
 public class PlaceMarkerCli {
 
 	private static Options options;
 
 	public static void main(String[] args) {
-		PlaceMarker exporter = new PlaceMarker();
 		CommandLineParser parser = new DefaultParser();
 
 		options = new Options();
@@ -61,6 +61,7 @@ public class PlaceMarkerCli {
 				key = cmd.getOptionValue("k");
 			}
 
+			PlaceMarker exporter = new PlaceMarker(new HotelServiceRemoteImpl(host, clientId, clientSecret));
 			if (numberOfPlacesToAdd > 0) {
 				exporter.setNumberOfPlacesToAdd(numberOfPlacesToAdd);
 			}

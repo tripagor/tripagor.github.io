@@ -10,13 +10,13 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 
 import com.tripagor.cli.exporter.BookingComExporter;
+import com.tripagor.hotels.HotelServiceRemoteImpl;
 
 public class BookingComExporterCli {
 
 	private static Options options;
 
 	public static void main(String[] args) {
-		BookingComExporter exporter = new BookingComExporter();
 
 		options = new Options();
 
@@ -62,6 +62,8 @@ public class BookingComExporterCli {
 			}
 
 			if (host != null && clientId != null && clientSecret != null) {
+				BookingComExporter exporter = new BookingComExporter(
+						new HotelServiceRemoteImpl(host, clientId, clientSecret));
 				if (source != null) {
 					exporter.extract(new File(source), host, clientId, clientSecret);
 				} else if (directory != null) {

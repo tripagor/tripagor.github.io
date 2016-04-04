@@ -4,17 +4,8 @@ import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Locale;
 
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.hateoas.PagedResources;
-import org.springframework.hateoas.hal.Jackson2HalModule;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
 import com.google.maps.PlacesApi;
@@ -27,32 +18,23 @@ import com.google.maps.model.RankBy;
 import com.tripagor.cli.service.AddressTools;
 import com.tripagor.cli.service.DistanceCalculator;
 import com.tripagor.cli.service.StringSimilarity;
+import com.tripagor.hotels.HotelService;
 import com.tripagor.hotels.model.Hotel;
-import com.tripagor.rest.RestTemplateFactory;
 
 public class UnmarkedLodgingPlacesFinder {
 	private int numberOfPlacesToAdd = 50000;
 	private StringSimilarity stringSimilarity;
 	private DistanceCalculator distanceCalculator;
 	private AddressTools addressTools;
-	private RestTemplateFactory restTemplateFactory;
-	private MappingJackson2HttpMessageConverter converter;
 	private Object pageSize = 50;
+	private HotelService hotelService;
 
-	public UnmarkedLodgingPlacesFinder() {
+	public UnmarkedLodgingPlacesFinder(HotelService hotelService) {
 		stringSimilarity = new StringSimilarity();
 		distanceCalculator = new DistanceCalculator();
 		addressTools = new AddressTools();
 
-		restTemplateFactory = new RestTemplateFactory();
-
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		mapper.registerModule(new Jackson2HalModule());
-
-		converter = new MappingJackson2HttpMessageConverter();
-		converter.setSupportedMediaTypes(MediaType.parseMediaTypes("application/hal+json"));
-		converter.setObjectMapper(mapper);
+		this.hotelService = hotelService;
 
 	}
 
@@ -70,13 +52,7 @@ public class UnmarkedLodgingPlacesFinder {
 		long totalPages = 1;
 
 		while (currentPage < totalPages && !isMaxiumimNumber) {
-			PagedResources<Hotel> pagedResources = restTemplateFactory.get(converter)
-					.exchange(
-							host.concat(
-									"hotels/search/findByIsEvaluatedExists?isEvaluatedExisting=false&page={page}&size={pageSize}&sort=bookingComId,desc"),
-							HttpMethod.GET, null, new ParameterizedTypeReference<PagedResources<Hotel>>() {
-							}, currentPage++, pageSize)
-					.getBody();
+			PagedResources<Hotel> pagedResources = hotelService.findByIsEvaluatedExists(currentPage++, pageSize, true);
 			totalPages = pagedResources.getMetadata().getTotalPages();
 			Collection<Hotel> hotels = pagedResources.getContent();
 
@@ -143,11 +119,7 @@ public class UnmarkedLodgingPlacesFinder {
 						hotel.setFormattedAddress(wellformattedAddress);
 					}
 
-					HttpHeaders headers = new HttpHeaders();
-					headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString());
-					HttpEntity<Hotel> requestEntity = new HttpEntity<>(hotel, headers);
-					restTemplateFactory.get(host, clientId, clientSecret).exchange(host.concat("/hotels/{id}"),
-							HttpMethod.PATCH, requestEntity, String.class, hotel.getId());
+					hotelService.update(hotel);
 					currentNumberProcessed++;
 
 				} catch (Exception e) {
