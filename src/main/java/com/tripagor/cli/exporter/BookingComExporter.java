@@ -10,17 +10,10 @@ import java.util.Map;
 import org.apache.commons.beanutils.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.web.client.RestTemplate;
 
 import com.google.common.base.CaseFormat;
 import com.tripagor.hotels.HotelService;
-import com.tripagor.hotels.HotelServiceRemoteImpl;
 import com.tripagor.hotels.model.Hotel;
-import com.tripagor.rest.RestTemplateFactory;
 import com.univocity.parsers.tsv.TsvParser;
 import com.univocity.parsers.tsv.TsvParserSettings;
 
@@ -79,9 +72,9 @@ public class BookingComExporter {
 						if (loaded == null) {
 							hotelService.create(hotel);
 						} else {
+							hotel.setId(loaded.getId());
 							hotelService.update(hotel);
 						}
-
 					} catch (Exception e) {
 						continue;
 					}
