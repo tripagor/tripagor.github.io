@@ -7,6 +7,8 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 
 import com.tripagor.cli.exporter.PlaceMarker;
+import com.tripagor.cli.service.PlaceApiImpl;
+import com.tripagor.cli.service.PlaceAddApiSeleniumImpl;
 import com.tripagor.hotels.HotelServiceRemoteImpl;
 
 public class PlaceMarkerCli {
@@ -27,6 +29,7 @@ public class PlaceMarkerCli {
 		options.addOption("p", true, "client Secret");
 
 		options.addOption("k", true, "google api key");
+		options.addOption("c", true, "google credentials");
 
 		try {
 			CommandLine cmd = parser.parse(options, args);
@@ -35,6 +38,8 @@ public class PlaceMarkerCli {
 			String clientId = null;
 			String clientSecret = null;
 			String key = null;
+			String username = null;
+			String password = null;
 			int numberOfPlacesToAdd = 0;
 			String appendStr = null;
 
@@ -60,8 +65,22 @@ public class PlaceMarkerCli {
 			if (cmd.hasOption("k")) {
 				key = cmd.getOptionValue("k");
 			}
+			if (cmd.hasOption("c")) {
+				key = cmd.getOptionValue("c");
+			}
 
-			PlaceMarker exporter = new PlaceMarker(new HotelServiceRemoteImpl(host, clientId, clientSecret));
+			if (key != null || (username == null && password == null)) {
+				help();
+			}
+
+			PlaceMarker exporter = null;
+			if (key != null) {
+				exporter = new PlaceMarker(new HotelServiceRemoteImpl(host, clientId, clientSecret),
+						new PlaceApiImpl(key));
+			} else {
+				new PlaceMarker(new HotelServiceRemoteImpl(host, clientId, clientSecret),
+						new PlaceAddApiSeleniumImpl(username, password));
+			}
 			if (numberOfPlacesToAdd > 0) {
 				exporter.setNumberOfPlacesToAdd(numberOfPlacesToAdd);
 			}
@@ -69,9 +88,6 @@ public class PlaceMarkerCli {
 				exporter.setAppendStr(appendStr);
 			}
 
-			if (key == null) {
-				help();
-			}
 			if (host != null && clientId != null && clientSecret != null) {
 				exporter.doMark(host, clientId, clientSecret, key);
 			} else {

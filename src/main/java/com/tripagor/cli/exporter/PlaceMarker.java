@@ -19,14 +19,14 @@ public class PlaceMarker {
 	private String appendStr = "";
 	private int pageSize = 50;
 	private HotelService hotelService;
+	private PlaceAddApi placeAddApi;
 
-	public PlaceMarker(HotelService hotelService) {
+	public PlaceMarker(HotelService hotelService, PlaceAddApi placeAddApi) {
 		this.hotelService = hotelService;
-
+		this.placeAddApi = placeAddApi;
 	}
 
 	public void doMark(String host, String clientId, String clientSecret, String key) {
-		PlaceAddApi placeAddApi = new PlaceAddApi(key);
 
 		boolean isMaxiumimNumber = false;
 		int currentNumberAdded = 0;
