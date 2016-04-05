@@ -66,7 +66,8 @@ public class PlaceMarkerCli {
 				key = cmd.getOptionValue("k");
 			}
 			if (cmd.hasOption("c")) {
-				key = cmd.getOptionValue("c");
+				 username = cmd.getOptionValue("c").split(":")[0];
+				 password = cmd.getOptionValue("c").split(":")[1];	
 			}
 
 			if (key != null || (username == null && password == null)) {
@@ -78,7 +79,7 @@ public class PlaceMarkerCli {
 				exporter = new PlaceMarker(new HotelServiceRemoteImpl(host, clientId, clientSecret),
 						new PlaceApiImpl(key));
 			} else {
-				new PlaceMarker(new HotelServiceRemoteImpl(host, clientId, clientSecret),
+				exporter = new PlaceMarker(new HotelServiceRemoteImpl(host, clientId, clientSecret),
 						new PlaceAddApiSeleniumImpl(username, password));
 			}
 			if (numberOfPlacesToAdd > 0) {
