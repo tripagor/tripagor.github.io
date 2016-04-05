@@ -58,15 +58,18 @@ public class PlaceAddApiSeleniumImpl implements PlaceAddApi {
 			driver.findElement(By.cssSelector(
 					"div.add-a-place-card-field.add-a-place-card-field-type-category > div.issue-card-field-value-container > div.rap-text-input-container > input.rap-text-input")).sendKeys(Keys.TAB);
 
-			driver.findElement(By.xpath("//div[@id='rap-card']/div/div/div[2]/div[3]/button")).click();
+			//driver.findElement(By.xpath("//div[@id='rap-card']/div/div/div[2]/div[3]/button")).click();
 
 			placeAddResponse.setPlaceId("NO_PLACE_ID_ADDED_WITH_SELENIUM_" + username);
 			placeAddResponse.setStatus("OK");
+			return placeAddResponse;
 		} catch (Exception e) {
 			System.err.println("error " + e);
 			placeAddResponse.setStatus("FAILED");
+			return placeAddResponse;
+		} finally{
+			driver.close();
 		}
-		return placeAddResponse;
 	}
 
 }
