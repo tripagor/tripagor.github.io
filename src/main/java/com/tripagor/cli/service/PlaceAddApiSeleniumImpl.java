@@ -3,6 +3,7 @@ package com.tripagor.cli.service;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
@@ -35,10 +36,11 @@ public class PlaceAddApiSeleniumImpl implements PlaceAddApi {
 			driver.findElement(By.id("signIn")).click();
 			driver.findElement(By.id("searchboxinput")).clear();
 			driver.findElement(By.id("searchboxinput")).sendKeys(place.getAddress());
-		    driver.findElement(By.cssSelector("button.searchbox-searchbutton")).click();
+			driver.findElement(By.cssSelector("button.searchbox-searchbutton")).click();
 			driver.findElement(By.cssSelector("button.widget-pane-term-link.widget-pane-link")).click();
 			driver.findElement(By.cssSelector("input.rap-text-input")).clear();
 			driver.findElement(By.cssSelector("input.rap-text-input")).sendKeys(place.getName());
+
 			driver.findElement(By.cssSelector(
 					"div.add-a-place-card-field.add-a-place-card-field-type-website > div.issue-card-field-value-container > div.rap-text-input-container > input.rap-text-input"))
 					.clear();
@@ -46,11 +48,20 @@ public class PlaceAddApiSeleniumImpl implements PlaceAddApi {
 					"div.add-a-place-card-field.add-a-place-card-field-type-website > div.issue-card-field-value-container > div.rap-text-input-container > input.rap-text-input"))
 					.sendKeys(place.getWebsite());
 
-		    driver.findElement(By.id(":7n")).click();
+			driver.findElement(By.cssSelector(
+					"div.add-a-place-card-field.add-a-place-card-field-type-category > div.issue-card-field-value-container > div.rap-text-input-container > input.rap-text-input"))
+					.clear();
+			driver.findElement(By.cssSelector(
+					"div.add-a-place-card-field.add-a-place-card-field-type-category > div.issue-card-field-value-container > div.rap-text-input-container > input.rap-text-input"))
+					.sendKeys("Unterkü");
+
+			driver.findElement(By.cssSelector(
+					"div.add-a-place-card-field.add-a-place-card-field-type-category > div.issue-card-field-value-container > div.rap-text-input-container > input.rap-text-input")).sendKeys(Keys.TAB);
+
 			driver.findElement(By.xpath("//div[@id='rap-card']/div/div/div[2]/div[3]/button")).click();
 
 			placeAddResponse.setPlaceId("NO_PLACE_ID_ADDED_WITH_SELENIUM_" + username);
-			//placeAddResponse.setStatus("OK");
+			placeAddResponse.setStatus("OK");
 		} catch (Exception e) {
 			System.err.println("error " + e);
 			placeAddResponse.setStatus("FAILED");
