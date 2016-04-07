@@ -49,9 +49,12 @@ public class PlaceDetails {
 				HttpMethod.GET, null, new ParameterizedTypeReference<PagedResources<Hotel>>() {
 				}, 0, 100).getBody().getContent();
 		for (Hotel hotel : hotels) {
-			com.google.maps.model.PlaceDetails result = PlacesApi.placeDetails(context, hotel.getPlaceId().toString())
-					.await();
-			System.out.println("name=" + result.name + " placeId=" + result.placeId + " scope=" + result.scope);
+			if (!hotel.getPlaceId().contains("PLACE") && !hotel.getPlaceId().contains("HAND")) {
+				com.google.maps.model.PlaceDetails result = PlacesApi
+						.placeDetails(context, hotel.getPlaceId().toString()).await();
+				System.out.println("name=" + result.name + " placeId=" + result.placeId + " scope=" + result.scope);
+
+			}
 		}
 	}
 }
