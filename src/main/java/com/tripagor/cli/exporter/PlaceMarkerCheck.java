@@ -47,9 +47,7 @@ public class PlaceMarkerCheck {
 					PlacesSearchResponse response = PlacesApi.nearbySearchQuery(geoApiContext, hotelLatLng)
 							.rankby(RankBy.DISTANCE).type(PlaceType.LODGING).await();
 					for (PlacesSearchResult result : response.results) {
-						if (result.name.equals(hotel.getName())
-								&& distanceCalculator.distance(hotelLatLng, result.geometry.location) < 150
-								&& result.scope == PlaceIdScope.GOOGLE) {
+						if (result.name.equals(hotel.getName()) && result.scope == PlaceIdScope.GOOGLE) {
 							System.out.println(
 									hotel.getName() + " seems to be approved " + result.scope + " " + result.placeId);
 							break;

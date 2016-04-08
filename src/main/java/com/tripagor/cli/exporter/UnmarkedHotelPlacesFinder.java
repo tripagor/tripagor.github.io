@@ -21,7 +21,7 @@ import com.tripagor.cli.service.StringSimilarity;
 import com.tripagor.hotels.HotelService;
 import com.tripagor.hotels.model.Hotel;
 
-public class UnmarkedLodgingPlacesFinder {
+public class UnmarkedHotelPlacesFinder {
 	private int numberOfPlacesToAdd = 50000;
 	private StringSimilarity stringSimilarity;
 	private DistanceCalculator distanceCalculator;
@@ -30,7 +30,7 @@ public class UnmarkedLodgingPlacesFinder {
 	private HotelService hotelService;
 	private GeoApiContext geoApiContext;
 
-	public UnmarkedLodgingPlacesFinder(HotelService hotelService, GeoApiContext geoApiContext) {
+	public UnmarkedHotelPlacesFinder(HotelService hotelService, GeoApiContext geoApiContext) {
 		stringSimilarity = new StringSimilarity();
 		distanceCalculator = new DistanceCalculator();
 		addressTools = new AddressTools();

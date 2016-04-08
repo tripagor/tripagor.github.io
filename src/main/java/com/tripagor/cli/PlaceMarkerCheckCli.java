@@ -7,40 +7,37 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 
 import com.google.maps.GeoApiContext;
-import com.tripagor.cli.exporter.UnmarkedLodgingPlacesFinder;
+import com.tripagor.cli.exporter.PlaceMarkerCheck;
 import com.tripagor.hotels.HotelServiceRemoteImpl;
 
-public class UnmarkedPlacesFinderCli {
+public class PlaceMarkerCheckCli {
 
 	private static Options options;
 
 	public static void main(String[] args) {
+		CommandLineParser parser = new DefaultParser();
 
 		options = new Options();
-
 		options.addOption("h", false, "this help");
 
-		options.addOption("r", true, "Host RestService");
+		options.addOption("r", true, "Host Rest Service");
 		options.addOption("i", true, "clientId");
 		options.addOption("p", true, "client Secret");
 
-		options.addOption("k", true, "Google API key");
+		options.addOption("k", true, "google api key");
 
-		options.addOption("n", true, "maxium number set to be exported");
-
-		CommandLineParser parser = new DefaultParser();
 		try {
 			CommandLine cmd = parser.parse(options, args);
 
-			int numberOfPlacesToAdd = 0;
+			String host = null;
 			String clientId = null;
 			String clientSecret = null;
-			String host = null;
 			String key = null;
 
 			if (cmd.hasOption("h")) {
 				help();
 			}
+
 			if (cmd.hasOption("r")) {
 				host = cmd.getOptionValue("r");
 			}
@@ -53,24 +50,15 @@ public class UnmarkedPlacesFinderCli {
 			if (cmd.hasOption("k")) {
 				key = cmd.getOptionValue("k");
 			}
-			if (cmd.hasOption("n")) {
-				numberOfPlacesToAdd = Integer.parseInt(cmd.getOptionValue("n"));
-			}
 
-			if (key == null) {
-				help();
-			}
-
-			UnmarkedLodgingPlacesFinder exporter = new UnmarkedLodgingPlacesFinder(
-					new HotelServiceRemoteImpl(host, clientId, clientSecret), new GeoApiContext().setApiKey(key));
-			if (numberOfPlacesToAdd > 0) {
-				exporter.setNumberOfPlacesToAdd(numberOfPlacesToAdd);
+			PlaceMarkerCheck check = null;
+			if (key != null) {
+				check = new PlaceMarkerCheck(new HotelServiceRemoteImpl(host, clientId, clientSecret),
+						new GeoApiContext().setApiKey(key));
 			}
 			if (host != null && clientId != null && clientSecret != null) {
-				exporter.doExport();
-			}
-
-			else {
+				check.doCheck();
+			} else {
 				help();
 			}
 		} catch (Exception e) {
@@ -80,7 +68,7 @@ public class UnmarkedPlacesFinderCli {
 
 	private static void help() {
 		HelpFormatter formater = new HelpFormatter();
-		formater.printHelp(UnmarkedPlacesFinderCli.class.getName(), options);
+		formater.printHelp(PlaceMarkerCheckCli.class.getName(), options);
 		System.exit(0);
 	}
 

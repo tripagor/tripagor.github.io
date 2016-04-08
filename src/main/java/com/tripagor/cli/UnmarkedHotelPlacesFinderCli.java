@@ -7,37 +7,40 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 
 import com.google.maps.GeoApiContext;
-import com.tripagor.cli.exporter.PlaceMarkerCheck;
+import com.tripagor.cli.exporter.UnmarkedHotelPlacesFinder;
 import com.tripagor.hotels.HotelServiceRemoteImpl;
 
-public class PlaceMarkerCheckerCli {
+public class UnmarkedHotelPlacesFinderCli {
 
 	private static Options options;
 
 	public static void main(String[] args) {
-		CommandLineParser parser = new DefaultParser();
 
 		options = new Options();
+
 		options.addOption("h", false, "this help");
 
-		options.addOption("r", true, "Host Rest Service");
+		options.addOption("r", true, "Host RestService");
 		options.addOption("i", true, "clientId");
 		options.addOption("p", true, "client Secret");
 
-		options.addOption("k", true, "google api key");
+		options.addOption("k", true, "Google API key");
 
+		options.addOption("n", true, "maxium number set to be exported");
+
+		CommandLineParser parser = new DefaultParser();
 		try {
 			CommandLine cmd = parser.parse(options, args);
 
-			String host = null;
+			int numberOfPlacesToAdd = 0;
 			String clientId = null;
 			String clientSecret = null;
+			String host = null;
 			String key = null;
 
 			if (cmd.hasOption("h")) {
 				help();
 			}
-
 			if (cmd.hasOption("r")) {
 				host = cmd.getOptionValue("r");
 			}
@@ -50,15 +53,24 @@ public class PlaceMarkerCheckerCli {
 			if (cmd.hasOption("k")) {
 				key = cmd.getOptionValue("k");
 			}
+			if (cmd.hasOption("n")) {
+				numberOfPlacesToAdd = Integer.parseInt(cmd.getOptionValue("n"));
+			}
 
-			PlaceMarkerCheck check = null;
-			if (key != null) {
-				check = new PlaceMarkerCheck(new HotelServiceRemoteImpl(host, clientId, clientSecret),
-						new GeoApiContext().setApiKey(key));
+			if (key == null) {
+				help();
+			}
+
+			UnmarkedHotelPlacesFinder exporter = new UnmarkedHotelPlacesFinder(
+					new HotelServiceRemoteImpl(host, clientId, clientSecret), new GeoApiContext().setApiKey(key));
+			if (numberOfPlacesToAdd > 0) {
+				exporter.setNumberOfPlacesToAdd(numberOfPlacesToAdd);
 			}
 			if (host != null && clientId != null && clientSecret != null) {
-				check.doCheck();
-			} else {
+				exporter.doExport();
+			}
+
+			else {
 				help();
 			}
 		} catch (Exception e) {
@@ -68,7 +80,7 @@ public class PlaceMarkerCheckerCli {
 
 	private static void help() {
 		HelpFormatter formater = new HelpFormatter();
-		formater.printHelp(PlaceMarkerCheckerCli.class.getName(), options);
+		formater.printHelp(UnmarkedHotelPlacesFinderCli.class.getName(), options);
 		System.exit(0);
 	}
 
