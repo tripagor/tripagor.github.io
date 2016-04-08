@@ -26,7 +26,7 @@ public class PlaceMarker {
 		this.placeAddApi = placeAddApi;
 	}
 
-	public void doMark(String host, String clientId, String clientSecret, String key) {
+	public void doMark() {
 
 		boolean isMaxiumimNumber = false;
 		int currentNumberAdded = 0;

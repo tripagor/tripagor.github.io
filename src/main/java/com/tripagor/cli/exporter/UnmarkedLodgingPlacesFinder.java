@@ -28,22 +28,22 @@ public class UnmarkedLodgingPlacesFinder {
 	private AddressTools addressTools;
 	private Object pageSize = 50;
 	private HotelService hotelService;
+	private GeoApiContext geoApiContext;
 
-	public UnmarkedLodgingPlacesFinder(HotelService hotelService) {
+	public UnmarkedLodgingPlacesFinder(HotelService hotelService, GeoApiContext geoApiContext) {
 		stringSimilarity = new StringSimilarity();
 		distanceCalculator = new DistanceCalculator();
 		addressTools = new AddressTools();
 
 		this.hotelService = hotelService;
+		this.geoApiContext = geoApiContext;
 	}
 
 	public void setNumberOfPlacesToAdd(int numberOfPlacesToAdd) {
 		this.numberOfPlacesToAdd = numberOfPlacesToAdd;
 	}
 
-	public void export(String host, String clientId, String clientSecret, String key) {
-		GeoApiContext context = new GeoApiContext().setApiKey(key);
-
+	public void doExport() {
 		boolean isMaxiumimNumber = false;
 		int currentNumberProcessed = 0;
 
@@ -52,7 +52,7 @@ public class UnmarkedLodgingPlacesFinder {
 
 		while (currentPage < totalPages && !isMaxiumimNumber) {
 			PagedResources<Hotel> pagedResources = hotelService.findByIsEvaluatedExists(currentPage++, pageSize, true);
-			
+
 			totalPages = pagedResources.getMetadata().getTotalPages();
 			Collection<Hotel> hotels = pagedResources.getContent();
 
@@ -76,8 +76,8 @@ public class UnmarkedLodgingPlacesFinder {
 					} else {
 						continue;
 					}
-					PlacesSearchResponse response = PlacesApi.nearbySearchQuery(context, latLng).rankby(RankBy.DISTANCE)
-							.keyword(query).await();
+					PlacesSearchResponse response = PlacesApi.nearbySearchQuery(geoApiContext, latLng)
+							.rankby(RankBy.DISTANCE).keyword(query).await();
 					boolean isApprovedByGoogle = false;
 					boolean isMarketSet = false;
 					for (PlacesSearchResult result : response.results) {
@@ -101,7 +101,7 @@ public class UnmarkedLodgingPlacesFinder {
 					}
 					String wellformattedAddress = null;
 					if (!isApprovedByGoogle && address != null) {
-						GeocodingResult[] results = GeocodingApi.geocode(context, address)
+						GeocodingResult[] results = GeocodingApi.geocode(geoApiContext, address)
 								.resultType(AddressType.STREET_ADDRESS).await();
 						for (GeocodingResult result : results) {
 							if (addressTools.isProperStreetAddress(result)) {

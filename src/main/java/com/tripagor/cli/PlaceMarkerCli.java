@@ -7,8 +7,8 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 
 import com.tripagor.cli.exporter.PlaceMarker;
-import com.tripagor.cli.service.PlaceApiImpl;
 import com.tripagor.cli.service.PlaceAddApiSeleniumImpl;
+import com.tripagor.cli.service.PlaceApiImpl;
 import com.tripagor.hotels.HotelServiceRemoteImpl;
 
 public class PlaceMarkerCli {
@@ -66,8 +66,8 @@ public class PlaceMarkerCli {
 				key = cmd.getOptionValue("k");
 			}
 			if (cmd.hasOption("c")) {
-				 username = cmd.getOptionValue("c").split(":")[0];
-				 password = cmd.getOptionValue("c").split(":")[1];	
+				username = cmd.getOptionValue("c").split(":")[0];
+				password = cmd.getOptionValue("c").split(":")[1];
 			}
 
 			if (key != null || (username == null && password == null)) {
@@ -90,7 +90,7 @@ public class PlaceMarkerCli {
 			}
 
 			if (host != null && clientId != null && clientSecret != null) {
-				exporter.doMark(host, clientId, clientSecret, key);
+				exporter.doMark();
 			} else {
 				help();
 			}
