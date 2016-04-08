@@ -4,23 +4,24 @@ import java.util.Collection;
 
 import org.springframework.hateoas.PagedResources;
 
+import com.google.maps.GeoApiContext;
 import com.tripagor.hotels.HotelService;
 import com.tripagor.hotels.model.Hotel;
 
 public class PlaceMarkerCheck {
 
 	private HotelService hotelService;
+	private GeoApiContext geoApiContext;
 
-
-	public PlaceMarkerCheck(HotelService hotelService) {
+	public PlaceMarkerCheck(HotelService hotelService, GeoApiContext geoApiContext) {
 		this.hotelService = hotelService;
+		this.geoApiContext = geoApiContext;
 	}
 
 	public void doCheck() {
-
 		int currentPage = 0;
 		long totalPages = 1;
-		int pageSize= 50;
+		int pageSize = 50;
 
 		while (currentPage < totalPages) {
 			PagedResources<Hotel> pagedResources = hotelService
@@ -30,7 +31,7 @@ public class PlaceMarkerCheck {
 			Collection<Hotel> hotels = pagedResources.getContent();
 
 			for (Hotel hotel : hotels) {
-				
+
 			}
 		}
 	}

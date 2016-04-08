@@ -6,6 +6,7 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 
+import com.google.maps.GeoApiContext;
 import com.tripagor.cli.exporter.PlaceMarkerCheck;
 import com.tripagor.hotels.HotelServiceRemoteImpl;
 
@@ -52,7 +53,8 @@ public class PlaceMarkerCheckerCli {
 
 			PlaceMarkerCheck check = null;
 			if (key != null) {
-				check = new PlaceMarkerCheck(new HotelServiceRemoteImpl(host, clientId, clientSecret));
+				check = new PlaceMarkerCheck(new HotelServiceRemoteImpl(host, clientId, clientSecret),
+						new GeoApiContext().setApiKey(key));
 			}
 			if (host != null && clientId != null && clientSecret != null) {
 				check.doCheck();
