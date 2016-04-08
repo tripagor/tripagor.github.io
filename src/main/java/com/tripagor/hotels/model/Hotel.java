@@ -464,4 +464,21 @@ public class Hotel {
 		}
 	}
 
+	@Override
+	public String toString() {
+		return "Hotel [id=" + id + ", bookingComId=" + bookingComId + ", name=" + name + ", address=" + address
+				+ ", zip=" + zip + ", city=" + city + ", countryCode=" + countryCode + ", ufi=" + ufi + ", hotelClass="
+				+ hotelClass + ", currencycode=" + currencycode + ", minrate=" + minrate + ", maxrate=" + maxrate
+				+ ", nrRooms=" + nrRooms + ", longitude=" + longitude + ", latitude=" + latitude + ", publicRanking="
+				+ publicRanking + ", url=" + url + ", imageUrl=" + imageUrl + ", descEn=" + descEn + ", descFr="
+				+ descFr + ", descEs=" + descEs + ", descDe=" + descDe + ", descNl=" + descNl + ", descIt=" + descIt
+				+ ", descPt=" + descPt + ", descJa=" + descJa + ", descZh=" + descZh + ", descPl=" + descPl
+				+ ", descRu=" + descRu + ", descSv=" + descSv + ", descAr=" + descAr + ", descEl=" + descEl
+				+ ", descNo=" + descNo + ", cityUnique=" + cityUnique + ", cityPreferred=" + cityPreferred
+				+ ", continentId=" + continentId + ", reviewScore=" + reviewScore + ", reviewNr=" + reviewNr
+				+ ", isEvaluated=" + isEvaluated + ", isMarkerSet=" + isMarkerSet + ", isMarkerApproved="
+				+ isMarkerApproved + ", formattedAddress=" + formattedAddress + ", placeId=" + placeId
+				+ ", preferredBookingComPartner=" + preferredBookingComPartner + "]";
+	}
+
 }
