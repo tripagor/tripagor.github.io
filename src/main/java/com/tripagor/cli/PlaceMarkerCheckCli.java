@@ -25,6 +25,9 @@ public class PlaceMarkerCheckCli {
 		options.addOption("p", true, "client Secret");
 
 		options.addOption("k", true, "google api key");
+		
+		options.addOption("a", true, "url postfix");
+		
 
 		try {
 			CommandLine cmd = parser.parse(options, args);
@@ -33,6 +36,7 @@ public class PlaceMarkerCheckCli {
 			String clientId = null;
 			String clientSecret = null;
 			String key = null;
+			String postfix = "";
 
 			if (cmd.hasOption("h")) {
 				help();
@@ -50,11 +54,14 @@ public class PlaceMarkerCheckCli {
 			if (cmd.hasOption("k")) {
 				key = cmd.getOptionValue("k");
 			}
+			if (cmd.hasOption("a")) {
+				postfix = cmd.getOptionValue("a");
+			}
 
 			PlaceMarkerCheck check = null;
 			if (key != null) {
 				check = new PlaceMarkerCheck(new HotelServiceRemoteImpl(host, clientId, clientSecret),
-						new GeoApiContext().setApiKey(key));
+						new GeoApiContext().setApiKey(key), postfix);
 			}
 			if (host != null && clientId != null && clientSecret != null) {
 				check.doCheck();

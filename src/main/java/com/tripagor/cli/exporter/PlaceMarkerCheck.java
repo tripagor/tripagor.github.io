@@ -13,7 +13,6 @@ import com.google.maps.model.PlaceType;
 import com.google.maps.model.PlacesSearchResponse;
 import com.google.maps.model.PlacesSearchResult;
 import com.google.maps.model.RankBy;
-import com.tripagor.cli.service.DistanceCalculator;
 import com.tripagor.hotels.HotelService;
 import com.tripagor.hotels.model.Hotel;
 
@@ -21,12 +20,16 @@ public class PlaceMarkerCheck {
 
 	private HotelService hotelService;
 	private GeoApiContext geoApiContext;
-	private DistanceCalculator distanceCalculator;
+	private String postfix;
 
-	public PlaceMarkerCheck(HotelService hotelService, GeoApiContext geoApiContext) {
+	public PlaceMarkerCheck(HotelService hotelService, GeoApiContext geoApiContext, String postfix) {
 		this.hotelService = hotelService;
 		this.geoApiContext = geoApiContext;
-		this.distanceCalculator = new DistanceCalculator();
+		if (postfix == null) {
+			this.postfix = "";
+		} else {
+			this.postfix = postfix;
+		}
 	}
 
 	public void doCheck() {
@@ -50,15 +53,16 @@ public class PlaceMarkerCheck {
 					for (PlacesSearchResult result : response.results) {
 						if (result.name.equals(hotel.getName()) && result.scope == PlaceIdScope.GOOGLE) {
 							PlaceDetails placeDetails = PlacesApi.placeDetails(geoApiContext, result.placeId).await();
-							if (hotel.getUrl().equals(placeDetails.website.toString())) {
-								System.out.println(hotel.getName() + " APPROVED " + result.scope + " "
-										+ result.placeId);
+							if (hotel.getUrl().concat(postfix).equals(placeDetails.website.toString())) {
+								System.out
+										.println(hotel.getName() + " APPROVED " + result.scope + " " + result.placeId);
 								hotel.setIsMarkerApproved(true);
 								hotel.setPlaceId(placeDetails.placeId);
 								hotelService.update(hotel);
 							} else {
-								System.out.println(hotel.getName() + " NOT APPROvVED " + result.scope + " "
-										+ result.placeId);
+								System.out.println(
+										hotel.getName() + " NOT APPROvVED " + result.scope + " " + result.placeId);
+								hotel.setIsMarkerApproved(false);
 								hotel.setPlaceId(null);
 								hotelService.update(hotel);
 							}
