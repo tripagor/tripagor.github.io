@@ -7,6 +7,7 @@ import org.springframework.hateoas.PagedResources;
 import com.google.maps.GeoApiContext;
 import com.google.maps.PlacesApi;
 import com.google.maps.model.LatLng;
+import com.google.maps.model.PlaceDetails;
 import com.google.maps.model.PlaceIdScope;
 import com.google.maps.model.PlaceType;
 import com.google.maps.model.PlacesSearchResponse;
@@ -48,8 +49,19 @@ public class PlaceMarkerCheck {
 							.rankby(RankBy.DISTANCE).type(PlaceType.LODGING).await();
 					for (PlacesSearchResult result : response.results) {
 						if (result.name.equals(hotel.getName()) && result.scope == PlaceIdScope.GOOGLE) {
-							System.out.println(
-									hotel.getName() + " seems to be approved " + result.scope + " " + result.placeId);
+							PlaceDetails placeDetails = PlacesApi.placeDetails(geoApiContext, result.placeId).await();
+							if (hotel.getUrl().equals(placeDetails.website.toString())) {
+								System.out.println(hotel.getName() + " APPROVED " + result.scope + " "
+										+ result.placeId);
+								hotel.setIsMarkerApproved(true);
+								hotel.setPlaceId(placeDetails.placeId);
+								hotelService.update(hotel);
+							} else {
+								System.out.println(hotel.getName() + " NOT APPROvVED " + result.scope + " "
+										+ result.placeId);
+								hotel.setPlaceId(null);
+								hotelService.update(hotel);
+							}
 							break;
 						}
 					}
