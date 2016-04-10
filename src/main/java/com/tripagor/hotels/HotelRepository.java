@@ -13,19 +13,21 @@ import com.tripagor.hotels.model.Hotel;
 @RepositoryRestResource
 public interface HotelRepository extends MongoRepository<Hotel, String> {
 
-	Hotel findByBookingComId(@Param("bookingId") long id);
+	Hotel findByBookingComId(@Param("bookingId") Long id);
 
-	long countByIsEvaluatedAndIsMarkerSetAndIsMarkerApprovedAndFormattedAddressExists(
+	long countByIsEvaluatedAndIsMarkerSetAndIsMarkerApprovedAndFormattedAddressExistsAndPlaceIdExists(
 			@Param("isEvaluated") boolean isEvaluated, @Param("isMarkerSet") boolean isMarkerSet,
 			@Param("isMarkerApproved") boolean isMarkerApproved,
-			@Param("isFormattedAddressExisting") boolean formattedAddressExists);
+			@Param("isFormattedAddressExisting") boolean formattedAddressExists,
+			@Param("isPlaceIdExisting") boolean isPlaceIdExisting);
 
 	long countByIsEvaluatedExists(@Param("isEvaluatedExisting") boolean isEvaluated);
 
-	Page<List<Hotel>> findByIsEvaluatedAndIsMarkerSetAndIsMarkerApprovedAndFormattedAddressExists(
+	Page<List<Hotel>> findByIsEvaluatedAndIsMarkerSetAndIsMarkerApprovedAndFormattedAddressExistsAndPlaceIdExists(
 			@Param("isEvaluated") boolean isEvaluated, @Param("isMarkerSet") boolean isMarkerSet,
 			@Param("isMarkerApproved") boolean isMarkerApproved,
-			@Param("isFormattedAddressExisting") boolean formattedAddressExists, Pageable pageable);
+			@Param("isFormattedAddressExisting") boolean formattedAddressExists,
+			@Param("isPlaceIdExisting") boolean isPlaceIdExisting, Pageable pageable);
 
 	Page<List<Hotel>> findByIsEvaluatedExists(@Param("isEvaluatedExisting") boolean isEvaluatedExisting,
 			Pageable pageable);

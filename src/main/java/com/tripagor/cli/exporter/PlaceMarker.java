@@ -36,8 +36,8 @@ public class PlaceMarker {
 
 		while (currentPage < totalPages && !isMaxiumimNumber) {
 			PagedResources<Hotel> pagedResources = hotelService
-					.findByIsEvaluatedAndIsMarkerSetAndIsMarkerApprovedAndFormattedAddressExists(currentPage++,
-							pageSize, true, false, false, true);
+					.findByIsEvaluatedAndIsMarkerSetAndIsMarkerApprovedAndFormattedAddressExistsAndPlaceIdExists(
+							currentPage++, pageSize, true, false, false, true, true);
 			totalPages = pagedResources.getMetadata().getTotalPages();
 			Collection<Hotel> hotels = pagedResources.getContent();
 

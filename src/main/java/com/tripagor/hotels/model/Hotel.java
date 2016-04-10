@@ -14,7 +14,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 @Document
 @JsonInclude(Include.NON_NULL)
 @CompoundIndexes({
-		@CompoundIndex(name = "place_idex", def = "{'is_evaluated': 1, 'is_marker_set': 1, 'is_marker_approved': 1}"),
+		@CompoundIndex(name = "place_marker_idex", def = "{'is_evaluated': 1, 'is_marker_set': 1, 'is_marker_approved': 1, 'well_formatted_address': 1, 'place_id': 1}"),
 		@CompoundIndex(name = "country_city_idex", def = "{'country_code': 1, 'city_unique': 1}") })
 public class Hotel {
 	@Id
@@ -87,9 +87,9 @@ public class Hotel {
 	@Field("is_marker_approved")
 	private Boolean isMarkerApproved;
 	@Field("well_formatted_address")
-	private String formattedAddress;
+	private @Indexed String formattedAddress;
 	@Field("place_id")
-	private String placeId;
+	private @Indexed String placeId;
 	private @Field("preferred") @JsonIgnore int preferredBookingComPartner;
 
 	public String getId() {

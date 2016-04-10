@@ -12,8 +12,9 @@ public interface HotelService {
 
 	Hotel update(Hotel hotel);
 
-	PagedResources<Hotel> findByIsEvaluatedAndIsMarkerSetAndIsMarkerApprovedAndFormattedAddressExists(int currentPage, int pageSize,
-			boolean isEvaluated, boolean isMarkerSet, boolean isMarkerApproved, boolean isFormettedAddressExisting);
+	PagedResources<Hotel> findByIsEvaluatedAndIsMarkerSetAndIsMarkerApprovedAndFormattedAddressExistsAndPlaceIdExists(
+			int currentPage, int pageSize, boolean isEvaluated, boolean isMarkerSet, boolean isMarkerApproved,
+			boolean isFormettedAddressExisting, boolean isPlaceIdExisting);
 
 	PagedResources<Hotel> findByIsEvaluatedExists(int i, Object pageSize, boolean b);
 

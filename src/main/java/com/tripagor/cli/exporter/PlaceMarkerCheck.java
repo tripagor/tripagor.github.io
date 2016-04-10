@@ -39,8 +39,8 @@ public class PlaceMarkerCheck {
 
 		while (currentPage < totalPages) {
 			PagedResources<Hotel> pagedResources = hotelService
-					.findByIsEvaluatedAndIsMarkerSetAndIsMarkerApprovedAndFormattedAddressExists(currentPage++,
-							pageSize, true, true, false, true);
+					.findByIsEvaluatedAndIsMarkerSetAndIsMarkerApprovedAndFormattedAddressExistsAndPlaceIdExists(
+							currentPage++, pageSize, true, true, false, true, true);
 			totalPages = pagedResources.getMetadata().getTotalPages();
 			Collection<Hotel> hotels = pagedResources.getContent();
 
@@ -53,6 +53,7 @@ public class PlaceMarkerCheck {
 					for (PlacesSearchResult result : response.results) {
 						if (result.name.equals(hotel.getName()) && result.scope == PlaceIdScope.GOOGLE) {
 							PlaceDetails placeDetails = PlacesApi.placeDetails(geoApiContext, result.placeId).await();
+							
 							if (hotel.getUrl().concat(postfix).equals(placeDetails.website.toString())) {
 								System.out
 										.println(hotel.getName() + " APPROVED " + result.scope + " " + result.placeId);

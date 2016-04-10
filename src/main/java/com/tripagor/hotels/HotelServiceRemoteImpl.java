@@ -54,21 +54,21 @@ public class HotelServiceRemoteImpl implements HotelService {
 		headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString());
 		HttpEntity<Hotel> requestEntity = new HttpEntity<>(hotel, headers);
 		return restTemplateFactory.get(host, clientId, clientSecret)
-				.exchange(host.concat("/hotels/{id}"), HttpMethod.PATCH, requestEntity, Hotel.class, hotel.getId())
+				.exchange(host.concat("/hotels/{id}"), HttpMethod.PUT, requestEntity, Hotel.class, hotel.getId())
 				.getBody();
 	}
 
 	@Override
-	public PagedResources<Hotel> findByIsEvaluatedAndIsMarkerSetAndIsMarkerApprovedAndFormattedAddressExists(
+	public PagedResources<Hotel> findByIsEvaluatedAndIsMarkerSetAndIsMarkerApprovedAndFormattedAddressExistsAndPlaceIdExists(
 			int currentPage, int pageSize, boolean isEvaluated, boolean isMarkerSet, boolean isMarkerApproved,
-			boolean isFormettedAddressExisting) {
+			boolean isFormettedAddressExisting, boolean isPlaceIdExisting) {
 		return restTemplateFactory.get(hateoasConverter)
 				.exchange(
 						host.concat(
-								"hotels/search/findByIsEvaluatedAndIsMarkerSetAndIsMarkerApprovedAndFormattedAddressExists?page={page}&size={size}&sort=bookingComId,desc&isEvaluated={isEvaluated}&isMarkerSet={isMarkerSet}&isMarkerApproved={isMarkerSet}&isFormattedAddressExisting={isFormettedAddressExisting}"),
+								"hotels/search/findByIsEvaluatedAndIsMarkerSetAndIsMarkerApprovedAndFormattedAddressExistsAndPlaceIdExisting?page={page}&size={size}&sort=bookingComId,desc&isEvaluated={isEvaluated}&isMarkerSet={isMarkerSet}&isMarkerApproved={isMarkerSet}&isFormattedAddressExisting={isFormettedAddressExisting}&isPlaceIdExisting={isPlaceIdExisting}"),
 						HttpMethod.GET, null, new ParameterizedTypeReference<PagedResources<Hotel>>() {
 						}, currentPage, pageSize, isEvaluated, isMarkerSet, isMarkerApproved,
-						isFormettedAddressExisting)
+						isFormettedAddressExisting, isPlaceIdExisting)
 				.getBody();
 	}
 
