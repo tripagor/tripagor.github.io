@@ -65,7 +65,7 @@ public class HotelServiceRemoteImpl implements HotelService {
 		return restTemplateFactory.get(hateoasConverter)
 				.exchange(
 						host.concat(
-								"hotels/search/findByIsEvaluatedAndIsMarkerSetAndIsMarkerApprovedAndFormattedAddressExistsAndPlaceIdExisting?page={page}&size={size}&sort=bookingComId,desc&isEvaluated={isEvaluated}&isMarkerSet={isMarkerSet}&isMarkerApproved={isMarkerSet}&isFormattedAddressExisting={isFormettedAddressExisting}&isPlaceIdExisting={isPlaceIdExisting}"),
+								"hotels/search/findByIsEvaluatedAndIsMarkerSetAndIsMarkerApprovedAndFormattedAddressExistsAndPlaceIdExists?page={page}&size={size}&sort=bookingComId,desc&isEvaluated={isEvaluated}&isMarkerSet={isMarkerSet}&isMarkerApproved={isMarkerSet}&isFormattedAddressExisting={isFormettedAddressExisting}&isPlaceIdExisting={isPlaceIdExisting}"),
 						HttpMethod.GET, null, new ParameterizedTypeReference<PagedResources<Hotel>>() {
 						}, currentPage, pageSize, isEvaluated, isMarkerSet, isMarkerApproved,
 						isFormettedAddressExisting, isPlaceIdExisting)
