@@ -1,6 +1,6 @@
 package com.tripagor.hotels;
 
-import org.springframework.hateoas.PagedResources;
+import org.springframework.data.domain.Page;
 
 import com.tripagor.hotels.model.Hotel;
 
@@ -12,10 +12,10 @@ public interface HotelService {
 
 	Hotel update(Hotel hotel);
 
-	PagedResources<Hotel> findByIsEvaluatedAndIsMarkerSetAndIsMarkerApprovedAndFormattedAddressExistsAndPlaceIdExists(
+	Page<Hotel> findByIsEvaluatedAndIsMarkerSetAndIsMarkerApprovedAndFormattedAddressExistsAndPlaceIdExists(
 			int currentPage, int pageSize, boolean isEvaluated, boolean isMarkerSet, boolean isMarkerApproved,
 			boolean isFormettedAddressExisting, boolean isPlaceIdExisting);
 
-	PagedResources<Hotel> findByIsEvaluatedExists(int i, Object pageSize, boolean b);
+	Page<Hotel> findByIsEvaluatedExists(int currentPage, int pageSize, boolean isEvaluatedExisting);
 
 }

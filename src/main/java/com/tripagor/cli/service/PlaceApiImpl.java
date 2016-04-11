@@ -1,5 +1,7 @@
 package com.tripagor.cli.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.RestTemplate;
 
 import com.tripagor.model.PlaceAddRequest;
@@ -16,7 +18,8 @@ public class PlaceApiImpl implements PlaceAddApi, PlaceDeleteApi {
 	private String deletePlaceApiUrl;
 	private RestTemplate restTemplate;
 
-	public PlaceApiImpl(String apiKey) {
+	@Autowired
+	public PlaceApiImpl(@Value("${google.maps.api.key}") String apiKey) {
 		restTemplate = new RestTemplate();
 		addPlaceApiUrl = GOOGLE_PLACES_API_ADD_PLACE_URL + "?key=" + apiKey;
 		deletePlaceApiUrl = GOOGLE_PLACES_API_DELETE_PLACE_URL + "?key=" + apiKey;

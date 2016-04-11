@@ -23,13 +23,13 @@ public interface HotelRepository extends MongoRepository<Hotel, String> {
 
 	long countByIsEvaluatedExists(@Param("isEvaluatedExisting") boolean isEvaluated);
 
-	Page<List<Hotel>> findByIsEvaluatedAndIsMarkerSetAndIsMarkerApprovedAndFormattedAddressExistsAndPlaceIdExists(
+	Page<Hotel> findByIsEvaluatedAndIsMarkerSetAndIsMarkerApprovedAndFormattedAddressExistsAndPlaceIdExists(
 			@Param("isEvaluated") boolean isEvaluated, @Param("isMarkerSet") boolean isMarkerSet,
 			@Param("isMarkerApproved") boolean isMarkerApproved,
 			@Param("isFormattedAddressExisting") boolean formattedAddressExists,
 			@Param("isPlaceIdExisting") boolean isPlaceIdExisting, Pageable pageable);
 
-	Page<List<Hotel>> findByIsEvaluatedExists(@Param("isEvaluatedExisting") boolean isEvaluatedExisting,
+	Page<Hotel> findByIsEvaluatedExists(@Param("isEvaluatedExisting") boolean isEvaluatedExisting,
 			Pageable pageable);
 
 	long countBy();

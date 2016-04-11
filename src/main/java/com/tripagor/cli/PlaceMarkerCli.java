@@ -70,7 +70,7 @@ public class PlaceMarkerCli {
 				password = cmd.getOptionValue("c").split(":")[1];
 			}
 
-			if (key != null || (username == null && password == null)) {
+			if (key == null && (username == null && password == null)) {
 				help();
 			}
 

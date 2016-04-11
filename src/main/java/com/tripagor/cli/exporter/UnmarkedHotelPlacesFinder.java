@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Locale;
 
-import org.springframework.hateoas.PagedResources;
+import org.springframework.data.domain.Page;
 
 import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
@@ -48,12 +48,12 @@ public class UnmarkedHotelPlacesFinder {
 		int currentNumberProcessed = 0;
 
 		int currentPage = 0;
-		long totalPages = 1;
+		int totalPages = 1;
 
 		while (currentPage < totalPages && !isMaxiumimNumber) {
-			PagedResources<Hotel> pagedResources = hotelService.findByIsEvaluatedExists(currentPage++, pageSize, true);
+			Page<Hotel> pagedResources = hotelService.findByIsEvaluatedExists(currentPage++, pageSize, true);
 
-			totalPages = pagedResources.getMetadata().getTotalPages();
+			totalPages = pagedResources.getTotalPages();
 			Collection<Hotel> hotels = pagedResources.getContent();
 
 			for (Hotel hotel : hotels) {

@@ -2,9 +2,10 @@ package com.tripagor.cli.exporter;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.List;
 
-import org.springframework.hateoas.PagedResources;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 
 import com.tripagor.cli.service.PlaceAddApi;
 import com.tripagor.hotels.HotelService;
@@ -21,6 +22,7 @@ public class PlaceMarker {
 	private HotelService hotelService;
 	private PlaceAddApi placeAddApi;
 
+	@Autowired
 	public PlaceMarker(HotelService hotelService, PlaceAddApi placeAddApi) {
 		this.hotelService = hotelService;
 		this.placeAddApi = placeAddApi;
@@ -35,11 +37,11 @@ public class PlaceMarker {
 		long totalPages = 1;
 
 		while (currentPage < totalPages && !isMaxiumimNumber) {
-			PagedResources<Hotel> pagedResources = hotelService
+			Page<Hotel> pagedResources = hotelService
 					.findByIsEvaluatedAndIsMarkerSetAndIsMarkerApprovedAndFormattedAddressExistsAndPlaceIdExists(
 							currentPage++, pageSize, true, false, false, true, false);
-			totalPages = pagedResources.getMetadata().getTotalPages();
-			Collection<Hotel> hotels = pagedResources.getContent();
+			totalPages = pagedResources.getTotalPages();
+			List<Hotel> hotels = pagedResources.getContent();
 
 			for (Hotel hotel : hotels) {
 				if (numberOfPlacesToAdd != 0 && currentNumberAdded >= numberOfPlacesToAdd) {

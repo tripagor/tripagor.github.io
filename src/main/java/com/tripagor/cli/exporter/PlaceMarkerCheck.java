@@ -2,7 +2,10 @@ package com.tripagor.cli.exporter;
 
 import java.util.Collection;
 
-import org.springframework.hateoas.PagedResources;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Component;
 
 import com.google.maps.GeoApiContext;
 import com.google.maps.PlacesApi;
@@ -16,13 +19,16 @@ import com.google.maps.model.RankBy;
 import com.tripagor.hotels.HotelService;
 import com.tripagor.hotels.model.Hotel;
 
+@Component
 public class PlaceMarkerCheck {
 
 	private HotelService hotelService;
 	private GeoApiContext geoApiContext;
 	private String postfix;
 
-	public PlaceMarkerCheck(HotelService hotelService, GeoApiContext geoApiContext, String postfix) {
+	@Autowired
+	public PlaceMarkerCheck(HotelService hotelService, GeoApiContext geoApiContext,
+			@Value("${hotel.url.postfix}") String postfix) {
 		this.hotelService = hotelService;
 		this.geoApiContext = geoApiContext;
 		if (postfix == null) {
@@ -38,10 +44,10 @@ public class PlaceMarkerCheck {
 		int pageSize = 50;
 
 		while (currentPage < totalPages) {
-			PagedResources<Hotel> pagedResources = hotelService
+			Page<Hotel> pagedResources = hotelService
 					.findByIsEvaluatedAndIsMarkerSetAndIsMarkerApprovedAndFormattedAddressExistsAndPlaceIdExists(
 							currentPage++, pageSize, true, true, false, true, true);
-			totalPages = pagedResources.getMetadata().getTotalPages();
+			totalPages = pagedResources.getTotalPages();
 			Collection<Hotel> hotels = pagedResources.getContent();
 
 			for (Hotel hotel : hotels) {
@@ -53,7 +59,7 @@ public class PlaceMarkerCheck {
 					for (PlacesSearchResult result : response.results) {
 						if (result.name.equals(hotel.getName()) && result.scope == PlaceIdScope.GOOGLE) {
 							PlaceDetails placeDetails = PlacesApi.placeDetails(geoApiContext, result.placeId).await();
-							
+
 							if (hotel.getUrl().concat(postfix).equals(placeDetails.website.toString())) {
 								System.out
 										.println(hotel.getName() + " APPROVED " + result.scope + " " + result.placeId);
