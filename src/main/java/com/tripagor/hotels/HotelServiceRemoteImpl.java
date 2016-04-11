@@ -1,6 +1,10 @@
 package com.tripagor.hotels;
 
+import java.util.LinkedList;
+
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.hateoas.PagedResources;
 import org.springframework.hateoas.hal.Jackson2HalModule;
 import org.springframework.http.HttpEntity;
@@ -59,10 +63,10 @@ public class HotelServiceRemoteImpl implements HotelService {
 	}
 
 	@Override
-	public PagedResources<Hotel> findByIsEvaluatedAndIsMarkerSetAndIsMarkerApprovedAndFormattedAddressExistsAndPlaceIdExists(
+	public Page<Hotel> findByIsEvaluatedAndIsMarkerSetAndIsMarkerApprovedAndFormattedAddressExistsAndPlaceIdExists(
 			int currentPage, int pageSize, boolean isEvaluated, boolean isMarkerSet, boolean isMarkerApproved,
 			boolean isFormettedAddressExisting, boolean isPlaceIdExisting) {
-		return restTemplateFactory.get(hateoasConverter)
+		PagedResources<Hotel> result = restTemplateFactory.get(hateoasConverter)
 				.exchange(
 						host.concat(
 								"hotels/search/findByIsEvaluatedAndIsMarkerSetAndIsMarkerApprovedAndFormattedAddressExistsAndPlaceIdExists?page={page}&size={size}&sort=bookingComId,desc&isEvaluated={isEvaluated}&isMarkerSet={isMarkerSet}&isMarkerApproved={isMarkerSet}&isFormattedAddressExisting={isFormettedAddressExisting}&isPlaceIdExisting={isPlaceIdExisting}"),
@@ -70,17 +74,21 @@ public class HotelServiceRemoteImpl implements HotelService {
 						}, currentPage, pageSize, isEvaluated, isMarkerSet, isMarkerApproved,
 						isFormettedAddressExisting, isPlaceIdExisting)
 				.getBody();
+		Page<Hotel> page = new PageImpl<Hotel>(new LinkedList<Hotel>(result.getContent()));
+		return page;
 	}
 
 	@Override
-	public PagedResources<Hotel> findByIsEvaluatedExists(int currentPage, Object pageSize, boolean b) {
-		return restTemplateFactory.get(hateoasConverter)
+	public Page<Hotel> findByIsEvaluatedExists(int currentPage, int pageSize, boolean isEvaluatedExisting) {
+		PagedResources<Hotel> result = restTemplateFactory.get(hateoasConverter)
 				.exchange(
 						host.concat(
-								"hotels/search/findByIsEvaluatedExists?isEvaluatedExisting=false&page={page}&size={pageSize}&sort=bookingComId,desc"),
+								"hotels/search/findByIsEvaluatedExists?isEvaluatedExisting={isEvaluatedExisting}&page={page}&size={pageSize}&sort=bookingComId,desc"),
 						HttpMethod.GET, null, new ParameterizedTypeReference<PagedResources<Hotel>>() {
-						}, currentPage, pageSize)
+						}, isEvaluatedExisting, currentPage, pageSize)
 				.getBody();
+		Page<Hotel> page = new PageImpl<Hotel>(new LinkedList<Hotel>(result.getContent()));
+		return page;
 	}
 
 }

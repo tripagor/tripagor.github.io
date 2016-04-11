@@ -26,7 +26,7 @@ public class UnmarkedHotelPlacesFinder {
 	private StringSimilarity stringSimilarity;
 	private DistanceCalculator distanceCalculator;
 	private AddressTools addressTools;
-	private Object pageSize = 50;
+	private int pageSize = 50;
 	private HotelService hotelService;
 	private GeoApiContext geoApiContext;
 
