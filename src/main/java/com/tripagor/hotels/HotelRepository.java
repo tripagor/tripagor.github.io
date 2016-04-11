@@ -1,7 +1,5 @@
 package com.tripagor.hotels;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -29,8 +27,7 @@ public interface HotelRepository extends MongoRepository<Hotel, String> {
 			@Param("isFormattedAddressExisting") boolean formattedAddressExists,
 			@Param("isPlaceIdExisting") boolean isPlaceIdExisting, Pageable pageable);
 
-	Page<Hotel> findByIsEvaluatedExists(@Param("isEvaluatedExisting") boolean isEvaluatedExisting,
-			Pageable pageable);
+	Page<Hotel> findByIsEvaluatedExists(@Param("isEvaluatedExisting") boolean isEvaluatedExisting, Pageable pageable);
 
 	long countBy();
 
