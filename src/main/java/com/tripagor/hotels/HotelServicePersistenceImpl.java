@@ -17,8 +17,7 @@ public class HotelServicePersistenceImpl implements HotelService {
 
 	@Override
 	public Hotel getByBookingComId(Long bookingComId) {
-		// TODO Auto-generated method stub
-		return null;
+		return hotelRepository.findByBookingComId(bookingComId);
 	}
 
 	@Override
