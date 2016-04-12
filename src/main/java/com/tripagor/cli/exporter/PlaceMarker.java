@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Component;
 
 import com.tripagor.cli.service.PlaceAddApi;
 import com.tripagor.hotels.HotelService;
@@ -18,6 +19,7 @@ import com.tripagor.model.Location;
 import com.tripagor.model.PlaceAddRequest;
 import com.tripagor.model.PlaceAddResponse;
 
+@Component
 public class PlaceMarker {
 
 	private int pageSize = 50;
