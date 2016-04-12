@@ -41,7 +41,7 @@ public class PlaceMarkerCli {
 			String username = null;
 			String password = null;
 			int numberOfPlacesToAdd = 0;
-			String appendStr = null;
+			String appendStr = "";
 
 			if (cmd.hasOption("h")) {
 				help();
@@ -82,15 +82,8 @@ public class PlaceMarkerCli {
 				exporter = new PlaceMarker(new HotelServiceRemoteImpl(host, clientId, clientSecret),
 						new PlaceAddApiSeleniumImpl(username, password));
 			}
-			if (numberOfPlacesToAdd > 0) {
-				exporter.setNumberOfPlacesToAdd(numberOfPlacesToAdd);
-			}
-			if (appendStr != null) {
-				exporter.setAppendStr(appendStr);
-			}
-
 			if (host != null && clientId != null && clientSecret != null) {
-				exporter.doMark();
+				exporter.doMark(numberOfPlacesToAdd, appendStr);
 			} else {
 				help();
 			}

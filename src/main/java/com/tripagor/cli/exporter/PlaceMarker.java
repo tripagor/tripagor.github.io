@@ -2,8 +2,12 @@ package com.tripagor.cli.exporter;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 
@@ -16,11 +20,10 @@ import com.tripagor.model.PlaceAddResponse;
 
 public class PlaceMarker {
 
-	private int numberOfPlacesToAdd;
-	private String appendStr = "";
 	private int pageSize = 50;
 	private HotelService hotelService;
 	private PlaceAddApi placeAddApi;
+	private final Logger logger = LoggerFactory.getLogger(PlaceMarker.class);
 
 	@Autowired
 	public PlaceMarker(HotelService hotelService, PlaceAddApi placeAddApi) {
@@ -28,7 +31,8 @@ public class PlaceMarker {
 		this.placeAddApi = placeAddApi;
 	}
 
-	public void doMark() {
+	public Collection<Hotel> doMark(int numberOfPlacesToAdd, String appendStr) {
+		Collection<Hotel> markedHotels = new LinkedList<>();
 
 		boolean isMaxiumimNumber = false;
 		int currentNumberAdded = 0;
@@ -49,7 +53,7 @@ public class PlaceMarker {
 					break;
 				}
 				try {
-					System.out.println(hotel.getBookingComId() + " " + hotel.getName());
+					logger.debug(hotel.getBookingComId() + " " + hotel.getName());
 					PlaceAddRequest place = new PlaceAddRequest();
 
 					place.setName(hotel.getName());
@@ -59,7 +63,11 @@ public class PlaceMarker {
 					location.setLng(new BigDecimal(hotel.getLongitude()).doubleValue());
 					place.setLocation(location);
 					place.setAccuracy(30);
-					place.setWebsite(hotel.getUrl() + appendStr);
+					String url = hotel.getUrl();
+					if (appendStr != null) {
+						url = url + appendStr;
+					}
+					place.setWebsite(url);
 					place.setTypes(Arrays.asList(new String[] { "lodging" }));
 
 					PlaceAddResponse response = placeAddApi.add(place);
@@ -68,6 +76,8 @@ public class PlaceMarker {
 						hotel.setIsMarkerSet(true);
 
 						hotelService.update(hotel);
+						
+						markedHotels.add(hotel);
 						currentNumberAdded++;
 					}
 				} catch (Exception e) {
@@ -75,14 +85,7 @@ public class PlaceMarker {
 				}
 			}
 		}
-	}
-
-	public void setNumberOfPlacesToAdd(int numberOfPlacesToAdd) {
-		this.numberOfPlacesToAdd = numberOfPlacesToAdd;
-	}
-
-	public void setAppendStr(String appendStr) {
-		this.appendStr = appendStr;
+		return markedHotels;
 	}
 
 }

@@ -38,9 +38,9 @@ public class BookingComExporter {
 	public void extract(Path path, String restUri, String clientId, String clientSecret) {
 		File directory = path.toFile();
 		for (File file : directory.listFiles()) {
-			System.out.println("extracting file " + file.getName() + "...");
+			logger.debug("extracting file " + file.getName() + "...");
 			extract(file, restUri, clientId, clientSecret);
-			System.out.println("extracting file " + file.getName() + " succeeded.");
+			logger.debug("extracting file " + file.getName() + " succeeded.");
 		}
 	}
 

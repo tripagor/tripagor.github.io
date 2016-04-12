@@ -32,7 +32,7 @@ public class UnmarkedHotelPlacesFinderCli {
 		try {
 			CommandLine cmd = parser.parse(options, args);
 
-			int numberOfPlacesToAdd = 0;
+			int numberOfPlacesToAdd = 1;
 			String clientId = null;
 			String clientSecret = null;
 			String host = null;
@@ -63,11 +63,9 @@ public class UnmarkedHotelPlacesFinderCli {
 
 			UnmarkedHotelPlacesFinder exporter = new UnmarkedHotelPlacesFinder(
 					new HotelServiceRemoteImpl(host, clientId, clientSecret), new GeoApiContext().setApiKey(key));
-			if (numberOfPlacesToAdd > 0) {
-				exporter.setNumberOfPlacesToAdd(numberOfPlacesToAdd);
-			}
+			
 			if (host != null && clientId != null && clientSecret != null) {
-				exporter.doExport();
+				exporter.doExport(numberOfPlacesToAdd);
 			}
 
 			else {

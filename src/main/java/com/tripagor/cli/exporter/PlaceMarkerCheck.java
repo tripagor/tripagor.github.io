@@ -2,6 +2,8 @@ package com.tripagor.cli.exporter;
 
 import java.util.Collection;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -25,6 +27,7 @@ public class PlaceMarkerCheck {
 	private HotelService hotelService;
 	private GeoApiContext geoApiContext;
 	private String postfix;
+	private Logger logger = LoggerFactory.getLogger(PlaceMarkerCheck.class);
 
 	@Autowired
 	public PlaceMarkerCheck(HotelService hotelService, GeoApiContext geoApiContext,
@@ -61,14 +64,13 @@ public class PlaceMarkerCheck {
 							PlaceDetails placeDetails = PlacesApi.placeDetails(geoApiContext, result.placeId).await();
 
 							if (hotel.getUrl().concat(postfix).equals(placeDetails.website.toString())) {
-								System.out
-										.println(hotel.getName() + " APPROVED " + result.scope + " " + result.placeId);
+								logger.debug(hotel.getName() + " APPROVED " + result.scope + " " + result.placeId);
 								hotel.setIsMarkerApproved(true);
 								hotel.setPlaceId(placeDetails.placeId);
 								hotelService.update(hotel);
 							} else {
-								System.out.println(
-										hotel.getName() + " NOT APPROvVED " + result.scope + " " + result.placeId);
+								logger.debug(
+										hotel.getName() + " NOT APPROVED " + result.scope + " " + result.placeId);
 								hotel.setIsMarkerApproved(false);
 								hotel.setPlaceId(null);
 								hotelService.update(hotel);

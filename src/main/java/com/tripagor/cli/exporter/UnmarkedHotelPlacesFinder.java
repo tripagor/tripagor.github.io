@@ -2,8 +2,11 @@ package com.tripagor.cli.exporter;
 
 import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.Locale;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 
 import com.google.maps.GeoApiContext;
@@ -22,13 +25,13 @@ import com.tripagor.hotels.HotelService;
 import com.tripagor.hotels.model.Hotel;
 
 public class UnmarkedHotelPlacesFinder {
-	private int numberOfPlacesToAdd = 50000;
 	private StringSimilarity stringSimilarity;
 	private DistanceCalculator distanceCalculator;
 	private AddressTools addressTools;
 	private int pageSize = 50;
 	private HotelService hotelService;
 	private GeoApiContext geoApiContext;
+	private Logger logger = LoggerFactory.getLogger(UnmarkedHotelPlacesFinder.class);
 
 	public UnmarkedHotelPlacesFinder(HotelService hotelService, GeoApiContext geoApiContext) {
 		stringSimilarity = new StringSimilarity();
@@ -39,11 +42,8 @@ public class UnmarkedHotelPlacesFinder {
 		this.geoApiContext = geoApiContext;
 	}
 
-	public void setNumberOfPlacesToAdd(int numberOfPlacesToAdd) {
-		this.numberOfPlacesToAdd = numberOfPlacesToAdd;
-	}
-
-	public void doExport() {
+	public Collection<Hotel> doExport(int numberOfPlacesToAdd) {
+		Collection<Hotel> unmarkedHotels = new LinkedList<>();
 		boolean isMaxiumimNumber = false;
 		int currentNumberProcessed = 0;
 
@@ -87,13 +87,13 @@ public class UnmarkedHotelPlacesFinder {
 
 						if (cosineDistance >= 0.5 || jaroDistance >= 0.8 || geometricalDistance <= 50) {
 							if ("APP".equals(result.scope.name())) {
+								logger.debug("{} ALREADY MARKED",hotel.getName());
 								isMarketSet = true;
-								System.out.println(hotel.getName() + " WAS MARKED!");
 								break;
 							} else if ("GOOGLE".equals(result.scope.name())) {
+								logger.debug("{} ALREADY MARKED BY GOOGLE",hotel.getName());
 								isMarketSet = true;
 								isApprovedByGoogle = true;
-								System.out.println(hotel.getName() + " IS MARKED AND APPROVED BY GOOGLE!");
 								break;
 							}
 
@@ -115,17 +115,18 @@ public class UnmarkedHotelPlacesFinder {
 					hotel.setIsMarkerSet(isMarketSet);
 					hotel.setIsMarkerApproved(isApprovedByGoogle);
 					if (wellformattedAddress != null) {
-						System.out.println("Setting wellformatted " + wellformattedAddress);
+						logger.debug("Setting wellformatted " + wellformattedAddress);
 						hotel.setFormattedAddress(wellformattedAddress);
 					}
-
 					hotelService.update(hotel);
+					unmarkedHotels.add(hotel);
+
 					currentNumberProcessed++;
 				} catch (Exception e) {
 				}
 			}
 		}
-
+		return unmarkedHotels;
 	}
 
 }
