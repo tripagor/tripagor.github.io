@@ -78,7 +78,7 @@ public class PlaceMarker {
 						hotel.setIsMarkerSet(true);
 
 						hotelService.update(hotel);
-						
+
 						markedHotels.add(hotel);
 						currentNumberAdded++;
 					}
