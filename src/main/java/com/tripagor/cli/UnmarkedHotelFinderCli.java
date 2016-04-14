@@ -7,10 +7,10 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 
 import com.google.maps.GeoApiContext;
-import com.tripagor.cli.exporter.UnmarkedHotelPlacesFinder;
+import com.tripagor.cli.exporter.UnmarkedHotelFinder;
 import com.tripagor.hotels.HotelServiceRemoteImpl;
 
-public class UnmarkedHotelPlacesFinderCli {
+public class UnmarkedHotelFinderCli {
 
 	private static Options options;
 
@@ -61,7 +61,7 @@ public class UnmarkedHotelPlacesFinderCli {
 				help();
 			}
 
-			UnmarkedHotelPlacesFinder exporter = new UnmarkedHotelPlacesFinder(
+			UnmarkedHotelFinder exporter = new UnmarkedHotelFinder(
 					new HotelServiceRemoteImpl(host, clientId, clientSecret), new GeoApiContext().setApiKey(key));
 			
 			if (host != null && clientId != null && clientSecret != null) {
@@ -78,7 +78,7 @@ public class UnmarkedHotelPlacesFinderCli {
 
 	private static void help() {
 		HelpFormatter formater = new HelpFormatter();
-		formater.printHelp(UnmarkedHotelPlacesFinderCli.class.getName(), options);
+		formater.printHelp(UnmarkedHotelFinderCli.class.getName(), options);
 		System.exit(0);
 	}
 

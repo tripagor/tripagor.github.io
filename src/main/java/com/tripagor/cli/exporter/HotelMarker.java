@@ -20,15 +20,15 @@ import com.tripagor.model.PlaceAddRequest;
 import com.tripagor.model.PlaceAddResponse;
 
 @Component
-public class PlaceMarker {
+public class HotelMarker {
 
 	private int pageSize = 50;
 	private HotelService hotelService;
 	private PlaceAddApi placeAddApi;
-	private final Logger logger = LoggerFactory.getLogger(PlaceMarker.class);
+	private final Logger logger = LoggerFactory.getLogger(HotelMarker.class);
 
 	@Autowired
-	public PlaceMarker(HotelService hotelService, PlaceAddApi placeAddApi) {
+	public HotelMarker(HotelService hotelService, PlaceAddApi placeAddApi) {
 		this.hotelService = hotelService;
 		this.placeAddApi = placeAddApi;
 	}

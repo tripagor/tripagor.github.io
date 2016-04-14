@@ -22,15 +22,15 @@ import com.tripagor.hotels.HotelService;
 import com.tripagor.hotels.model.Hotel;
 
 @Component
-public class PlaceMarkerCheck {
+public class HotelMarkerCheck {
 
 	private HotelService hotelService;
 	private GeoApiContext geoApiContext;
 	private String postfix;
-	private Logger logger = LoggerFactory.getLogger(PlaceMarkerCheck.class);
+	private Logger logger = LoggerFactory.getLogger(HotelMarkerCheck.class);
 
 	@Autowired
-	public PlaceMarkerCheck(HotelService hotelService, GeoApiContext geoApiContext,
+	public HotelMarkerCheck(HotelService hotelService, GeoApiContext geoApiContext,
 			@Value("${hotel.url.postfix}") String postfix) {
 		this.hotelService = hotelService;
 		this.geoApiContext = geoApiContext;

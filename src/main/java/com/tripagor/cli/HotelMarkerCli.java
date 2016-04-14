@@ -6,11 +6,12 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 
-import com.google.maps.GeoApiContext;
-import com.tripagor.cli.exporter.PlaceMarkerCheck;
+import com.tripagor.cli.exporter.HotelMarker;
+import com.tripagor.cli.service.PlaceAddApiSeleniumImpl;
+import com.tripagor.cli.service.PlaceApiImpl;
 import com.tripagor.hotels.HotelServiceRemoteImpl;
 
-public class PlaceMarkerCheckCli {
+public class HotelMarkerCli {
 
 	private static Options options;
 
@@ -20,14 +21,15 @@ public class PlaceMarkerCheckCli {
 		options = new Options();
 		options.addOption("h", false, "this help");
 
+		options.addOption("a", true, "append string");
+		options.addOption("n", true, "maxium number of markers to be placed");
+
 		options.addOption("r", true, "Host Rest Service");
 		options.addOption("i", true, "clientId");
 		options.addOption("p", true, "client Secret");
 
 		options.addOption("k", true, "google api key");
-		
-		options.addOption("a", true, "url postfix");
-		
+		options.addOption("c", true, "google credentials");
 
 		try {
 			CommandLine cmd = parser.parse(options, args);
@@ -36,12 +38,21 @@ public class PlaceMarkerCheckCli {
 			String clientId = null;
 			String clientSecret = null;
 			String key = null;
-			String postfix = "";
+			String username = null;
+			String password = null;
+			int numberOfPlacesToAdd = 0;
+			String appendStr = "";
 
 			if (cmd.hasOption("h")) {
 				help();
 			}
 
+			if (cmd.hasOption("n")) {
+				numberOfPlacesToAdd = Integer.parseInt(cmd.getOptionValue("n"));
+			}
+			if (cmd.hasOption("a")) {
+				appendStr = cmd.getOptionValue("a");
+			}
 			if (cmd.hasOption("r")) {
 				host = cmd.getOptionValue("r");
 			}
@@ -54,17 +65,25 @@ public class PlaceMarkerCheckCli {
 			if (cmd.hasOption("k")) {
 				key = cmd.getOptionValue("k");
 			}
-			if (cmd.hasOption("a")) {
-				postfix = cmd.getOptionValue("a");
+			if (cmd.hasOption("c")) {
+				username = cmd.getOptionValue("c").split(":")[0];
+				password = cmd.getOptionValue("c").split(":")[1];
 			}
 
-			PlaceMarkerCheck check = null;
+			if (key == null && (username == null && password == null)) {
+				help();
+			}
+
+			HotelMarker exporter = null;
 			if (key != null) {
-				check = new PlaceMarkerCheck(new HotelServiceRemoteImpl(host, clientId, clientSecret),
-						new GeoApiContext().setApiKey(key), postfix);
+				exporter = new HotelMarker(new HotelServiceRemoteImpl(host, clientId, clientSecret),
+						new PlaceApiImpl(key));
+			} else {
+				exporter = new HotelMarker(new HotelServiceRemoteImpl(host, clientId, clientSecret),
+						new PlaceAddApiSeleniumImpl(username, password));
 			}
 			if (host != null && clientId != null && clientSecret != null) {
-				check.doCheck();
+				exporter.doMark(numberOfPlacesToAdd, appendStr);
 			} else {
 				help();
 			}
@@ -75,7 +94,7 @@ public class PlaceMarkerCheckCli {
 
 	private static void help() {
 		HelpFormatter formater = new HelpFormatter();
-		formater.printHelp(PlaceMarkerCheckCli.class.getName(), options);
+		formater.printHelp(HotelMarkerCli.class.getName(), options);
 		System.exit(0);
 	}
 

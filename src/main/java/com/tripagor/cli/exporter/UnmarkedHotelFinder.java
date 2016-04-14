@@ -24,16 +24,16 @@ import com.tripagor.cli.service.StringSimilarity;
 import com.tripagor.hotels.HotelService;
 import com.tripagor.hotels.model.Hotel;
 
-public class UnmarkedHotelPlacesFinder {
+public class UnmarkedHotelFinder {
 	private StringSimilarity stringSimilarity;
 	private DistanceCalculator distanceCalculator;
 	private AddressTools addressTools;
 	private int pageSize = 50;
 	private HotelService hotelService;
 	private GeoApiContext geoApiContext;
-	private Logger logger = LoggerFactory.getLogger(UnmarkedHotelPlacesFinder.class);
+	private Logger logger = LoggerFactory.getLogger(UnmarkedHotelFinder.class);
 
-	public UnmarkedHotelPlacesFinder(HotelService hotelService, GeoApiContext geoApiContext) {
+	public UnmarkedHotelFinder(HotelService hotelService, GeoApiContext geoApiContext) {
 		stringSimilarity = new StringSimilarity();
 		distanceCalculator = new DistanceCalculator();
 		addressTools = new AddressTools();
