@@ -20,13 +20,16 @@ public class HotelMarkerExportHandler {
 	private final HotelMarker hotelMarker;
 	private ExecutorService executor = Executors.newFixedThreadPool(10);
 	private final String appendStr;
+	private final HotelMarkerExportRepository hotelMarkerExportRepository;
+
 	@Autowired
-	public HotelMarkerExportHandler(HotelMarker hotelMarker,@Value("${hotel.url.postfix}") String appendStr) {
+	public HotelMarkerExportHandler(HotelMarker hotelMarker, HotelMarkerExportRepository hotelMarkerExportRepository,
+			@Value("${hotel.url.postfix}") String appendStr) {
 		super();
 		this.hotelMarker = hotelMarker;
 		this.appendStr = appendStr;
+		this.hotelMarkerExportRepository = hotelMarkerExportRepository;
 	}
-
 
 	@HandleAfterCreate
 	public void handle(final HotelMarkerExport markerExport) {
@@ -36,6 +39,7 @@ public class HotelMarkerExportHandler {
 			public void run() {
 				Collection<Hotel> exported = hotelMarker.doMark(markerExport.getNumberToMark(), appendStr);
 				markerExport.setHotels(exported);
+				hotelMarkerExportRepository.save(markerExport);
 			}
 		});
 
