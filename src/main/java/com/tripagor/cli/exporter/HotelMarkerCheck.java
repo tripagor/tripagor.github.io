@@ -1,6 +1,7 @@
 package com.tripagor.cli.exporter;
 
 import java.util.Collection;
+import java.util.LinkedList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +42,8 @@ public class HotelMarkerCheck {
 		}
 	}
 
-	public void doCheck() {
+	public Collection<Hotel> doCheck() {
+		Collection<Hotel> checked = new LinkedList<>();
 		int currentPage = 0;
 		long totalPages = 1;
 		int pageSize = 50;
@@ -82,7 +84,9 @@ public class HotelMarkerCheck {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				checked.add(hotel);
 			}
 		}
+		return checked;
 	}
 }
