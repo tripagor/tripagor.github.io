@@ -3,6 +3,7 @@ package com.tripagor.markers.model;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedList;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
@@ -23,7 +24,7 @@ public class HotelMarkerExport {
 	private Date creationDate;
 	@LastModifiedDate
 	private Date lastModified;
-	private Collection<Hotel> hotels = Collections.emptyList();
+	private Collection<Hotel> hotels = new LinkedList<>();
 
 	public String getId() {
 		return id;

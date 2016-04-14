@@ -25,14 +25,6 @@ public class Approval {
 		this.hotelName = hotelName;
 	}
 
-	public LatLng getLatLng() {
-		return latLng;
-	}
-
-	public void setLatLng(LatLng latLng) {
-		this.latLng = latLng;
-	}
-
 	public ApprovalStatus getStatus() {
 		return status;
 	}
@@ -47,6 +39,14 @@ public class Approval {
 
 	public void setFormattedAddress(String formattedAddress) {
 		this.formattedAddress = formattedAddress;
+	}
+
+	public LatLng getLatLng() {
+		return latLng;
+	}
+
+	public void setLatLng(LatLng latLng) {
+		this.latLng = latLng;
 	}
 
 }
