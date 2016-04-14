@@ -36,8 +36,8 @@ public class HotelMarker {
 	public Collection<Hotel> doMark(int numberOfPlacesToAdd, String appendStr) {
 		Collection<Hotel> markedHotels = new LinkedList<>();
 
-		boolean isMaxiumimNumber = numberOfPlacesToAdd == currentNumberAdded;
 		int currentNumberAdded = 0;
+		boolean isMaxiumimNumber = numberOfPlacesToAdd == currentNumberAdded;
 
 		int currentPage = 0;
 		long totalPages = 1;
