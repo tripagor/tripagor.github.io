@@ -8,6 +8,7 @@ import org.apache.commons.cli.Options;
 
 import com.google.maps.GeoApiContext;
 import com.tripagor.cli.exporter.HotelMarkerCheck;
+import com.tripagor.cli.service.PlaceApiImpl;
 import com.tripagor.hotels.HotelServiceRemoteImpl;
 
 public class HotelMarkerCheckCli {
@@ -25,9 +26,8 @@ public class HotelMarkerCheckCli {
 		options.addOption("p", true, "client Secret");
 
 		options.addOption("k", true, "google api key");
-		
+
 		options.addOption("a", true, "url postfix");
-		
 
 		try {
 			CommandLine cmd = parser.parse(options, args);
@@ -61,7 +61,7 @@ public class HotelMarkerCheckCli {
 			HotelMarkerCheck check = null;
 			if (key != null) {
 				check = new HotelMarkerCheck(new HotelServiceRemoteImpl(host, clientId, clientSecret),
-						new GeoApiContext().setApiKey(key), postfix);
+						new GeoApiContext().setApiKey(key), new PlaceApiImpl(key), postfix);
 			}
 			if (host != null && clientId != null && clientSecret != null) {
 				check.doCheck();
