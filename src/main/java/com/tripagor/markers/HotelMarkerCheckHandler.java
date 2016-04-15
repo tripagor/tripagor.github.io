@@ -50,6 +50,7 @@ public class HotelMarkerCheckHandler {
 					approval.setHotelName(hotel.getName());
 					approval.setFormattedAddress(hotel.getFormattedAddress());
 					approval.setUrl(hotel.getUrl());
+					approval.setPlaceId(hotel.getPlaceId());
 					approval.setLatLng(new LatLng(Double.parseDouble(hotel.getLatitude()),
 							Double.parseDouble(hotel.getLongitude())));
 					if (hotel.getIsMarkerApproved()) {
