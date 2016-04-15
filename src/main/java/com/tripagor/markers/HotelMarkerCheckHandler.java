@@ -6,6 +6,7 @@ import java.util.concurrent.Executors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.core.annotation.HandleAfterCreate;
+import org.springframework.data.rest.core.annotation.HandleBeforeCreate;
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +15,7 @@ import com.tripagor.hotels.model.Hotel;
 import com.tripagor.markers.model.Approval;
 import com.tripagor.markers.model.ApprovalStatus;
 import com.tripagor.markers.model.HotelMarkerCheck;
+import com.tripagor.markers.model.ProcessingStatus;
 
 @Component
 @RepositoryEventHandler(HotelMarkerCheck.class)
@@ -30,8 +32,13 @@ public class HotelMarkerCheckHandler {
 		this.hotelMarkerCheckRepository = hotelMarkerCheckRepository;
 	}
 
+	@HandleBeforeCreate
+	public void handleBeforeCreate(final HotelMarkerCheck markercheck) {
+		markercheck.setStatus(ProcessingStatus.CREATED);
+	}
+
 	@HandleAfterCreate
-	public void handle(final HotelMarkerCheck markercheck) {
+	public void handleAfterCreate(final HotelMarkerCheck markercheck) {
 		executor.execute(new Runnable() {
 
 			@Override
@@ -42,6 +49,7 @@ public class HotelMarkerCheckHandler {
 					approval.setHotelId(hotel.getId());
 					approval.setHotelName(hotel.getName());
 					approval.setFormattedAddress(hotel.getFormattedAddress());
+					approval.setUrl(hotel.getUrl());
 					approval.setLatLng(new LatLng(Double.parseDouble(hotel.getLatitude()),
 							Double.parseDouble(hotel.getLongitude())));
 					if (hotel.getIsMarkerApproved()) {
@@ -55,6 +63,7 @@ public class HotelMarkerCheckHandler {
 					}
 					markercheck.getApprovals().add(approval);
 				}
+				markercheck.setStatus(ProcessingStatus.PROCESSED);
 				hotelMarkerCheckRepository.save(markercheck);
 			}
 		});

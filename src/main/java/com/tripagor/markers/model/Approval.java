@@ -7,6 +7,8 @@ public class Approval {
 	private String hotelName;
 	private LatLng latLng;
 	private String formattedAddress;
+	private String url;
+	private String placeId;
 	private ApprovalStatus status;
 
 	public String getHotelId() {
@@ -47,6 +49,22 @@ public class Approval {
 
 	public void setLatLng(LatLng latLng) {
 		this.latLng = latLng;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	public String getPlaceId() {
+		return placeId;
+	}
+
+	public void setPlaceId(String placeId) {
+		this.placeId = placeId;
 	}
 
 }

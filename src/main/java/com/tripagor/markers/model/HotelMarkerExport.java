@@ -1,7 +1,6 @@
 package com.tripagor.markers.model;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 
@@ -14,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.tripagor.hotels.model.Hotel;
 
 @Document
-@JsonIgnoreProperties(ignoreUnknown=true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class HotelMarkerExport {
 
 	@Id
@@ -25,6 +24,7 @@ public class HotelMarkerExport {
 	@LastModifiedDate
 	private Date lastModified;
 	private Collection<Hotel> hotels = new LinkedList<>();
+	private ProcessingStatus status;
 
 	public String getId() {
 		return id;
@@ -64,5 +64,13 @@ public class HotelMarkerExport {
 
 	public void setHotels(Collection<Hotel> hotels) {
 		this.hotels = hotels;
+	}
+
+	public ProcessingStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(ProcessingStatus status) {
+		this.status = status;
 	}
 }

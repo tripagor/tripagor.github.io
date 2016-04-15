@@ -21,6 +21,7 @@ public class HotelMarkerCheck {
 	@CreatedDate
 	private Date creationDate;
 	private Collection<Approval> approvals = new LinkedList<>();
+	private ProcessingStatus status;
 
 	public String getId() {
 		return id;
@@ -52,6 +53,14 @@ public class HotelMarkerCheck {
 
 	public void setApprovals(Collection<Approval> approvals) {
 		this.approvals = approvals;
+	}
+
+	public ProcessingStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(ProcessingStatus status) {
+		this.status = status;
 	}
 
 }

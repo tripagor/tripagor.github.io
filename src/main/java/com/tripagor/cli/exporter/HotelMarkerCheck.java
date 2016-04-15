@@ -19,6 +19,7 @@ import com.google.maps.model.PlaceType;
 import com.google.maps.model.PlacesSearchResponse;
 import com.google.maps.model.PlacesSearchResult;
 import com.google.maps.model.RankBy;
+import com.tripagor.cli.service.PlaceDeleteApi;
 import com.tripagor.hotels.HotelService;
 import com.tripagor.hotels.model.Hotel;
 
@@ -29,12 +30,14 @@ public class HotelMarkerCheck {
 	private GeoApiContext geoApiContext;
 	private String postfix;
 	private Logger logger = LoggerFactory.getLogger(HotelMarkerCheck.class);
+	private PlaceDeleteApi placeDeleteApi;
 
 	@Autowired
-	public HotelMarkerCheck(HotelService hotelService, GeoApiContext geoApiContext,
+	public HotelMarkerCheck(HotelService hotelService, GeoApiContext geoApiContext, PlaceDeleteApi placeDeleteApi,
 			@Value("${hotel.url.postfix}") String postfix) {
 		this.hotelService = hotelService;
 		this.geoApiContext = geoApiContext;
+		this.placeDeleteApi = placeDeleteApi;
 		if (postfix == null) {
 			this.postfix = "";
 		} else {
@@ -62,22 +65,27 @@ public class HotelMarkerCheck {
 					PlacesSearchResponse response = PlacesApi.nearbySearchQuery(geoApiContext, hotelLatLng)
 							.rankby(RankBy.DISTANCE).type(PlaceType.LODGING).await();
 					for (PlacesSearchResult result : response.results) {
-						if (result.name.equals(hotel.getName()) && result.scope == PlaceIdScope.GOOGLE) {
+						if (result.name.equals(hotel.getName())) {
 							PlaceDetails placeDetails = PlacesApi.placeDetails(geoApiContext, result.placeId).await();
-
-							if (hotel.getUrl().concat(postfix).equals(placeDetails.website.toString())) {
-								logger.debug(hotel.getName() + " APPROVED " + result.scope + " " + result.placeId);
-								hotel.setIsMarkerApproved(true);
-								hotel.setPlaceId(placeDetails.placeId);
-								hotelService.update(hotel);
+							if (result.scope == PlaceIdScope.GOOGLE) {
+								if (hotel.getUrl().concat(postfix).equals(placeDetails.website.toString())) {
+									logger.debug(hotel.getName() + " APPROVED " + result.scope + " " + result.placeId);
+									hotel.setIsMarkerApproved(true);
+									hotel.setPlaceId(placeDetails.placeId);
+									hotelService.update(hotel);
+								} else {
+									logger.debug(
+											hotel.getName() + " NOT APPROVED " + result.scope + " " + result.placeId);
+									hotel.setIsMarkerApproved(false);
+									hotel.setPlaceId(null);
+									hotelService.update(hotel);
+								}
+								break;
 							} else {
-								logger.debug(
-										hotel.getName() + " NOT APPROVED " + result.scope + " " + result.placeId);
-								hotel.setIsMarkerApproved(false);
-								hotel.setPlaceId(null);
-								hotelService.update(hotel);
+								if (!placeDetails.placeId.equals(hotel.getPlaceId())) {
+									placeDeleteApi.delete(placeDetails.placeId);
+								}
 							}
-							break;
 						}
 					}
 				} catch (Exception e) {
