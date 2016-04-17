@@ -2,17 +2,12 @@ package com.tripagor.cli;
 
 import java.io.File;
 import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
-import org.apache.log4j.Level;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 
 import com.tripagor.cli.exporter.BookingComExporter;
 import com.tripagor.hotels.HotelServiceRemoteImpl;
@@ -22,12 +17,6 @@ public class BookingComExporterCli {
 	private static Options options;
 
 	public static void main(String[] args) {
-		java.util.logging.LogManager.getLogManager().reset();
-		List<Logger> loggers = Collections.<Logger> list(LogManager.getCurrentLoggers());
-		loggers.add(LogManager.getRootLogger());
-		for (Logger logger : loggers) {
-			logger.setLevel(Level.OFF);
-		}
 		options = new Options();
 
 		options.addOption("h", false, "this help");
