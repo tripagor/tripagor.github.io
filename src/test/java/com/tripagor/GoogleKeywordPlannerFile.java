@@ -38,7 +38,7 @@ public class GoogleKeywordPlannerFile {
 		restTemplate.setMessageConverters(asList(hateoasConverter));
 
 		int currentPage = 0;
-		long totalPages = 25;
+		long totalPages = 1;
 		List<String> citynames = new ArrayList<>();
 		while (currentPage < totalPages) {
 			PagedResources<Hotel> result = restTemplate
@@ -47,7 +47,7 @@ public class GoogleKeywordPlannerFile {
 							}, currentPage++, 200)
 					.getBody();
 
-			//totalPages = result.getMetadata().getTotalPages();
+			totalPages = result.getMetadata().getTotalPages();
 			Collection<Hotel> hotels = result.getContent();
 
 			for (Hotel hotel : hotels) {
