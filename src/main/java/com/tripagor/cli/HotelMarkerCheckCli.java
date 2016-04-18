@@ -71,24 +71,23 @@ public class HotelMarkerCheckCli {
 				mongoUri = cmd.getOptionValue("d");
 			}
 
-			HotelMarkerCheck check = null;
-
-			if (mongoUri != null && key != null) {
+			HotelService hotelService = null;
+			if (mongoUri != null) {
 				MongoDbFactory mongoDbFactory = new SimpleMongoDbFactory(new MongoClientURI(mongoUri));
 				MongoTemplate mongoTemplate = new MongoTemplate(mongoDbFactory);
 				HotelRepository hotelRepository = new MongoRepositoryFactory(mongoTemplate)
 						.getRepository(HotelRepository.class);
-				HotelService hotelService = new HotelServicePersistenceImpl(hotelRepository);
-				check = new HotelMarkerCheck(hotelService, new GeoApiContext().setApiKey(key), new PlaceApiImpl(key),
-						postfix);
+				hotelService = new HotelServicePersistenceImpl(hotelRepository);
+			} else if (host != null && clientId != null && clientSecret != null) {
+				hotelService = new HotelServiceRemoteImpl(host, clientId, clientSecret);
 			}
-			if (host != null && clientId != null && clientSecret != null && key != null) {
-				check = new HotelMarkerCheck(new HotelServiceRemoteImpl(host, clientId, clientSecret),
-						new GeoApiContext().setApiKey(key), new PlaceApiImpl(key), postfix);
+
+			if (key != null && hotelService != null) {
+				new HotelMarkerCheck(hotelService, new GeoApiContext().setApiKey(key), new PlaceApiImpl(key),
+						postfix).doCheck();
 			} else {
 				help();
 			}
-			check.doCheck();
 		} catch (Exception e) {
 			System.err.println("An problem occured:" + e);
 		}

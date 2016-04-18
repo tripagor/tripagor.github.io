@@ -5,10 +5,18 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
+import org.springframework.data.mongodb.MongoDbFactory;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
+import org.springframework.data.mongodb.repository.support.MongoRepositoryFactory;
 
+import com.mongodb.MongoClientURI;
 import com.tripagor.cli.exporter.HotelMarker;
 import com.tripagor.cli.service.PlaceAddApiSeleniumImpl;
 import com.tripagor.cli.service.PlaceApiImpl;
+import com.tripagor.hotels.HotelRepository;
+import com.tripagor.hotels.HotelService;
+import com.tripagor.hotels.HotelServicePersistenceImpl;
 import com.tripagor.hotels.HotelServiceRemoteImpl;
 
 public class HotelMarkerCli {
@@ -27,7 +35,7 @@ public class HotelMarkerCli {
 		options.addOption("r", true, "Host Rest Service");
 		options.addOption("i", true, "clientId");
 		options.addOption("p", true, "client Secret");
-		
+
 		options.addOption("d", true, "Uri Mongo DB");
 
 		options.addOption("k", true, "google api key");
@@ -72,7 +80,7 @@ public class HotelMarkerCli {
 				username = cmd.getOptionValue("c").split(":")[0];
 				password = cmd.getOptionValue("c").split(":")[1];
 			}
-			if(cmd.hasOption("d")){
+			if (cmd.hasOption("d")) {
 				mongoUri = cmd.getOptionValue("d");
 			}
 
@@ -80,16 +88,22 @@ public class HotelMarkerCli {
 				help();
 			}
 
-			HotelMarker exporter = null;
-			if (key != null) {
-				exporter = new HotelMarker(new HotelServiceRemoteImpl(host, clientId, clientSecret),
-						new PlaceApiImpl(key));
-			} else {
-				exporter = new HotelMarker(new HotelServiceRemoteImpl(host, clientId, clientSecret),
-						new PlaceAddApiSeleniumImpl(username, password));
+			HotelService hotelService = null;
+			if (mongoUri != null) {
+				MongoDbFactory mongoDbFactory = new SimpleMongoDbFactory(new MongoClientURI(mongoUri));
+				MongoTemplate mongoTemplate = new MongoTemplate(mongoDbFactory);
+				HotelRepository hotelRepository = new MongoRepositoryFactory(mongoTemplate)
+						.getRepository(HotelRepository.class);
+				hotelService = new HotelServicePersistenceImpl(hotelRepository);
+			} else if (host != null && clientId != null && clientSecret != null) {
+				hotelService = new HotelServiceRemoteImpl(host, clientId, clientSecret);
 			}
-			if (host != null && clientId != null && clientSecret != null) {
-				exporter.doMark(numberOfPlacesToAdd, appendStr);
+
+			if (hotelService != null && key != null) {
+				new HotelMarker(hotelService, new PlaceApiImpl(key)).doMark(numberOfPlacesToAdd, appendStr);
+			} else if (hotelService != null && username != null && password != null) {
+				new HotelMarker(hotelService, new PlaceAddApiSeleniumImpl(username, password))
+						.doMark(numberOfPlacesToAdd, appendStr);
 			} else {
 				help();
 			}

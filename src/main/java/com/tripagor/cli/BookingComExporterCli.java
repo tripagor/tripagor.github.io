@@ -75,24 +75,23 @@ public class BookingComExporterCli {
 				help();
 			}
 
-			BookingComExporter exporter = null;
-			if (host != null && clientId != null && clientSecret != null) {
-				exporter = new BookingComExporter(new HotelServiceRemoteImpl(host, clientId, clientSecret));
-			} else if (mongoUri != null) {
+			HotelService hotelService = null;
+			if (mongoUri != null) {
 				MongoDbFactory mongoDbFactory = new SimpleMongoDbFactory(new MongoClientURI(mongoUri));
 				MongoTemplate mongoTemplate = new MongoTemplate(mongoDbFactory);
 				HotelRepository hotelRepository = new MongoRepositoryFactory(mongoTemplate)
 						.getRepository(HotelRepository.class);
-				HotelService hotelService = new HotelServicePersistenceImpl(hotelRepository);
-				exporter = new BookingComExporter(hotelService);
-			} else {
-				help();
+				hotelService = new HotelServicePersistenceImpl(hotelRepository);
+			} else if (host != null && clientId != null && clientSecret != null) {
+				hotelService = new HotelServiceRemoteImpl(host, clientId, clientSecret);
 			}
 
-			if (source != null) {
-				exporter.extract(new File(source), host, clientId, clientSecret);
-			} else if (directory != null) {
-				exporter.extract(Paths.get(directory), host, clientId, clientSecret);
+			if (hotelService != null && source != null) {
+				new BookingComExporter(hotelService).extract(new File(source), host, clientId, clientSecret);
+			} else if (hotelService != null && directory != null) {
+				new BookingComExporter(hotelService).extract(Paths.get(directory), host, clientId, clientSecret);
+			} else {
+				help();
 			}
 
 		} catch (Exception e) {

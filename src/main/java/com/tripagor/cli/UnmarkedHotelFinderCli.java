@@ -5,9 +5,17 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
+import org.springframework.data.mongodb.MongoDbFactory;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
+import org.springframework.data.mongodb.repository.support.MongoRepositoryFactory;
 
 import com.google.maps.GeoApiContext;
+import com.mongodb.MongoClientURI;
 import com.tripagor.cli.exporter.UnmarkedHotelFinder;
+import com.tripagor.hotels.HotelRepository;
+import com.tripagor.hotels.HotelService;
+import com.tripagor.hotels.HotelServicePersistenceImpl;
 import com.tripagor.hotels.HotelServiceRemoteImpl;
 
 public class UnmarkedHotelFinderCli {
@@ -23,7 +31,7 @@ public class UnmarkedHotelFinderCli {
 		options.addOption("r", true, "Host RestService");
 		options.addOption("i", true, "clientId");
 		options.addOption("p", true, "client Secret");
-		
+
 		options.addOption("d", true, "Uri Mongo DB");
 
 		options.addOption("k", true, "Google API key");
@@ -59,22 +67,24 @@ public class UnmarkedHotelFinderCli {
 			if (cmd.hasOption("n")) {
 				numberOfPlacesToAdd = Integer.parseInt(cmd.getOptionValue("n"));
 			}
-			if(cmd.hasOption("d")){
+			if (cmd.hasOption("d")) {
 				mongoUri = cmd.getOptionValue("d");
 			}
 
-			if (key == null) {
-				help();
+			HotelService hotelService = null;
+			if (mongoUri != null) {
+				MongoDbFactory mongoDbFactory = new SimpleMongoDbFactory(new MongoClientURI(mongoUri));
+				MongoTemplate mongoTemplate = new MongoTemplate(mongoDbFactory);
+				HotelRepository hotelRepository = new MongoRepositoryFactory(mongoTemplate)
+						.getRepository(HotelRepository.class);
+				hotelService = new HotelServicePersistenceImpl(hotelRepository);
+			} else if (host != null && clientId != null && clientSecret != null) {
+				hotelService = new HotelServiceRemoteImpl(host, clientId, clientSecret);
 			}
 
-			UnmarkedHotelFinder exporter = new UnmarkedHotelFinder(
-					new HotelServiceRemoteImpl(host, clientId, clientSecret), new GeoApiContext().setApiKey(key));
-			
-			if (host != null && clientId != null && clientSecret != null) {
-				exporter.doExport(numberOfPlacesToAdd);
-			}
-
-			else {
+			if (hotelService != null && key != null) {
+				new UnmarkedHotelFinder(hotelService, new GeoApiContext().setApiKey(key)).doExport(numberOfPlacesToAdd);
+			} else {
 				help();
 			}
 		} catch (Exception e) {
