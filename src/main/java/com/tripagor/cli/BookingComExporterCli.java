@@ -8,13 +8,11 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
-import org.springframework.cloud.service.document.MongoDbFactoryFactory;
 import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 import org.springframework.data.mongodb.repository.support.MongoRepositoryFactory;
 
-import com.mongodb.Mongo;
 import com.mongodb.MongoClientURI;
 import com.tripagor.cli.exporter.BookingComExporter;
 import com.tripagor.hotels.HotelRepository;
@@ -39,7 +37,6 @@ public class BookingComExporterCli {
 		options.addOption("p", true, "client Secret");
 
 		options.addOption("d", true, "Uri Mongo DB");
-		options.addOption("c", true, "collection");
 
 		CommandLineParser parser = new DefaultParser();
 		try {
@@ -50,7 +47,6 @@ public class BookingComExporterCli {
 			String clientId = null;
 			String clientSecret = null;
 			String mongoUri = null;
-			String collection = null;
 
 			if (cmd.hasOption("h")) {
 				help();
@@ -74,30 +70,29 @@ public class BookingComExporterCli {
 			if (cmd.hasOption("d")) {
 				mongoUri = cmd.getOptionValue("d");
 			}
-			if (cmd.hasOption("c")) {
-				collection = cmd.getOptionValue("c");
-			}
 
 			if (source == null && directory == null) {
 				help();
 			}
 
+			BookingComExporter exporter = null;
 			if (host != null && clientId != null && clientSecret != null) {
-				BookingComExporter exporter = new BookingComExporter(
-						new HotelServiceRemoteImpl(host, clientId, clientSecret));
-				if (source != null) {
-					exporter.extract(new File(source), host, clientId, clientSecret);
-				} else if (directory != null) {
-					exporter.extract(Paths.get(directory), host, clientId, clientSecret);
-				}
-			} else if (mongoUri != null && collection != null) {
-				Mongo mongo = new Mongo();
-				MongoTemplate mongoTemplate = new MongoTemplate(mongo);
-				HotelRepository hotelRepository = new MongoRepositoryFactory(mongoTemplate).getRepository(HotelRepository.class);
+				exporter = new BookingComExporter(new HotelServiceRemoteImpl(host, clientId, clientSecret));
+			} else if (mongoUri != null) {
+				MongoDbFactory mongoDbFactory = new SimpleMongoDbFactory(new MongoClientURI(mongoUri));
+				MongoTemplate mongoTemplate = new MongoTemplate(mongoDbFactory);
+				HotelRepository hotelRepository = new MongoRepositoryFactory(mongoTemplate)
+						.getRepository(HotelRepository.class);
 				HotelService hotelService = new HotelServicePersistenceImpl(hotelRepository);
-				BookingComExporter exporter = new BookingComExporter(hotelService);
+				exporter = new BookingComExporter(hotelService);
 			} else {
 				help();
+			}
+
+			if (source != null) {
+				exporter.extract(new File(source), host, clientId, clientSecret);
+			} else if (directory != null) {
+				exporter.extract(Paths.get(directory), host, clientId, clientSecret);
 			}
 
 		} catch (Exception e) {

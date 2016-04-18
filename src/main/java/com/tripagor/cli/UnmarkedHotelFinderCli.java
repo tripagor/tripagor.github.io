@@ -23,6 +23,8 @@ public class UnmarkedHotelFinderCli {
 		options.addOption("r", true, "Host RestService");
 		options.addOption("i", true, "clientId");
 		options.addOption("p", true, "client Secret");
+		
+		options.addOption("d", true, "Uri Mongo DB");
 
 		options.addOption("k", true, "Google API key");
 
@@ -37,6 +39,7 @@ public class UnmarkedHotelFinderCli {
 			String clientSecret = null;
 			String host = null;
 			String key = null;
+			String mongoUri = null;
 
 			if (cmd.hasOption("h")) {
 				help();
@@ -55,6 +58,9 @@ public class UnmarkedHotelFinderCli {
 			}
 			if (cmd.hasOption("n")) {
 				numberOfPlacesToAdd = Integer.parseInt(cmd.getOptionValue("n"));
+			}
+			if(cmd.hasOption("d")){
+				mongoUri = cmd.getOptionValue("d");
 			}
 
 			if (key == null) {

@@ -27,6 +27,8 @@ public class HotelMarkerCli {
 		options.addOption("r", true, "Host Rest Service");
 		options.addOption("i", true, "clientId");
 		options.addOption("p", true, "client Secret");
+		
+		options.addOption("d", true, "Uri Mongo DB");
 
 		options.addOption("k", true, "google api key");
 		options.addOption("c", true, "google credentials");
@@ -42,6 +44,7 @@ public class HotelMarkerCli {
 			String password = null;
 			int numberOfPlacesToAdd = 0;
 			String appendStr = "";
+			String mongoUri = null;
 
 			if (cmd.hasOption("h")) {
 				help();
@@ -68,6 +71,9 @@ public class HotelMarkerCli {
 			if (cmd.hasOption("c")) {
 				username = cmd.getOptionValue("c").split(":")[0];
 				password = cmd.getOptionValue("c").split(":")[1];
+			}
+			if(cmd.hasOption("d")){
+				mongoUri = cmd.getOptionValue("d");
 			}
 
 			if (key == null && (username == null && password == null)) {
