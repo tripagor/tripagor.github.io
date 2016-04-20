@@ -59,6 +59,7 @@ public class HotelMarkerCheck {
 			Collection<Hotel> hotels = pagedResources.getContent();
 
 			for (Hotel hotel : hotels) {
+				checked.add(hotel);
 				try {
 					LatLng hotelLatLng = new LatLng(Double.parseDouble(hotel.getLatitude()),
 							Double.parseDouble(hotel.getLongitude()));
@@ -92,7 +93,6 @@ public class HotelMarkerCheck {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				checked.add(hotel);
 			}
 		}
 		return checked;
