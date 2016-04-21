@@ -6,6 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class City {
 	private String id;
 	private String name;
+	private String countryCode;
 	private int numOfHotels;
 
 	public String getName() {
@@ -30,6 +31,14 @@ public class City {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public String getCountryCode() {
+		return countryCode;
+	}
+
+	public void setCountryCode(String countryCode) {
+		this.countryCode = countryCode;
 	}
 
 }
