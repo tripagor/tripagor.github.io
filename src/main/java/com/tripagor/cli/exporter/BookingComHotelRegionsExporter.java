@@ -12,19 +12,21 @@ import org.slf4j.LoggerFactory;
 
 import com.tripagor.locations.City;
 import com.tripagor.locations.CityRepository;
+import com.tripagor.locations.Region;
+import com.tripagor.locations.RegionRepository;
 import com.univocity.parsers.tsv.TsvParser;
 import com.univocity.parsers.tsv.TsvParserSettings;
 
-public class BookingComHotelCitiesExporter {
+public class BookingComHotelRegionsExporter {
 	private File importFile;
 	private TsvParser parser;
-	private final Logger logger = LoggerFactory.getLogger(BookingComHotelCitiesExporter.class);
+	private final Logger logger = LoggerFactory.getLogger(BookingComHotelRegionsExporter.class);
 	private Map<String, Integer> propMap;
-	private CityRepository cityRepository;
+	private RegionRepository regionRepository;
 
-	public BookingComHotelCitiesExporter(File importFile, CityRepository cityRepository) {
+	public BookingComHotelRegionsExporter(File importFile, RegionRepository regionRepository) {
 		this.importFile = importFile;
-		this.cityRepository = cityRepository;
+		this.regionRepository = regionRepository;
 		TsvParserSettings settings = new TsvParserSettings();
 		settings.getFormat().setLineSeparator("\n");
 		this.parser = new TsvParser(settings);
@@ -41,12 +43,12 @@ public class BookingComHotelCitiesExporter {
 			for (int i = 0; i < rows.size(); i++) {
 				if (i > 0) {
 					try {
-						City city = new City();
-						city.setName(rows.get(i)[propMap.get("full_name")]);
-						city.setCountryCode(rows.get(i)[propMap.get("country_code")]);
-						city.setNumOfHotels(Integer.parseInt(rows.get(i)[propMap.get("number_of_hotels")]));
+						Region region = new Region();
+						region.setName(rows.get(i)[propMap.get("region_name")]);
+						region.setCountryCode(rows.get(i)[propMap.get("country_code")]);
+						region.setNumOfHotels(Integer.parseInt(rows.get(i)[propMap.get("number_of_hotels")]));
 						
-						cityRepository.save(city);						
+						regionRepository.save(region);						
 					} catch (Exception e) {
 						continue;
 					}

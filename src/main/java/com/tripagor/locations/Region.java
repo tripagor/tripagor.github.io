@@ -10,6 +10,7 @@ public class Region {
 	private String id;
 	private String name;
 	private int numOfHotels;
+	private String countryCode;
 
 	public String getId() {
 		return id;
@@ -33,6 +34,14 @@ public class Region {
 
 	public void setNumOfHotels(int numOfHotels) {
 		this.numOfHotels = numOfHotels;
+	}
+
+	public String getCountryCode() {
+		return countryCode;
+	}
+
+	public void setCountryCode(String countryCode) {
+		this.countryCode = countryCode;
 	}
 
 }

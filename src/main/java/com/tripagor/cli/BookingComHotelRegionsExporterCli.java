@@ -13,10 +13,11 @@ import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 import org.springframework.data.mongodb.repository.support.MongoRepositoryFactory;
 
 import com.mongodb.MongoClientURI;
-import com.tripagor.cli.exporter.BookingComHotelCitiesExporter;
+import com.tripagor.cli.exporter.BookingComHotelRegionsExporter;
 import com.tripagor.locations.CityRepository;
+import com.tripagor.locations.RegionRepository;
 
-public class BookingComHotelCitiesExporterCli {
+public class BookingComHotelRegionsExporterCli {
 	private static Options options;
 
 	public static void main(String args[]) {
@@ -48,9 +49,9 @@ public class BookingComHotelCitiesExporterCli {
 			if (source != null && mongoUri != null) {
 				MongoDbFactory mongoDbFactory = new SimpleMongoDbFactory(new MongoClientURI(mongoUri));
 				MongoTemplate mongoTemplate = new MongoTemplate(mongoDbFactory);
-				CityRepository cityRepository = new MongoRepositoryFactory(mongoTemplate)
-						.getRepository(CityRepository.class);
-				new BookingComHotelCitiesExporter(new File(source), cityRepository).doExport();
+				RegionRepository regionRepository = new MongoRepositoryFactory(mongoTemplate)
+						.getRepository(RegionRepository.class);
+				new BookingComHotelRegionsExporter(new File(source), regionRepository).doExport();
 			} else {
 				help();
 			}
