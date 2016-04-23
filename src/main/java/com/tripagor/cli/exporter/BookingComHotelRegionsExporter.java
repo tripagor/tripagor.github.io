@@ -1,6 +1,8 @@
 package com.tripagor.cli.exporter;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,7 +22,6 @@ public class BookingComHotelRegionsExporter {
 	private final Logger logger = LoggerFactory.getLogger(BookingComHotelRegionsExporter.class);
 	private Map<String, Integer> propMap;
 	private RegionRepository regionRepository;
-	private List<String> regionTypes = new LinkedList<>();
 
 	public BookingComHotelRegionsExporter(File importFile, RegionRepository regionRepository) {
 		this.importFile = importFile;
@@ -35,6 +36,9 @@ public class BookingComHotelRegionsExporter {
 		List<String[]> rows = parser.parseAll(importFile);
 
 		try {
+			List<String> keywords = new LinkedList<>();
+			int filenameCounter = 1;
+			String filename = "googleKeywordRegion";
 			for (int i = 0; i < rows.size(); i++) {
 				if (i > 0) {
 					try {
@@ -57,6 +61,18 @@ public class BookingComHotelRegionsExporter {
 						}
 
 						regionRepository.save(region);
+
+						keywords.add("hotels " + name);
+						if (keywords.size() == 800 || i == (rows.size() - 1)) {
+							String nameStr = "";
+							for (String keyword : keywords) {
+								nameStr += keyword + "\n";
+							}
+							Files.write(Paths.get("target", filename + "_" + filenameCounter + ".csv"),
+									nameStr.getBytes());
+							filenameCounter++;
+							keywords = new LinkedList<>();
+						}
 					} catch (Exception e) {
 						continue;
 					}

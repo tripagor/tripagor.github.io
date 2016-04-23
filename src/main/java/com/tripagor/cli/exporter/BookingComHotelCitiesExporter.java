@@ -1,7 +1,10 @@
 package com.tripagor.cli.exporter;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -33,6 +36,9 @@ public class BookingComHotelCitiesExporter {
 		List<String[]> rows = parser.parseAll(importFile);
 
 		try {
+			List<String> keywords = new LinkedList<>();
+			int filenameCounter = 1;
+			String filename = "googleKeywordCity";
 			for (int i = 0; i < rows.size(); i++) {
 				if (i > 0) {
 					try {
@@ -52,6 +58,19 @@ public class BookingComHotelCitiesExporter {
 						}
 
 						cityRepository.save(city);
+						
+
+						keywords.add("hotels " + name);
+						if (keywords.size() == 800 || i == (rows.size() - 1)) {
+							String nameStr = "";
+							for (String keyword : keywords) {
+								nameStr += keyword + "\n";
+							}
+							Files.write(Paths.get("target", filename + "_" + filenameCounter + ".csv"),
+									nameStr.getBytes());
+							filenameCounter++;
+							keywords = new LinkedList<>();
+						}
 
 					} catch (Exception e) {
 						continue;
