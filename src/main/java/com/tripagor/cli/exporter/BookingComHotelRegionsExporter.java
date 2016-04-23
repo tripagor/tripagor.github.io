@@ -22,9 +22,11 @@ public class BookingComHotelRegionsExporter {
 	private final Logger logger = LoggerFactory.getLogger(BookingComHotelRegionsExporter.class);
 	private Map<String, Integer> propMap;
 	private RegionRepository regionRepository;
+	private File exportFolder;
 
-	public BookingComHotelRegionsExporter(File importFile, RegionRepository regionRepository) {
+	public BookingComHotelRegionsExporter(File importFile, File exportFolder, RegionRepository regionRepository) {
 		this.importFile = importFile;
+		this.exportFolder = exportFolder;
 		this.regionRepository = regionRepository;
 		TsvParserSettings settings = new TsvParserSettings();
 		settings.getFormat().setLineSeparator("\n");
@@ -68,8 +70,8 @@ public class BookingComHotelRegionsExporter {
 							for (String keyword : keywords) {
 								nameStr += keyword + "\n";
 							}
-							Files.write(Paths.get("target", filename + "_" + filenameCounter + ".csv"),
-									nameStr.getBytes());
+							Files.write(Paths.get(Paths.get(exportFolder.getAbsolutePath()).toString(),
+									filename + "_" + filenameCounter + ".csv"), nameStr.getBytes());
 							filenameCounter++;
 							keywords = new LinkedList<>();
 						}

@@ -14,7 +14,6 @@ import org.springframework.data.mongodb.repository.support.MongoRepositoryFactor
 
 import com.mongodb.MongoClientURI;
 import com.tripagor.cli.exporter.BookingComHotelRegionsExporter;
-import com.tripagor.locations.CityRepository;
 import com.tripagor.locations.RegionRepository;
 
 public class BookingComHotelRegionsExporterCli {
@@ -28,12 +27,15 @@ public class BookingComHotelRegionsExporterCli {
 
 		options.addOption("s", true, "source file");
 
+		options.addOption("t", true, "target folder for keyword csv");
+
 		options.addOption("d", true, "Uri Mongo DB");
 
 		CommandLineParser parser = new DefaultParser();
 		try {
 			CommandLine cmd = parser.parse(options, args);
 			String source = null;
+			String target = null;
 			String mongoUri = null;
 
 			if (cmd.hasOption("h")) {
@@ -42,16 +44,19 @@ public class BookingComHotelRegionsExporterCli {
 			if (cmd.hasOption("s")) {
 				source = cmd.getOptionValue("s");
 			}
+			if (cmd.hasOption("t")) {
+				target = cmd.getOptionValue("t");
+			}
 			if (cmd.hasOption("d")) {
 				mongoUri = cmd.getOptionValue("d");
 			}
 
-			if (source != null && mongoUri != null) {
+			if (source != null && target != null && mongoUri != null) {
 				MongoDbFactory mongoDbFactory = new SimpleMongoDbFactory(new MongoClientURI(mongoUri));
 				MongoTemplate mongoTemplate = new MongoTemplate(mongoDbFactory);
 				RegionRepository regionRepository = new MongoRepositoryFactory(mongoTemplate)
 						.getRepository(RegionRepository.class);
-				new BookingComHotelRegionsExporter(new File(source), regionRepository).doExport();
+				new BookingComHotelRegionsExporter(new File(source), new File(target), regionRepository).doExport();
 			} else {
 				help();
 			}

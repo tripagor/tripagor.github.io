@@ -22,9 +22,11 @@ public class BookingComHotelCitiesExporter {
 	private final Logger logger = LoggerFactory.getLogger(BookingComHotelCitiesExporter.class);
 	private Map<String, Integer> propMap;
 	private CityRepository cityRepository;
+	private File exportFolder;
 
-	public BookingComHotelCitiesExporter(File importFile, CityRepository cityRepository) {
+	public BookingComHotelCitiesExporter(File importFile, File exportFolder, CityRepository cityRepository) {
 		this.importFile = importFile;
+		this.exportFolder = exportFolder;
 		this.cityRepository = cityRepository;
 		TsvParserSettings settings = new TsvParserSettings();
 		settings.getFormat().setLineSeparator("\n");
@@ -58,7 +60,6 @@ public class BookingComHotelCitiesExporter {
 						}
 
 						cityRepository.save(city);
-						
 
 						keywords.add("hotels " + name);
 						if (keywords.size() == 800 || i == (rows.size() - 1)) {
@@ -66,8 +67,8 @@ public class BookingComHotelCitiesExporter {
 							for (String keyword : keywords) {
 								nameStr += keyword + "\n";
 							}
-							Files.write(Paths.get("target", filename + "_" + filenameCounter + ".csv"),
-									nameStr.getBytes());
+							Files.write(Paths.get(Paths.get(exportFolder.getAbsolutePath()).toString(),
+									filename + "_" + filenameCounter + ".csv"), nameStr.getBytes());
 							filenameCounter++;
 							keywords = new LinkedList<>();
 						}
