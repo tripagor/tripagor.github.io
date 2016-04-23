@@ -1,9 +1,7 @@
 package com.tripagor.cli.exporter;
 
 import java.io.File;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -31,22 +29,30 @@ public class BookingComHotelCitiesExporter {
 		this.propMap = new HashMap<>();
 	}
 
-	public Collection<City> doExport() {
-		Collection<City> cities = new LinkedList<>();
-
+	public void doExport() {
 		List<String[]> rows = parser.parseAll(importFile);
 
-		
 		try {
 			for (int i = 0; i < rows.size(); i++) {
 				if (i > 0) {
 					try {
-						City city = new City();
-						city.setName(rows.get(i)[propMap.get("full_name")]);
-						city.setCountryCode(rows.get(i)[propMap.get("country_code")]);
-						city.setNumOfHotels(Integer.parseInt(rows.get(i)[propMap.get("number_of_hotels")]));
-						
-						cityRepository.save(city);						
+						String name = rows.get(i)[propMap.get("full_name")];
+						String countryCode = rows.get(i)[propMap.get("country_code")];
+						int numOfHotels = Integer.parseInt(rows.get(i)[propMap.get("number_of_hotels")]);
+
+						City city = cityRepository.findByNameAndCountryCode(name, countryCode);
+
+						if (city == null) {
+							city = new City();
+							city.setName(name);
+							city.setCountryCode(countryCode);
+							city.setNumOfHotels(numOfHotels);
+						} else {
+							city.setNumOfHotels(numOfHotels);
+						}
+
+						cityRepository.save(city);
+
 					} catch (Exception e) {
 						continue;
 					}
@@ -61,8 +67,6 @@ public class BookingComHotelCitiesExporter {
 		} catch (Exception e) {
 			logger.error("failed with {}", e);
 		}
-
-		return cities;
 	}
 
 }

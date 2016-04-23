@@ -1,9 +1,14 @@
 package com.tripagor.locations;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+@CompoundIndexes({ @CompoundIndex(name = "city_county", unique = true, def = "{'name' : 1, 'countryCode' : 1}") })
 @Document
 public class City {
+	@Id
 	private String id;
 	private String name;
 	private String countryCode;
