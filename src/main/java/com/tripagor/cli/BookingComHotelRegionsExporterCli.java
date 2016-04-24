@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 import org.springframework.data.mongodb.repository.support.MongoRepositoryFactory;
 
+import com.google.maps.GeoApiContext;
 import com.mongodb.MongoClientURI;
 import com.tripagor.cli.exporter.BookingComHotelRegionsExporter;
 import com.tripagor.locations.RegionRepository;
@@ -31,12 +32,15 @@ public class BookingComHotelRegionsExporterCli {
 
 		options.addOption("d", true, "Uri Mongo DB");
 
+		options.addOption("k", true, "Google places Api key");
+
 		CommandLineParser parser = new DefaultParser();
 		try {
 			CommandLine cmd = parser.parse(options, args);
 			String source = null;
 			String target = null;
 			String mongoUri = null;
+			String key = null;
 
 			if (cmd.hasOption("h")) {
 				help();
@@ -50,13 +54,17 @@ public class BookingComHotelRegionsExporterCli {
 			if (cmd.hasOption("d")) {
 				mongoUri = cmd.getOptionValue("d");
 			}
+			if (cmd.hasOption("k")) {
+				key = cmd.getOptionValue("k");
+			}
 
-			if (source != null && target != null && mongoUri != null) {
+			if (source != null && target != null && mongoUri != null && key != null) {
 				MongoDbFactory mongoDbFactory = new SimpleMongoDbFactory(new MongoClientURI(mongoUri));
 				MongoTemplate mongoTemplate = new MongoTemplate(mongoDbFactory);
 				RegionRepository regionRepository = new MongoRepositoryFactory(mongoTemplate)
 						.getRepository(RegionRepository.class);
-				new BookingComHotelRegionsExporter(new File(source), new File(target), regionRepository).doExport();
+				new BookingComHotelRegionsExporter(new File(source), new File(target), regionRepository,
+						new GeoApiContext().setApiKey(key)).doExport();
 			} else {
 				help();
 			}

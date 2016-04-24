@@ -11,6 +11,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.maps.GeoApiContext;
 import com.tripagor.locations.City;
 import com.tripagor.locations.CityRepository;
 import com.univocity.parsers.tsv.TsvParser;
@@ -23,11 +24,15 @@ public class BookingComHotelCitiesExporter {
 	private Map<String, Integer> propMap;
 	private CityRepository cityRepository;
 	private File exportFolder;
+	private GeoApiContext geoApiContext;
 
-	public BookingComHotelCitiesExporter(File importFile, File exportFolder, CityRepository cityRepository) {
+	public BookingComHotelCitiesExporter(File importFile, File exportFolder, CityRepository cityRepository,
+			GeoApiContext geoApiContext) {
 		this.importFile = importFile;
 		this.exportFolder = exportFolder;
 		this.cityRepository = cityRepository;
+		this.geoApiContext = geoApiContext;
+
 		TsvParserSettings settings = new TsvParserSettings();
 		settings.getFormat().setLineSeparator("\n");
 		this.parser = new TsvParser(settings);
