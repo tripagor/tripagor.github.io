@@ -63,12 +63,6 @@ public class BookingComHotelRegionsExporter {
 						Region region = regionRepository.findByNameAndCountryCode(name, countryCode);
 
 						if (region == null) {
-							region = new Region();
-							region.setName(name);
-							region.setCountryCode(countryCode);
-							region.setNumOfHotels(numOfHotels);
-							region.setType(regionType);
-							
 							GeocodingResult[] results = GeocodingApi.geocode(geoApiContext, name)
 									.resultType(AddressType.LOCALITY).await();
 							for (GeocodingResult result : results) {
@@ -76,15 +70,22 @@ public class BookingComHotelRegionsExporter {
 								Location location = new Location();
 								location.setLat(latLng.lat);
 								location.setLng(latLng.lng);
+								
+								region = new Region();
+								region.setName(name);
+								region.setCountryCode(countryCode);
+								region.setNumOfHotels(numOfHotels);
+								region.setType(regionType);
 								region.setLocation(location);
-								System.out.println(location);
 							}
 						} else {
 							region.setNumOfHotels(numOfHotels);
 							region.setType(regionType);
 						}
 
-						regionRepository.save(region);
+						if (region != null) {
+							regionRepository.save(region);
+						}
 
 						keywords.add("hotels " + name);
 						if (keywords.size() == 800 || i == (rows.size() - 1)) {
