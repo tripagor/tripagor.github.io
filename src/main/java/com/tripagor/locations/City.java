@@ -5,6 +5,8 @@ import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.tripagor.model.Location;
+
 @CompoundIndexes({ @CompoundIndex(name = "city_county", unique = true, def = "{'name' : 1, 'countryCode' : 1}") })
 @Document
 public class City {
@@ -13,6 +15,7 @@ public class City {
 	private String name;
 	private String countryCode;
 	private int numOfHotels;
+	private Location location;
 
 	public String getName() {
 		return name;
@@ -44,6 +47,14 @@ public class City {
 
 	public void setCountryCode(String countryCode) {
 		this.countryCode = countryCode;
+	}
+
+	public Location getLocation() {
+		return location;
+	}
+
+	public void setLocation(Location location) {
+		this.location = location;
 	}
 
 }

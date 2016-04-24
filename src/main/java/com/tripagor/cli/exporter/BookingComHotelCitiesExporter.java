@@ -12,8 +12,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.maps.GeoApiContext;
+import com.google.maps.GeocodingApi;
+import com.google.maps.model.AddressType;
+import com.google.maps.model.GeocodingResult;
+import com.google.maps.model.LatLng;
 import com.tripagor.locations.City;
 import com.tripagor.locations.CityRepository;
+import com.tripagor.model.Location;
 import com.univocity.parsers.tsv.TsvParser;
 import com.univocity.parsers.tsv.TsvParserSettings;
 
@@ -56,15 +61,27 @@ public class BookingComHotelCitiesExporter {
 						City city = cityRepository.findByNameAndCountryCode(name, countryCode);
 
 						if (city == null) {
-							city = new City();
-							city.setName(name);
-							city.setCountryCode(countryCode);
-							city.setNumOfHotels(numOfHotels);
+							GeocodingResult[] results = GeocodingApi.geocode(geoApiContext, name)
+									.resultType(AddressType.LOCALITY).await();
+							for (GeocodingResult result : results) {
+								LatLng latLng = result.geometry.location;
+								Location location = new Location();
+								location.setLat(latLng.lat);
+								location.setLng(latLng.lng);
+								
+								city = new City();
+								city.setLocation(location);
+								city.setName(name);
+								city.setCountryCode(countryCode);
+								city.setNumOfHotels(numOfHotels);
+							}
 						} else {
 							city.setNumOfHotels(numOfHotels);
 						}
 
-						cityRepository.save(city);
+						if (city != null) {
+							cityRepository.save(city);
+						}
 
 						keywords.add("hotels " + name);
 						if (keywords.size() == 800 || i == (rows.size() - 1)) {
