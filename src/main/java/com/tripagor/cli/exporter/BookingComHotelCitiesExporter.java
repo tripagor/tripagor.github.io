@@ -74,6 +74,7 @@ public class BookingComHotelCitiesExporter {
 								city.setName(name);
 								city.setCountryCode(countryCode);
 								city.setNumOfHotels(numOfHotels);
+								break;
 							}
 						} else {
 							city.setNumOfHotels(numOfHotels);
