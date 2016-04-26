@@ -1,25 +1,46 @@
-
 <!DOCTYPE html>
 <html ng-app="demoapp">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://code.angularjs.org/1.5.5/angular.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js"></script>
-    <script src="assets/angular-leaflet-directive.min.js"></script>
-    <script src="assets/webgl-heatmap.js"></script>
-    <script src="assets/webgl-heatmap-leaflet.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.css" />
+    <script src="assets/angular.min.js"></script>
+    <script src="assets/leaflet.js"></script>
+    <script src="assets/angular-simple-logger.js"></script>
+    <script src="assets/leaflet-heat.js"></script>
+    <script src="assets/ui-leaflet.js"></script>
+    <script src="https://rawgit.com/elesdoar/ui-leaflet-layers/master/dist/ui-leaflet-layers.min.js"></script>
+    <link rel="stylesheet" href="assets/leaflet.css" />
     <script>
-        var app = angular.module("demoapp", ["leaflet-directive"]);
-        app.controller("LayersWebGLHeatmapController", [ "$scope", function($scope) {
-            var dataPoints = [
-                [44.651144316,-63.586260171, 0.5],
-                [44.75, -63.5, 0.8] ];
+        var app = angular.module("demoapp", ['ui-leaflet']);
+        app.controller("LayersHeatmapController", ["$scope", "$http", function($scope, $http) {
+
+            var points = [];
+            var heatmap = {
+                name: 'Heat Map',
+                type: 'heat',
+                data: points,
+                visible: true
+            };
+
+            $http.get("json/heat-points.json").success(function(data) {
+                $scope.layers.overlays = {
+                    heat: {
+                        name: 'Heat Map',
+                        type: 'heat',
+                        data: data,
+                        layerOptions: {
+                            radius: 20,
+                            blur: 10
+                        },
+                        visible: true
+                    }
+                };
+            });
+
             angular.extend($scope, {
                 center: {
-                    lat: 44.8091,
-                    lng: -63.3636,
-                    zoom: 9
+                    lat: 37.774546,
+                    lng: -122.433523,
+                    zoom: 12
                 },
                 layers: {
                     baselayers: {
@@ -28,24 +49,18 @@
                             url: 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
                             type: 'xyz'
                         }
-                    },
-                    overlays: {
-                        heatmap: {
-                            name: 'Heat Map',
-                            type: 'webGLHeatmap',
-                            data: dataPoints,
-                            visible: true
-                        }
                     }
                 }
             });
         }]);
     </script>
 </head>
-<body ng-controller="LayersWebGLHeatmapController">
+
+<body ng-controller="LayersHeatmapController">
     <leaflet lf-center="center" layers="layers" width="100%" height="480px"></leaflet>
-    <h1>HeatMap WebGL overlay example</h1>
-    <p>You can use the <a href="https://github.com/ursudio/webgl-heatmap-leaflet">WebGL HeatMap overlay plugin</a>, like this. Please read the heatmap plugin documentation to use it.</p>
-    <pre ng-bind="layers | json"></pre>
+    <h1>HeatMap example</h1>
+    <p>This example uses the <a href="https://github.com/Leaflet/Leaflet.heat">Leaflet.heat</a> library.</p>
+    <p>The example is inspired in <a href="https://developers.google.com/maps/documentation/javascript/examples/layer-heatmap?hl=es">this</a> Google Maps Heat example.</p>
 </body>
+
 </html>
