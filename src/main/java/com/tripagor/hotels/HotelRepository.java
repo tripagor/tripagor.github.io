@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import com.tripagor.hotels.model.Hotel;
+import com.tripagor.hotels.model.WorldRegion;
 
 @RepositoryRestResource
 public interface HotelRepository extends MongoRepository<Hotel, String> {
@@ -28,6 +29,8 @@ public interface HotelRepository extends MongoRepository<Hotel, String> {
 			@Param("isPlaceIdExisting") boolean isPlaceIdExisting, Pageable pageable);
 
 	Page<Hotel> findByIsEvaluatedExists(@Param("isEvaluatedExisting") boolean isEvaluatedExisting, Pageable pageable);
+
+	Page<Hotel> findByContinentId(Integer continentId, Pageable pageable);
 
 	long countBy();
 
