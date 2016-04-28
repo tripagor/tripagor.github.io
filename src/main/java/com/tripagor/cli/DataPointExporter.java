@@ -15,7 +15,6 @@ import org.springframework.data.mongodb.repository.support.MongoRepositoryFactor
 import com.mongodb.MongoClientURI;
 import com.tripagor.hotels.HotelRepository;
 import com.tripagor.hotels.model.Hotel;
-import com.tripagor.hotels.model.WorldRegion;
 import com.tripagor.locations.CityRepository;
 import com.tripagor.locations.Region;
 import com.tripagor.locations.RegionRepository;
@@ -58,12 +57,12 @@ public class DataPointExporter {
 		Files.write(Paths.get("src/main/resources/static/web/json", "regions.json"), jsonStr.getBytes());
 
 		jsonStr = "[";
-		int numOfPages = 100;
+		int numOfPages = 1;
 		int currentPage = 0;
+		String countryCode = "us";
 
 		while (currentPage < numOfPages) {
-			Page<Hotel> page = hotelRepository.findByContinentId(WorldRegion.EUROPE.toValue(),
-					new PageRequest(currentPage++, 500));
+			Page<Hotel> page = hotelRepository.findByCountryCode(countryCode, new PageRequest(currentPage++, 500));
 			numOfPages = page.getTotalPages();
 			for (Hotel hotel : page.getContent()) {
 				jsonStr += "[";
@@ -73,7 +72,8 @@ public class DataPointExporter {
 		}
 		jsonStr += "]";
 
-		Files.write(Paths.get("src/main/resources/static/web/json", "hotels.json"), jsonStr.getBytes());
+		Files.write(Paths.get("src/main/resources/static/web/json", "hotels_" + countryCode + ".json"),
+				jsonStr.getBytes());
 	}
 
 }

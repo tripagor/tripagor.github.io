@@ -13,15 +13,15 @@
         var app = angular.module("demoapp", ['ui-leaflet']);
         app.controller("LayersHeatmapController", ["$scope", "$http", function($scope, $http) {
 
-            $http.get("json/hotels.json").success(function(data) {
+            $http.get("json/hotels_us.json").success(function(data) {
                 $scope.layers.overlays = {
                     heat: {
                         name: 'Heat Map',
                         type: 'heat',
                         data: data,
                         layerOptions: {
-                            radius: 20,
-                            blur: 10
+                            radius: 70,
+                            blur: 30
                         },
                         visible: true
                     }
