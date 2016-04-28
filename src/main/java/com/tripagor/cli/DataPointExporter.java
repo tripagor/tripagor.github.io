@@ -1,11 +1,10 @@
-package com.tripagor.cli.exporter;
+package com.tripagor.cli;
 
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
-import org.junit.Test;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.MongoDbFactory;
@@ -23,8 +22,7 @@ import com.tripagor.locations.RegionRepository;
 
 public class DataPointExporter {
 
-	@Test
-	public void doExport() throws Exception {
+	public static void main(String args[]) throws Exception {
 
 		MongoDbFactory mongoDbFactory = new SimpleMongoDbFactory(
 				new MongoClientURI("mongodb://localhost:27017/hotels"));
