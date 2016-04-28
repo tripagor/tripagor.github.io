@@ -69,7 +69,8 @@ public class HotelMarkerCheck {
 						if (result.name.equals(hotel.getName())) {
 							PlaceDetails placeDetails = PlacesApi.placeDetails(geoApiContext, result.placeId).await();
 							if (result.scope == PlaceIdScope.GOOGLE) {
-								if (hotel.getUrl().concat(postfix).equals(placeDetails.website.toString())) {
+								if (placeDetails.website != null
+										&& hotel.getUrl().concat(postfix).equals(placeDetails.website.toString())) {
 									logger.debug(hotel.getName() + " APPROVED " + result.scope + " " + result.placeId);
 									hotel.setIsMarkerApproved(true);
 									hotel.setPlaceId(placeDetails.placeId);
