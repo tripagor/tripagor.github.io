@@ -13,7 +13,7 @@
         var app = angular.module("demoapp", ['ui-leaflet']);
         app.controller("LayersHeatmapController", ["$scope", "$http", function($scope, $http) {
 
-            $http.get("json/regions.json").success(function(data) {
+            $http.get("json/hotels.json").success(function(data) {
                 $scope.layers.overlays = {
                     heat: {
                         name: 'Heat Map',
@@ -49,7 +49,7 @@
 </head>
 
 <body ng-controller="LayersHeatmapController">
-    <leaflet lf-center="center" layers="layers" width="100%" height="480px"></leaflet>
+    <leaflet lf-center="center" layers="layers" width="100%" height="800px"></leaflet>
 </body>
 
 </html>

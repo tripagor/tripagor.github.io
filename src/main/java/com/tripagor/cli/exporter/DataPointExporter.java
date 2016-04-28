@@ -1,5 +1,6 @@
 package com.tripagor.cli.exporter;
 
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
@@ -12,6 +13,7 @@ import org.springframework.data.mongodb.repository.support.MongoRepositoryFactor
 
 import com.mongodb.MongoClientURI;
 import com.tripagor.hotels.HotelRepository;
+import com.tripagor.hotels.model.Hotel;
 import com.tripagor.locations.CityRepository;
 import com.tripagor.locations.Region;
 import com.tripagor.locations.RegionRepository;
@@ -44,7 +46,8 @@ public class DataPointExporter {
 		for (Region region : regions) {
 			if (region.getLocation() != null) {
 				jsonStr += "[";
-				double weight = region.getNumOfHotels() / max;
+				double weight = new BigDecimal(region.getNumOfHotels())
+						.divide(new BigDecimal(max), 2, BigDecimal.ROUND_HALF_UP).doubleValue();
 				jsonStr += region.getLocation().getLat() + "," + region.getLocation().getLng() + "," + weight;
 				jsonStr += "],";
 			}
@@ -52,6 +55,18 @@ public class DataPointExporter {
 
 		jsonStr += "]";
 		Files.write(Paths.get("src/main/resources/static/web/json", "regions.json"), jsonStr.getBytes());
+
+		jsonStr = "[";
+		List<Hotel> hotels = hotelRepository.findAll();
+		for (Hotel hotel : hotels) {
+			jsonStr += "[";
+			jsonStr += hotel.getLatitude() + "," + hotel.getLongitude();
+			jsonStr += "],";
+		}
+
+		jsonStr += "]";
+
+		Files.write(Paths.get("src/main/resources/static/web/json", "hotels.json"), jsonStr.getBytes());
 	}
 
 }
