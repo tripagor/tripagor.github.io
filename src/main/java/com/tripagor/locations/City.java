@@ -42,11 +42,11 @@ public class City {
 	}
 
 	public String getCountryCode() {
-		return countryCode;
+		return countryCode.toUpperCase();
 	}
 
 	public void setCountryCode(String countryCode) {
-		this.countryCode = countryCode;
+		this.countryCode = countryCode.toUpperCase();
 	}
 
 	public Location getLocation() {
