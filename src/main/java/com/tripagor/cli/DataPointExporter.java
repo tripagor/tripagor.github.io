@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Locale;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -56,24 +57,27 @@ public class DataPointExporter {
 		jsonStr += "]";
 		Files.write(Paths.get("src/main/resources/static/web/json", "regions.json"), jsonStr.getBytes());
 
-		jsonStr = "[";
-		int numOfPages = 1;
-		int currentPage = 0;
-		String countryCode = "us";
+		String[] locales = Locale.getISOCountries();
 
-		while (currentPage < numOfPages) {
-			Page<Hotel> page = hotelRepository.findByCountryCode(countryCode, new PageRequest(currentPage++, 500));
-			numOfPages = page.getTotalPages();
-			for (Hotel hotel : page.getContent()) {
-				jsonStr += "[";
-				jsonStr += hotel.getLatitude() + "," + hotel.getLongitude();
-				jsonStr += "],";
+		for (String countryCode : locales) {
+			jsonStr = "[";
+			int numOfPages = 1;
+			int currentPage = 0;
+			while (currentPage < numOfPages) {
+				Page<Hotel> page = hotelRepository.findByCountryCode(countryCode.toLowerCase(),
+						new PageRequest(currentPage++, 500));
+				numOfPages = page.getTotalPages();
+				for (Hotel hotel : page.getContent()) {
+					jsonStr += "[";
+					jsonStr += hotel.getLatitude() + "," + hotel.getLongitude();
+					jsonStr += "],";
+				}
 			}
-		}
-		jsonStr += "]";
+			jsonStr += "]";
 
-		Files.write(Paths.get("src/main/resources/static/web/json", "hotels_" + countryCode + ".json"),
-				jsonStr.getBytes());
+			Files.write(Paths.get("src/main/resources/static/web/json", "hotels_" + countryCode + ".json"),
+					jsonStr.getBytes());
+		}
 	}
 
 }
