@@ -28,7 +28,7 @@ public class UnmarkedHotelFinder {
 	private StringSimilarity stringSimilarity;
 	private DistanceCalculator distanceCalculator;
 	private AddressTools addressTools;
-	private int pageSize = 50;
+	private int pageSize = 300;
 	private HotelService hotelService;
 	private GeoApiContext geoApiContext;
 	private Logger logger = LoggerFactory.getLogger(UnmarkedHotelFinder.class);
@@ -42,23 +42,22 @@ public class UnmarkedHotelFinder {
 		this.geoApiContext = geoApiContext;
 	}
 
-	public Collection<Hotel> doExport(int numberOfPlacesToAdd) {
+	public Collection<Hotel> doExport(int numberOfPlacesToFind) {
 		Collection<Hotel> unmarkedHotels = new LinkedList<>();
 		boolean isMaxiumimNumber = false;
-		int currentNumberProcessed = 0;
+		int currentNumberFound = 0;
 
 		int currentPage = 0;
 		int totalPages = 1;
 
 		while (currentPage < totalPages && !isMaxiumimNumber) {
-			Page<Hotel> pagedResources = hotelService.findByIsEvaluatedExists(currentPage++, pageSize, true);
-
+			Page<Hotel> pagedResources = hotelService.findByIsEvaluatedExists(currentPage++, pageSize, false);
 			totalPages = pagedResources.getTotalPages();
 			Collection<Hotel> hotels = pagedResources.getContent();
 
 			for (Hotel hotel : hotels) {
 
-				if (numberOfPlacesToAdd != 0 && currentNumberProcessed >= numberOfPlacesToAdd) {
+				if (numberOfPlacesToFind != 0 && currentNumberFound >= numberOfPlacesToFind) {
 					isMaxiumimNumber = true;
 					break;
 				}
@@ -68,11 +67,11 @@ public class UnmarkedHotelFinder {
 					double latitude = new BigDecimal(hotel.getLatitude()).doubleValue();
 					LatLng latLng = new LatLng(latitude, longitude);
 					String query = hotel.getName() + ", " + hotel.getCity() + ", "
-							+ new Locale("", hotel.getCountryCode()).getDisplayCountry();
+							+ new Locale("en", hotel.getCountryCode()).getDisplayCountry(new Locale("en"));
 					String address = null;
 					if (hotel.getAddress() != null && hotel.getCity() != null && hotel.getCountryCode() != null) {
 						address = hotel.getAddress() + ", " + hotel.getCity() + ", "
-								+ new Locale("", hotel.getCountryCode()).getDisplayCountry();
+								+ new Locale("en", hotel.getCountryCode()).getDisplayCountry(new Locale("en"));
 					} else {
 						continue;
 					}
@@ -85,13 +84,13 @@ public class UnmarkedHotelFinder {
 						float jaroDistance = stringSimilarity.jaroDistance(hotel.getName(), result.name);
 						float geometricalDistance = distanceCalculator.distance(latLng, result.geometry.location);
 
-						if (cosineDistance >= 0.5 || jaroDistance >= 0.8 || geometricalDistance <= 50) {
+						if (cosineDistance >= 0.5 || jaroDistance >= 0.8 || geometricalDistance <= 30) {
 							if ("APP".equals(result.scope.name())) {
-								logger.debug("{} ALREADY MARKED",hotel.getName());
+								logger.debug("{} ALREADY MARKED", hotel.getName());
 								isMarketSet = true;
 								break;
 							} else if ("GOOGLE".equals(result.scope.name())) {
-								logger.debug("{} ALREADY MARKED BY GOOGLE",hotel.getName());
+								logger.debug("{} ALREADY MARKED BY GOOGLE", hotel.getName());
 								isMarketSet = true;
 								isApprovedByGoogle = true;
 								break;
@@ -104,8 +103,10 @@ public class UnmarkedHotelFinder {
 						GeocodingResult[] results = GeocodingApi.geocode(geoApiContext, address)
 								.resultType(AddressType.STREET_ADDRESS).await();
 						for (GeocodingResult result : results) {
-							if (addressTools.isProperStreetAddress(result)) {
+							if (addressTools.isProperStreetAddress(result)
+									&& distanceCalculator.distance(latLng, result.geometry.location) <= 30) {
 								wellformattedAddress = result.formattedAddress;
+								currentNumberFound++;
 								break;
 							}
 						}
@@ -121,8 +122,8 @@ public class UnmarkedHotelFinder {
 					hotelService.update(hotel);
 					unmarkedHotels.add(hotel);
 
-					currentNumberProcessed++;
 				} catch (Exception e) {
+					e.printStackTrace();
 				}
 			}
 		}

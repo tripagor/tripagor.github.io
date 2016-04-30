@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.hateoas.PagedResources;
 import org.springframework.hateoas.hal.Jackson2HalModule;
 import org.springframework.http.HttpEntity;
@@ -74,7 +75,8 @@ public class HotelServiceRemoteImpl implements HotelService {
 						}, currentPage, pageSize, isEvaluated, isMarkerSet, isMarkerApproved,
 						isFormettedAddressExisting, isPlaceIdExisting)
 				.getBody();
-		Page<Hotel> page = new PageImpl<Hotel>(new LinkedList<Hotel>(result.getContent()));
+		Page<Hotel> page = new PageImpl<Hotel>(new LinkedList<Hotel>(result.getContent()),
+				new PageRequest(currentPage, pageSize), result.getMetadata().getTotalElements());
 		return page;
 	}
 
@@ -87,7 +89,8 @@ public class HotelServiceRemoteImpl implements HotelService {
 						HttpMethod.GET, null, new ParameterizedTypeReference<PagedResources<Hotel>>() {
 						}, isEvaluatedExisting, currentPage, pageSize)
 				.getBody();
-		Page<Hotel> page = new PageImpl<Hotel>(new LinkedList<Hotel>(result.getContent()));
+		Page<Hotel> page = new PageImpl<Hotel>(new LinkedList<Hotel>(result.getContent()),
+				new PageRequest(currentPage, pageSize), result.getMetadata().getTotalElements());
 		return page;
 	}
 
