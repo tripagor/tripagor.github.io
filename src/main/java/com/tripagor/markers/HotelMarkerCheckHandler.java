@@ -46,6 +46,7 @@ public class HotelMarkerCheckHandler {
 				Collection<Hotel> exported = hotelMarkerCheck.doCheck();
 				for (Hotel hotel : exported) {
 					Approval approval = new Approval();
+					markercheck.getApprovals().add(approval);
 					approval.setHotelId(hotel.getId());
 					approval.setHotelName(hotel.getName());
 					approval.setFormattedAddress(hotel.getFormattedAddress());
@@ -62,7 +63,6 @@ public class HotelMarkerCheckHandler {
 					} else {
 						approval.setStatus(ApprovalStatus.PENDING);
 					}
-					markercheck.getApprovals().add(approval);
 				}
 				markercheck.setStatus(ProcessingStatus.PROCESSED);
 				hotelMarkerCheckRepository.save(markercheck);

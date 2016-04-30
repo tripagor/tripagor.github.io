@@ -91,7 +91,6 @@ public class HotelMarkerCheck {
 						}
 					}
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
