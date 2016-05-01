@@ -37,7 +37,7 @@ public class HotelMarker {
 	private StringSimilarity stringSimilarity;
 	private DistanceCalculator distanceCalculator;
 	private AddressTools addressTools;
-	private int pageSize = 100;
+	private int pageSize = 50;
 	private int accuracy = 30;
 	private HotelService hotelService;
 	private GeoApiContext geoApiContext;
@@ -72,6 +72,11 @@ public class HotelMarker {
 					break;
 				}
 
+				boolean isApprovedByGoogle = false;
+				boolean isMarketSet = false;
+				String placeId = null;
+				String wellformattedAddress = null;
+
 				try {
 					double longitude = new BigDecimal(hotel.getLongitude()).doubleValue();
 					double latitude = new BigDecimal(hotel.getLatitude()).doubleValue();
@@ -85,10 +90,6 @@ public class HotelMarker {
 					} else {
 						continue;
 					}
-
-					boolean isApprovedByGoogle = false;
-					boolean isMarketSet = false;
-					String placeId = null;
 
 					PlacesSearchResponse response = PlacesApi.nearbySearchQuery(geoApiContext, latLng)
 							.rankby(RankBy.DISTANCE).keyword(query).await();
@@ -111,7 +112,6 @@ public class HotelMarker {
 						}
 					}
 
-					String wellformattedAddress = null;
 					if (!isApprovedByGoogle && address != null) {
 						GeocodingResult[] results = GeocodingApi.geocode(geoApiContext, address)
 								.resultType(AddressType.STREET_ADDRESS).await();
@@ -132,37 +132,34 @@ public class HotelMarker {
 								place.setLocation(location);
 								place.setAccuracy(
 										new BigDecimal(distanceCalculator.distance(latLng, result.geometry.location))
-												.setScale(1, RoundingMode.CEILING).intValue());
+												.setScale(0, RoundingMode.CEILING).intValue());
 								place.setWebsite(hotel.getUrl() + appendStr);
 								place.setTypes(Arrays.asList(new String[] { "lodging" }));
 								place.setLanguage("en");
 
 								PlaceAddResponse placeAddResponse = placeAddApi.add(place);
-								
-								// if
-								// ("OK".equals(placeAddResponse.getStatus())) {
-								// isMarketSet = true;
-								// placeId = placeAddResponse.getPlaceId();
-								// markedHotels.add(hotel);
-								// currentNumberMarked++;
-								// }
 
-								currentNumberMarked++;
+								if ("OK".equals(placeAddResponse.getStatus())) {
+									isMarketSet = true;
+									placeId = placeAddResponse.getPlaceId();
+									markedHotels.add(hotel);
+									currentNumberMarked++;
+								}
 								break;
 							}
 						}
 					}
 
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally {
 					hotel.setIsEvaluated(true);
 					hotel.setIsMarkerSet(isMarketSet);
 					hotel.setIsMarkerApproved(isApprovedByGoogle);
 					hotel.setFormattedAddress(wellformattedAddress);
 					hotel.setPlaceId(placeId);
 
-					// hotelService.update(hotel);
-
-				} catch (Exception e) {
-					e.printStackTrace();
+					hotelService.update(hotel);
 				}
 			}
 		}
