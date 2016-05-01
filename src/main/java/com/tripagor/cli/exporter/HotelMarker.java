@@ -129,21 +129,18 @@ public class HotelMarker {
 								place.setLocation(location);
 								place.setAccuracy(
 										new BigDecimal(distanceCalculator.distance(latLng, result.geometry.location))
-												.setScale(2, RoundingMode.HALF_UP).intValue());
+												.setScale(2, RoundingMode.CEILING).intValue());
 								place.setWebsite(hotel.getUrl() + appendStr);
 								place.setTypes(Arrays.asList(new String[] { "lodging" }));
 								place.setLanguage("en");
 
-								/*
-								 * PlaceAddResponse placeAddResponse =
-								 * placeAddApi.add(place); if
-								 * ("OK".equals(placeAddResponse.getStatus())) {
-								 * isMarketSet = true; placeId =
-								 * placeAddResponse.getPlaceId();
-								 * markedHotels.add(hotel); 
-								 * 
-								currentNumberMarked++;}
-								 */
+								PlaceAddResponse placeAddResponse = placeAddApi.add(place);
+//								if ("OK".equals(placeAddResponse.getStatus())) {
+//									isMarketSet = true;
+//									placeId = placeAddResponse.getPlaceId();
+//									markedHotels.add(hotel);
+//									currentNumberMarked++;
+//								}
 
 								currentNumberMarked++;
 								break;
