@@ -138,6 +138,7 @@ public class HotelMarker {
 								place.setLanguage("en");
 
 								PlaceAddResponse placeAddResponse = placeAddApi.add(place);
+								
 								// if
 								// ("OK".equals(placeAddResponse.getStatus())) {
 								// isMarketSet = true;
