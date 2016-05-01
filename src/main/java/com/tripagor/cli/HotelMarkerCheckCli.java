@@ -28,9 +28,11 @@ public class HotelMarkerCheckCli {
 
 		options = new Options();
 		options.addOption("h", false, "this help");
+		
+
+		options.addOption("a", true, "url postfix");
 
 		options.addOption("k", true, "google api key");
-		options.addOption("a", true, "url postfix");
 
 		options.addOption("r", true, "Host Rest Service");
 		options.addOption("i", true, "clientId");

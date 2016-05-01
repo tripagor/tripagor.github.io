@@ -44,7 +44,7 @@ public class HotelMarkerExportHandler {
 
 			@Override
 			public void run() {
-				Collection<Hotel> exported = hotelMarker.doMark(markerExport.getNumberToMark(), appendStr);
+				Collection<Hotel> exported = hotelMarker.doHandle(markerExport.getNumberToMark(), appendStr);
 				markerExport.setHotels(exported);
 				markerExport.setStatus(ProcessingStatus.PROCESSED);
 				hotelMarkerExportRepository.save(markerExport);
