@@ -1,7 +1,6 @@
 package com.tripagor.cli.exporter;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.Collection;
@@ -10,7 +9,9 @@ import java.util.Locale;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Component;
 
 import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
@@ -31,6 +32,7 @@ import com.tripagor.model.Location;
 import com.tripagor.model.PlaceAddRequest;
 import com.tripagor.model.PlaceAddResponse;
 
+@Component
 public class HotelMarker {
 	private StringSimilarity stringSimilarity;
 	private DistanceCalculator distanceCalculator;
@@ -42,6 +44,7 @@ public class HotelMarker {
 	private Logger logger = LoggerFactory.getLogger(HotelMarker.class);
 	private PlaceAddApi placeAddApi;
 
+	@Autowired
 	public HotelMarker(HotelService hotelService, PlaceAddApi placeAddApi, GeoApiContext geoApiContext) {
 		stringSimilarity = new StringSimilarity();
 		distanceCalculator = new DistanceCalculator();
@@ -129,18 +132,19 @@ public class HotelMarker {
 								place.setLocation(location);
 								place.setAccuracy(
 										new BigDecimal(distanceCalculator.distance(latLng, result.geometry.location))
-												.setScale(2, RoundingMode.CEILING).intValue());
+												.setScale(1, RoundingMode.CEILING).intValue());
 								place.setWebsite(hotel.getUrl() + appendStr);
 								place.setTypes(Arrays.asList(new String[] { "lodging" }));
 								place.setLanguage("en");
 
 								PlaceAddResponse placeAddResponse = placeAddApi.add(place);
-//								if ("OK".equals(placeAddResponse.getStatus())) {
-//									isMarketSet = true;
-//									placeId = placeAddResponse.getPlaceId();
-//									markedHotels.add(hotel);
-//									currentNumberMarked++;
-//								}
+								// if
+								// ("OK".equals(placeAddResponse.getStatus())) {
+								// isMarketSet = true;
+								// placeId = placeAddResponse.getPlaceId();
+								// markedHotels.add(hotel);
+								// currentNumberMarked++;
+								// }
 
 								currentNumberMarked++;
 								break;
