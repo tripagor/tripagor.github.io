@@ -145,7 +145,6 @@ public class HotelMarker {
 									markedHotels.add(hotel);
 									currentNumberMarked++;
 								}
-								
 								break;
 							}
 						}
