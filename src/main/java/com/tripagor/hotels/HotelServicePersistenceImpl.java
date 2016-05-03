@@ -44,7 +44,8 @@ public class HotelServicePersistenceImpl implements HotelService {
 
 	@Override
 	public Page<Hotel> findByIsEvaluatedExists(int currentPage, int pageSize, boolean isEvaluatedExisting) {
-		return hotelRepository.findByIsEvaluatedExists(isEvaluatedExisting, new PageRequest(currentPage, pageSize));
+		return hotelRepository.findByIsEvaluatedExistsOrderByBookingComIdAsc(isEvaluatedExisting,
+				new PageRequest(currentPage, pageSize));
 	}
 
 }
