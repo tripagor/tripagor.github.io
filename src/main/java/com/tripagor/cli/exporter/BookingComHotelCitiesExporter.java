@@ -1,10 +1,7 @@
 package com.tripagor.cli.exporter;
 
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -28,13 +25,10 @@ public class BookingComHotelCitiesExporter {
 	private final Logger logger = LoggerFactory.getLogger(BookingComHotelCitiesExporter.class);
 	private Map<String, Integer> propMap;
 	private CityRepository cityRepository;
-	private File exportFolder;
 	private GeoApiContext geoApiContext;
 
-	public BookingComHotelCitiesExporter(File importFile, File exportFolder, CityRepository cityRepository,
-			GeoApiContext geoApiContext) {
+	public BookingComHotelCitiesExporter(File importFile, CityRepository cityRepository, GeoApiContext geoApiContext) {
 		this.importFile = importFile;
-		this.exportFolder = exportFolder;
 		this.cityRepository = cityRepository;
 		this.geoApiContext = geoApiContext;
 
@@ -48,9 +42,6 @@ public class BookingComHotelCitiesExporter {
 		List<String[]> rows = parser.parseAll(importFile);
 
 		try {
-			List<String> keywords = new LinkedList<>();
-			int filenameCounter = 1;
-			String filename = "googleKeywordCity";
 			for (int i = 0; i < rows.size(); i++) {
 				if (i > 0) {
 					try {
@@ -68,7 +59,7 @@ public class BookingComHotelCitiesExporter {
 								Location location = new Location();
 								location.setLat(latLng.lat);
 								location.setLng(latLng.lng);
-								
+
 								city = new City();
 								city.setLocation(location);
 								city.setName(name);
@@ -82,18 +73,6 @@ public class BookingComHotelCitiesExporter {
 
 						if (city != null) {
 							cityRepository.save(city);
-						}
-
-						keywords.add("hotels " + name);
-						if (keywords.size() == 800 || i == (rows.size() - 1)) {
-							String nameStr = "";
-							for (String keyword : keywords) {
-								nameStr += keyword + "\n";
-							}
-							Files.write(Paths.get(Paths.get(exportFolder.getAbsolutePath()).toString(),
-									filename + "_" + filenameCounter + ".csv"), nameStr.getBytes());
-							filenameCounter++;
-							keywords = new LinkedList<>();
 						}
 
 					} catch (Exception e) {

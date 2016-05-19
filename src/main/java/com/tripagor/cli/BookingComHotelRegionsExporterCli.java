@@ -28,8 +28,6 @@ public class BookingComHotelRegionsExporterCli {
 
 		options.addOption("s", true, "source file");
 
-		options.addOption("t", true, "target folder for keyword csv");
-
 		options.addOption("d", true, "Uri Mongo DB");
 
 		options.addOption("k", true, "Google places Api key");
@@ -38,7 +36,6 @@ public class BookingComHotelRegionsExporterCli {
 		try {
 			CommandLine cmd = parser.parse(options, args);
 			String source = null;
-			String target = null;
 			String mongoUri = null;
 			String key = null;
 
@@ -48,9 +45,6 @@ public class BookingComHotelRegionsExporterCli {
 			if (cmd.hasOption("s")) {
 				source = cmd.getOptionValue("s");
 			}
-			if (cmd.hasOption("t")) {
-				target = cmd.getOptionValue("t");
-			}
 			if (cmd.hasOption("d")) {
 				mongoUri = cmd.getOptionValue("d");
 			}
@@ -58,12 +52,12 @@ public class BookingComHotelRegionsExporterCli {
 				key = cmd.getOptionValue("k");
 			}
 
-			if (source != null && target != null && mongoUri != null && key != null) {
+			if (source != null && mongoUri != null && key != null) {
 				MongoDbFactory mongoDbFactory = new SimpleMongoDbFactory(new MongoClientURI(mongoUri));
 				MongoTemplate mongoTemplate = new MongoTemplate(mongoDbFactory);
 				RegionRepository regionRepository = new MongoRepositoryFactory(mongoTemplate)
 						.getRepository(RegionRepository.class);
-				new BookingComHotelRegionsExporter(new File(source), new File(target), regionRepository,
+				new BookingComHotelRegionsExporter(new File(source), regionRepository,
 						new GeoApiContext().setApiKey(key)).doExport();
 			} else {
 				help();
