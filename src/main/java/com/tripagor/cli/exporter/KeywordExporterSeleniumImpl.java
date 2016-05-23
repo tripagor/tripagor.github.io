@@ -7,13 +7,16 @@ import java.util.concurrent.TimeUnit;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxProfile;
 
 public class KeywordExporterSeleniumImpl {
 	private WebDriver driver;
 
 	public KeywordExporterSeleniumImpl() {
 		super();
-		this.driver = new FirefoxDriver();
+		FirefoxProfile profile = new FirefoxProfile();
+		profile.setPreference("browser.helperApps.neverAsk.saveToDisk", "text/csv");
+		this.driver = new FirefoxDriver(profile);
 		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 		driver.get("https://adwords.google.com/KeywordPlanner");
 	}
