@@ -22,7 +22,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<start-class>com.tripagor.AccommodationAffiliateApplication</start-class>
 		<java.version>1.8</java.version>
-		<seleniumVersion>2.52.0</seleniumVersion>
+		<seleniumVersion>2.53.0</seleniumVersion>
 		<mongodb.version>3.2.0</mongodb.version>
 	</properties>
 
