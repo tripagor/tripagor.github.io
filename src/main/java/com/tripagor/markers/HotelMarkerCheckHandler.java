@@ -55,13 +55,9 @@ public class HotelMarkerCheckHandler {
 					approval.setLatLng(new LatLng(Double.parseDouble(hotel.getLatitude()),
 							Double.parseDouble(hotel.getLongitude())));
 					if (hotel.getIsMarkerApproved()) {
-						if (hotel.getPlaceId() != null) {
-							approval.setStatus(ApprovalStatus.APPROVED);
-						} else {
-							approval.setStatus(ApprovalStatus.REJECTED);
-						}
+						approval.setStatus(ApprovalStatus.APPROVED);
 					} else {
-						approval.setStatus(ApprovalStatus.PENDING);
+						approval.setStatus(ApprovalStatus.REJECTED);
 					}
 				}
 				markercheck.setStatus(ProcessingStatus.PROCESSED);

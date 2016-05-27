@@ -46,7 +46,8 @@ public class HotelMarkerCheck {
 	}
 
 	public Collection<Hotel> doCheck() {
-		Collection<Hotel> checked = new LinkedList<>();
+		Collection<Hotel> changedMarkerStatusHotels = new LinkedList<>();
+		
 		int currentPage = 0;
 		long totalPages = 1;
 		int pageSize = 50;
@@ -59,7 +60,6 @@ public class HotelMarkerCheck {
 			Collection<Hotel> hotels = pagedResources.getContent();
 
 			for (Hotel hotel : hotels) {
-				checked.add(hotel);
 				try {
 					LatLng hotelLatLng = new LatLng(Double.parseDouble(hotel.getLatitude()),
 							Double.parseDouble(hotel.getLongitude()));
@@ -74,13 +74,13 @@ public class HotelMarkerCheck {
 									logger.debug(hotel.getName() + " APPROVED " + result.scope + " " + result.placeId);
 									hotel.setIsMarkerApproved(true);
 									hotel.setPlaceId(placeDetails.placeId);
-									hotelService.update(hotel);
+									changedMarkerStatusHotels.add(hotel);
 								} else {
 									logger.debug(
 											hotel.getName() + " NOT APPROVED " + result.scope + " " + result.placeId);
 									hotel.setIsMarkerApproved(false);
 									hotel.setPlaceId(null);
-									hotelService.update(hotel);
+									changedMarkerStatusHotels.add(hotel);
 								}
 								break;
 							} else {
@@ -95,6 +95,11 @@ public class HotelMarkerCheck {
 				}
 			}
 		}
-		return checked;
+		
+		for(Hotel changed:changedMarkerStatusHotels){
+			hotelService.update(changed);
+		}
+		
+		return changedMarkerStatusHotels;
 	}
 }
