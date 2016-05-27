@@ -36,6 +36,6 @@ public interface HotelRepository extends MongoRepository<Hotel, String> {
 
 	long countBy();
 
-	Page<Hotel> findByIsEvaluatedExistsOrderByBookingComIdDesc(boolean isEvaluatedExisting, PageRequest pageRequest);
+	Page<Hotel> findByIsEvaluatedExistsOrderByBookingComIdDesc(boolean isEvaluatedExisting, Pageable pageRequest);
 
 }
