@@ -54,26 +54,25 @@ public class BookingComExporter {
 					try {
 						String[] values = rows.get(i);
 
-						Map<String, Object> valueMap = new HashMap<>();
+						Map<String, Object> newValueMap = new HashMap<>();
 						for (int j = 0; j < values.length; j++) {
 							if (values[j] != null) {
-								valueMap.put(CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, propMap.get(j)),
+								newValueMap.put(CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, propMap.get(j)),
 										toObject(getType(propMap.get(j)), values[j]));
 							}
 						}
 
-						Hotel hotel = new Hotel();
-						BeanUtils.populate(hotel, valueMap);
-						hotel.setCity(valueMap.get("cityHotel").toString());
-						hotel.setUrl(valueMap.get("hotelUrl").toString());
-						hotel.setImageUrl(valueMap.get("photoUrl").toString());
-
-						Hotel loaded = hotelService.getByBookingComId(hotel.getBookingComId());
+						Hotel loaded = hotelService.getByBookingComId((Long) newValueMap.get("bookingComId"));
 						if (loaded == null) {
+							Hotel hotel = new Hotel();
+							BeanUtils.populate(hotel, newValueMap);
+							hotel.setCity(newValueMap.get("cityHotel").toString());
+							hotel.setUrl(newValueMap.get("hotelUrl").toString());
+							hotel.setImageUrl(newValueMap.get("photoUrl").toString());
 							hotelService.create(hotel);
 						} else {
-							hotel.setId(loaded.getId());
-							hotelService.update(hotel);
+							BeanUtils.populate(loaded, newValueMap);
+							hotelService.update(loaded);
 						}
 					} catch (Exception e) {
 						continue;
