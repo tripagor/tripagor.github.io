@@ -19,6 +19,7 @@ import com.google.maps.PlacesApi;
 import com.google.maps.model.AddressType;
 import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.LatLng;
+import com.google.maps.model.PlaceDetails;
 import com.google.maps.model.PlacesSearchResponse;
 import com.google.maps.model.PlacesSearchResult;
 import com.google.maps.model.RankBy;
@@ -102,17 +103,22 @@ public class HotelMarker {
 							if ("APP".equals(result.scope.name())) {
 								logger.debug("{} ALREADY MARKED", hotel.getName());
 								isMarketSet = true;
+								isApprovedByGoogle = false;
+								wellformattedAddress = result.formattedAddress;
+								placeId = result.placeId;
 								break;
 							} else if ("GOOGLE".equals(result.scope.name())) {
 								logger.debug("{} ALREADY MARKED BY GOOGLE", hotel.getName());
 								isMarketSet = true;
 								isApprovedByGoogle = true;
+								///PlaceDetails details = PlacesApi.placeDetails(geoApiContext, placeId).await();
+								//if()
 								break;
 							}
 						}
 					}
 
-					if (!isApprovedByGoogle && address != null) {
+					if (address != null && !isApprovedByGoogle && placeId == null) {
 						GeocodingResult[] results = GeocodingApi.geocode(geoApiContext, address)
 								.resultType(AddressType.STREET_ADDRESS).await();
 						for (GeocodingResult result : results) {
