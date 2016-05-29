@@ -111,8 +111,12 @@ public class HotelMarker {
 								logger.debug("{} ALREADY MARKED BY GOOGLE", hotel.getName());
 								isMarketSet = true;
 								isApprovedByGoogle = true;
-								///PlaceDetails details = PlacesApi.placeDetails(geoApiContext, placeId).await();
-								//if()
+								PlaceDetails details = PlacesApi.placeDetails(geoApiContext, result.placeId).await();
+								if (details.website != null
+										&& hotel.getUrl().concat(appendStr).equals(details.website.toString())) {
+									wellformattedAddress = details.formattedAddress;
+									placeId = details.placeId;
+								}
 								break;
 							}
 						}
