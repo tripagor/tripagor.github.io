@@ -86,6 +86,9 @@ public class HotelServiceRemoteImpl implements HotelService {
 				.exchange(
 						host.concat(
 								"hotels/search/findByIsEvaluatedExists?isEvaluatedExisting={isEvaluatedExisting}&page={page}&size={pageSize}&sort=bookingComId,desc"),
+
+						//host.concat(
+						//		"hotels/search/findByIsEvaluatedExists?isEvaluatedExisting={isEvaluatedExisting}&page={page}&size={pageSize}"),
 						HttpMethod.GET, null, new ParameterizedTypeReference<PagedResources<Hotel>>() {
 						}, isEvaluatedExisting, currentPage, pageSize)
 				.getBody();

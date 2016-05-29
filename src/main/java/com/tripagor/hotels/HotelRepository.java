@@ -38,4 +38,6 @@ public interface HotelRepository extends MongoRepository<Hotel, String> {
 
 	Page<Hotel> findByIsEvaluatedExistsOrderByBookingComIdDesc(boolean isEvaluatedExisting, Pageable pageRequest);
 
+	Page<Hotel> findByIsEvaluatedExistsOrderByBookingComId(boolean isEvaluatedExisting, PageRequest pageRequest);
+
 }
