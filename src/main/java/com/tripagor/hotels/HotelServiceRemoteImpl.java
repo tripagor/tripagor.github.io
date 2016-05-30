@@ -96,7 +96,11 @@ public class HotelServiceRemoteImpl implements HotelService {
 
 	@Override
 	public void createOrModify(Iterable<Hotel> hotels) {
-		// TODO Auto-generated method stub
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString());
+		HttpEntity<Iterable<Hotel>> requestEntity = new HttpEntity<>(hotels, headers);
+		restTemplateFactory.get(host, clientId, clientSecret)
+				.exchange(host.concat("/hotels/"), HttpMethod.POST, requestEntity, Void.class).getBody();
 
 	}
 
