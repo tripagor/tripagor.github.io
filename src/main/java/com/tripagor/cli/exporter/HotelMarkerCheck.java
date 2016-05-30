@@ -19,7 +19,9 @@ import com.google.maps.model.PlaceType;
 import com.google.maps.model.PlacesSearchResponse;
 import com.google.maps.model.PlacesSearchResult;
 import com.google.maps.model.RankBy;
+import com.tripagor.cli.service.DistanceCalculator;
 import com.tripagor.cli.service.PlaceDeleteApi;
+import com.tripagor.cli.service.StringSimilarity;
 import com.tripagor.hotels.HotelService;
 import com.tripagor.hotels.model.Hotel;
 
@@ -31,10 +33,15 @@ public class HotelMarkerCheck {
 	private String postfix;
 	private Logger logger = LoggerFactory.getLogger(HotelMarkerCheck.class);
 	private PlaceDeleteApi placeDeleteApi;
+	private StringSimilarity stringSimilarity;
+	private DistanceCalculator distanceCalculator;
+	private static final float ACCURACY = 20;
 
 	@Autowired
 	public HotelMarkerCheck(HotelService hotelService, GeoApiContext geoApiContext, PlaceDeleteApi placeDeleteApi,
 			@Value("${hotel.url.postfix}") String postfix) {
+		stringSimilarity = new StringSimilarity();
+		distanceCalculator = new DistanceCalculator();
 		this.hotelService = hotelService;
 		this.geoApiContext = geoApiContext;
 		this.placeDeleteApi = placeDeleteApi;
@@ -66,7 +73,11 @@ public class HotelMarkerCheck {
 					PlacesSearchResponse response = PlacesApi.nearbySearchQuery(geoApiContext, hotelLatLng)
 							.rankby(RankBy.DISTANCE).type(PlaceType.LODGING).await();
 					for (PlacesSearchResult result : response.results) {
-						if (result.name.equals(hotel.getName())) {
+						float cosineDistance = stringSimilarity.cosineDistance(hotel.getName(), result.name);
+						float jaroDistance = stringSimilarity.jaroDistance(hotel.getName(), result.name);
+						float geometricalDistance = distanceCalculator.distance(hotelLatLng, result.geometry.location);
+
+						if (cosineDistance >= 0.5 || jaroDistance >= 0.8 || geometricalDistance <= ACCURACY) {
 							PlaceDetails placeDetails = PlacesApi.placeDetails(geoApiContext, result.placeId).await();
 							if (result.scope == PlaceIdScope.GOOGLE) {
 								if (placeDetails.website != null
