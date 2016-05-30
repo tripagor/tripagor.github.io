@@ -73,6 +73,7 @@ public class HotelMarkerCheck {
 					PlacesSearchResponse response = PlacesApi.nearbySearchQuery(geoApiContext, hotelLatLng)
 							.rankby(RankBy.DISTANCE).type(PlaceType.LODGING).await();
 					for (PlacesSearchResult result : response.results) {
+						
 						float cosineDistance = stringSimilarity.cosineDistance(hotel.getName(), result.name);
 						float jaroDistance = stringSimilarity.jaroDistance(hotel.getName(), result.name);
 						float geometricalDistance = distanceCalculator.distance(hotelLatLng, result.geometry.location);
