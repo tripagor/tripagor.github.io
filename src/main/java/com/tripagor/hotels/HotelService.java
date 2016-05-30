@@ -8,9 +8,7 @@ public interface HotelService {
 
 	Hotel getByBookingComId(Long bookingComId);
 
-	Hotel create(Hotel hotel);
-
-	Hotel update(Hotel hotel);
+	Hotel createOrModify(Hotel hotel);
 
 	Page<Hotel> findByIsEvaluatedAndIsMarkerSetAndIsMarkerApprovedAndFormattedAddressExistsAndPlaceIdExists(
 			int currentPage, int pageSize, boolean isEvaluated, boolean isMarkerSet, boolean isMarkerApproved,
@@ -18,4 +16,5 @@ public interface HotelService {
 
 	Page<Hotel> findByIsEvaluatedExists(int currentPage, int pageSize, boolean isEvaluatedExisting);
 
+	void createOrModify(Iterable<Hotel> hotels);
 }

@@ -169,7 +169,7 @@ public class HotelMarker {
 					hotel.setFormattedAddress(wellformattedAddress);
 					hotel.setPlaceId(placeId);
 
-					hotelService.update(hotel);
+					hotelService.createOrModify(hotel);
 				}
 			}
 		}

@@ -47,7 +47,7 @@ public class HotelMarkerCheck {
 
 	public Collection<Hotel> doCheck() {
 		Collection<Hotel> changedMarkerStatusHotels = new LinkedList<>();
-		
+
 		int currentPage = 0;
 		long totalPages = 1;
 		int pageSize = 50;
@@ -95,11 +95,11 @@ public class HotelMarkerCheck {
 				}
 			}
 		}
-		
-		for(Hotel changed:changedMarkerStatusHotels){
-			hotelService.update(changed);
+
+		for (Hotel changed : changedMarkerStatusHotels) {
+			hotelService.createOrModify(changed);
 		}
-		
+
 		return changedMarkerStatusHotels;
 	}
 }

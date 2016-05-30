@@ -4,6 +4,7 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -47,7 +48,9 @@ public class BookingComExporter {
 	public void extract(File importFile, String host, String clientId, String clientSecret) {
 
 		List<String[]> rows = parser.parseAll(importFile);
+		List<Hotel> hotels = new LinkedList<>();
 
+		int currentSize = 0;
 		try {
 			for (int i = 0; i < rows.size(); i++) {
 				if (i > 0) {
@@ -69,11 +72,20 @@ public class BookingComExporter {
 							hotel.setCity(newValueMap.get("cityHotel").toString());
 							hotel.setUrl(newValueMap.get("hotelUrl").toString());
 							hotel.setImageUrl(newValueMap.get("photoUrl").toString());
-							hotelService.create(hotel);
+							hotels.add(hotel);
 						} else {
 							BeanUtils.populate(loaded, newValueMap);
-							hotelService.update(loaded);
+							hotels.add(loaded);
 						}
+						if (currentSize == 50 || i == (rows.size() - 1)) {
+							hotelService.createOrModify(hotels);
+
+							currentSize = 0;
+							hotels.clear();
+						}
+
+						currentSize++;
+
 					} catch (Exception e) {
 						continue;
 					}

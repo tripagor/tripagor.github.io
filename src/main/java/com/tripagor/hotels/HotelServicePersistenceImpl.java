@@ -23,12 +23,7 @@ public class HotelServicePersistenceImpl implements HotelService {
 	}
 
 	@Override
-	public Hotel create(Hotel hotel) {
-		return hotelRepository.save(hotel);
-	}
-
-	@Override
-	public Hotel update(Hotel hotel) {
+	public Hotel createOrModify(Hotel hotel) {
 		return hotelRepository.save(hotel);
 	}
 
@@ -46,6 +41,11 @@ public class HotelServicePersistenceImpl implements HotelService {
 	public Page<Hotel> findByIsEvaluatedExists(int currentPage, int pageSize, boolean isEvaluatedExisting) {
 		return hotelRepository.findByIsEvaluatedExistsOrderByBookingComIdDesc(isEvaluatedExisting,
 				new PageRequest(currentPage, pageSize));
+	}
+
+	@Override
+	public void createOrModify(Iterable<Hotel> hotels) {
+		hotelRepository.save(hotels);
 	}
 
 }

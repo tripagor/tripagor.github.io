@@ -48,19 +48,19 @@ public class HotelServiceRemoteImpl implements HotelService {
 	}
 
 	@Override
-	public Hotel create(Hotel hotel) {
-		return restTemplateFactory.get(host, clientId, clientSecret).postForObject(host.concat("/hotels"), hotel,
-				Hotel.class);
-	}
+	public Hotel createOrModify(Hotel hotel) {
+		if (hotel.getId() != null) {
+			return restTemplateFactory.get(host, clientId, clientSecret).postForObject(host.concat("/hotels"), hotel,
+					Hotel.class);
+		} else {
+			HttpHeaders headers = new HttpHeaders();
+			headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString());
+			HttpEntity<Hotel> requestEntity = new HttpEntity<>(hotel, headers);
+			return restTemplateFactory.get(host, clientId, clientSecret)
+					.exchange(host.concat("/hotels/{id}"), HttpMethod.PUT, requestEntity, Hotel.class, hotel.getId())
+					.getBody();
 
-	@Override
-	public Hotel update(Hotel hotel) {
-		HttpHeaders headers = new HttpHeaders();
-		headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString());
-		HttpEntity<Hotel> requestEntity = new HttpEntity<>(hotel, headers);
-		return restTemplateFactory.get(host, clientId, clientSecret)
-				.exchange(host.concat("/hotels/{id}"), HttpMethod.PUT, requestEntity, Hotel.class, hotel.getId())
-				.getBody();
+		}
 	}
 
 	@Override
@@ -82,19 +82,22 @@ public class HotelServiceRemoteImpl implements HotelService {
 
 	@Override
 	public Page<Hotel> findByIsEvaluatedExists(int currentPage, int pageSize, boolean isEvaluatedExisting) {
-		PagedResources<Hotel> result = restTemplateFactory.get(hateoasConverter)
-				.exchange(
-						host.concat(
-								"hotels/search/findByIsEvaluatedExists?isEvaluatedExisting={isEvaluatedExisting}&page={page}&size={pageSize}&sort=bookingComId,desc"),
+		PagedResources<Hotel> result = restTemplateFactory.get(hateoasConverter).exchange(host.concat(
+				"hotels/search/findByIsEvaluatedExists?isEvaluatedExisting={isEvaluatedExisting}&page={page}&size={pageSize}&sort=bookingComId,desc"),
 
-						//host.concat(
-						//		"hotels/search/findByIsEvaluatedExists?isEvaluatedExisting={isEvaluatedExisting}&page={page}&size={pageSize}"),
-						HttpMethod.GET, null, new ParameterizedTypeReference<PagedResources<Hotel>>() {
-						}, isEvaluatedExisting, currentPage, pageSize)
-				.getBody();
+				// host.concat(
+				// "hotels/search/findByIsEvaluatedExists?isEvaluatedExisting={isEvaluatedExisting}&page={page}&size={pageSize}"),
+				HttpMethod.GET, null, new ParameterizedTypeReference<PagedResources<Hotel>>() {
+				}, isEvaluatedExisting, currentPage, pageSize).getBody();
 		Page<Hotel> page = new PageImpl<Hotel>(new LinkedList<Hotel>(result.getContent()),
 				new PageRequest(currentPage, pageSize), result.getMetadata().getTotalElements());
 		return page;
+	}
+
+	@Override
+	public void createOrModify(Iterable<Hotel> hotels) {
+		// TODO Auto-generated method stub
+
 	}
 
 }
