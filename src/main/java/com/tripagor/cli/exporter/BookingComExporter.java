@@ -77,7 +77,7 @@ public class BookingComExporter {
 							BeanUtils.populate(loaded, newValueMap);
 							hotels.add(loaded);
 						}
-						if (currentSize == 50 || i == (rows.size() - 1)) {
+						if (currentSize == 500 || i == (rows.size() - 1)) {
 							hotelService.createOrModify(hotels);
 
 							currentSize = 0;
