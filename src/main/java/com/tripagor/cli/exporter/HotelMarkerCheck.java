@@ -35,7 +35,7 @@ public class HotelMarkerCheck {
 	private PlaceDeleteApi placeDeleteApi;
 	private StringSimilarity stringSimilarity;
 	private DistanceCalculator distanceCalculator;
-	private static final float ACCURACY = 20;
+	private static final long ACCURACY = 20;
 
 	@Autowired
 	public HotelMarkerCheck(HotelService hotelService, GeoApiContext geoApiContext, PlaceDeleteApi placeDeleteApi,
@@ -73,12 +73,11 @@ public class HotelMarkerCheck {
 					PlacesSearchResponse response = PlacesApi.nearbySearchQuery(geoApiContext, hotelLatLng)
 							.rankby(RankBy.DISTANCE).type(PlaceType.LODGING).await();
 					for (PlacesSearchResult result : response.results) {
-						
 						float cosineDistance = stringSimilarity.cosineDistance(hotel.getName(), result.name);
 						float jaroDistance = stringSimilarity.jaroDistance(hotel.getName(), result.name);
 						float geometricalDistance = distanceCalculator.distance(hotelLatLng, result.geometry.location);
 
-						if (cosineDistance >= 0.5 || jaroDistance >= 0.8 || geometricalDistance <= ACCURACY) {
+						if ((cosineDistance >= 0.5 || jaroDistance >= 0.8) && geometricalDistance <= ACCURACY) {
 							PlaceDetails placeDetails = PlacesApi.placeDetails(geoApiContext, result.placeId).await();
 							if (result.scope == PlaceIdScope.GOOGLE) {
 								if (placeDetails.website != null
@@ -96,9 +95,7 @@ public class HotelMarkerCheck {
 								}
 								break;
 							} else {
-								if (!placeDetails.placeId.equals(hotel.getPlaceId())) {
-									placeDeleteApi.delete(placeDetails.placeId);
-								}
+								hotel.setPlaceId(placeDetails.placeId);
 							}
 						}
 					}
