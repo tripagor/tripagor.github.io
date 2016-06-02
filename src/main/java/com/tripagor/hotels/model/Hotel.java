@@ -1,6 +1,10 @@
 package com.tripagor.hotels.model;
 
+import java.util.Date;
+
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -91,6 +95,10 @@ public class Hotel {
 	@Field("place_id")
 	private @Indexed String placeId;
 	private @Field("preferred") @JsonIgnore int preferredBookingComPartner;
+	@LastModifiedDate
+	private Date lastModifiedDate;
+	@CreatedDate
+	private Date createdDate;
 
 	public String getId() {
 		return id;
@@ -479,6 +487,22 @@ public class Hotel {
 				+ ", isEvaluated=" + isEvaluated + ", isMarkerSet=" + isMarkerSet + ", isMarkerApproved="
 				+ isMarkerApproved + ", formattedAddress=" + formattedAddress + ", placeId=" + placeId
 				+ ", preferredBookingComPartner=" + preferredBookingComPartner + "]";
+	}
+
+	public Date getLastModifiedDate() {
+		return lastModifiedDate;
+	}
+
+	public void setLastModifiedDate(Date lastModifiedDate) {
+		this.lastModifiedDate = lastModifiedDate;
+	}
+
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
 	}
 
 }
