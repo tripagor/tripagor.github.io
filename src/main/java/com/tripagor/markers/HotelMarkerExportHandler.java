@@ -19,16 +19,16 @@ import com.tripagor.markers.model.ProcessingStatus;
 @Component
 @RepositoryEventHandler(HotelMarkerExport.class)
 public class HotelMarkerExportHandler {
-	private final HotelMarkerWorker hotelMarker;
+	private final HotelMarkerWorker hotelMarkerWorker;
 	private ExecutorService executor = Executors.newFixedThreadPool(10);
 	private final String appendStr;
 	private final HotelMarkerExportRepository hotelMarkerExportRepository;
 
 	@Autowired
-	public HotelMarkerExportHandler(HotelMarkerWorker hotelMarker, HotelMarkerExportRepository hotelMarkerExportRepository,
-			@Value("${hotel.url.postfix}") String appendStr) {
+	public HotelMarkerExportHandler(HotelMarkerWorker hotelMarkerWorker,
+			HotelMarkerExportRepository hotelMarkerExportRepository, @Value("${hotel.url.postfix}") String appendStr) {
 		super();
-		this.hotelMarker = hotelMarker;
+		this.hotelMarkerWorker = hotelMarkerWorker;
 		this.appendStr = appendStr;
 		this.hotelMarkerExportRepository = hotelMarkerExportRepository;
 	}
@@ -44,7 +44,7 @@ public class HotelMarkerExportHandler {
 
 			@Override
 			public void run() {
-				Collection<Hotel> exported = hotelMarker.doHandle(markerExport.getNumberToMark(), appendStr);
+				Collection<Hotel> exported = hotelMarkerWorker.doHandle(markerExport.getNumberToMark(), appendStr);
 				markerExport.setHotels(exported);
 				markerExport.setStatus(ProcessingStatus.PROCESSED);
 				hotelMarkerExportRepository.save(markerExport);

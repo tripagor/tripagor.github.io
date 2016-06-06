@@ -20,15 +20,15 @@ import com.tripagor.markers.model.ProcessingStatus;
 @Component
 @RepositoryEventHandler(HotelMarkerCheck.class)
 public class HotelMarkerCheckHandler {
-	private final com.tripagor.cli.exporter.HotelMarkerCheckWorker hotelMarkerCheck;
+	private final com.tripagor.cli.exporter.HotelMarkerCheckWorker hotelMarkerCheckWorker;
 	private ExecutorService executor = Executors.newFixedThreadPool(10);
 	private final HotelMarkerCheckRepository hotelMarkerCheckRepository;
 
 	@Autowired
-	public HotelMarkerCheckHandler(com.tripagor.cli.exporter.HotelMarkerCheckWorker hotelMarkerCheck,
+	public HotelMarkerCheckHandler(com.tripagor.cli.exporter.HotelMarkerCheckWorker hotelMarkerCheckWorker,
 			HotelMarkerCheckRepository hotelMarkerCheckRepository) {
 		super();
-		this.hotelMarkerCheck = hotelMarkerCheck;
+		this.hotelMarkerCheckWorker = hotelMarkerCheckWorker;
 		this.hotelMarkerCheckRepository = hotelMarkerCheckRepository;
 	}
 
@@ -43,7 +43,7 @@ public class HotelMarkerCheckHandler {
 
 			@Override
 			public void run() {
-				Collection<HotelMarker> changed = hotelMarkerCheck.doCheck();
+				Collection<HotelMarker> changed = hotelMarkerCheckWorker.doCheck();
 				for (HotelMarker hotelMarker : changed) {
 					Approval approval = new Approval();
 					markercheck.getApprovals().add(approval);
