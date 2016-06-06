@@ -13,11 +13,7 @@ import org.springframework.data.mongodb.repository.support.MongoRepositoryFactor
 import com.google.maps.GeoApiContext;
 import com.mongodb.MongoClientURI;
 import com.tripagor.cli.exporter.HotelMarkerCheckWorker;
-import com.tripagor.cli.service.PlaceApiImpl;
-import com.tripagor.hotels.HotelRepository;
-import com.tripagor.hotels.HotelService;
-import com.tripagor.hotels.HotelServicePersistenceImpl;
-import com.tripagor.hotels.HotelServiceRemoteImpl;
+import com.tripagor.markers.HotelMarkerRespository;
 
 public class HotelMarkerCheckCli {
 
@@ -28,24 +24,16 @@ public class HotelMarkerCheckCli {
 
 		options = new Options();
 		options.addOption("h", false, "this help");
-		
 
 		options.addOption("a", true, "url postfix");
 
 		options.addOption("k", true, "google api key");
-
-		options.addOption("r", true, "Host Rest Service");
-		options.addOption("i", true, "clientId");
-		options.addOption("p", true, "client Secret");
 
 		options.addOption("d", true, "Uri Mongo DB");
 
 		try {
 			CommandLine cmd = parser.parse(options, args);
 
-			String host = null;
-			String clientId = null;
-			String clientSecret = null;
 			String key = null;
 			String postfix = "";
 			String mongoUri = null;
@@ -54,15 +42,6 @@ public class HotelMarkerCheckCli {
 				help();
 			}
 
-			if (cmd.hasOption("r")) {
-				host = cmd.getOptionValue("r");
-			}
-			if (cmd.hasOption("i")) {
-				clientId = cmd.getOptionValue("i");
-			}
-			if (cmd.hasOption("p")) {
-				clientSecret = cmd.getOptionValue("p");
-			}
 			if (cmd.hasOption("k")) {
 				key = cmd.getOptionValue("k");
 			}
@@ -72,21 +51,15 @@ public class HotelMarkerCheckCli {
 			if (cmd.hasOption("d")) {
 				mongoUri = cmd.getOptionValue("d");
 			}
-
-			HotelService hotelService = null;
+			HotelMarkerRespository hotelMarkerRepository = null;
 			if (mongoUri != null) {
 				MongoDbFactory mongoDbFactory = new SimpleMongoDbFactory(new MongoClientURI(mongoUri));
 				MongoTemplate mongoTemplate = new MongoTemplate(mongoDbFactory);
-				HotelRepository hotelRepository = new MongoRepositoryFactory(mongoTemplate)
-						.getRepository(HotelRepository.class);
-				hotelService = new HotelServicePersistenceImpl(hotelRepository);
-			} else if (host != null && clientId != null && clientSecret != null) {
-				hotelService = new HotelServiceRemoteImpl(host, clientId, clientSecret);
+				hotelMarkerRepository = new MongoRepositoryFactory(mongoTemplate).getRepository(HotelMarkerRespository.class);
 			}
 
-			if (key != null && hotelService != null) {
-				new HotelMarkerCheckWorker(hotelService, new GeoApiContext().setApiKey(key), new PlaceApiImpl(key),
-						postfix).doCheck();
+			if (key != null && hotelMarkerRepository != null) {
+				new HotelMarkerCheckWorker(hotelMarkerRepository, new GeoApiContext().setApiKey(key), postfix).doCheck();
 			} else {
 				help();
 			}
