@@ -10,11 +10,7 @@ public interface HotelService {
 
 	Hotel createOrModify(Hotel hotel);
 
-	Page<Hotel> findByIsEvaluatedAndIsMarkerSetAndIsMarkerApprovedAndFormattedAddressExistsAndPlaceIdExists(
-			int currentPage, int pageSize, boolean isEvaluated, boolean isMarkerSet, boolean isMarkerApproved,
-			boolean isFormettedAddressExisting, boolean isPlaceIdExisting);
-
-	Page<Hotel> findByIsEvaluatedExists(int currentPage, int pageSize, boolean isEvaluatedExisting);
+	Page<Hotel> findNewest(int currentPage, int pageSize);
 
 	void createOrModify(Iterable<Hotel> hotels);
 }

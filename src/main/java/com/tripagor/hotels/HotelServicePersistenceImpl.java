@@ -3,6 +3,7 @@ package com.tripagor.hotels;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import com.tripagor.hotels.model.Hotel;
@@ -28,19 +29,8 @@ public class HotelServicePersistenceImpl implements HotelService {
 	}
 
 	@Override
-	public Page<Hotel> findByIsEvaluatedAndIsMarkerSetAndIsMarkerApprovedAndFormattedAddressExistsAndPlaceIdExists(
-			int currentPage, int pageSize, boolean isEvaluated, boolean isMarkerSet, boolean isMarkerApproved,
-			boolean isFormettedAddressExisting, boolean isPlaceIdExisting) {
-		return hotelRepository
-				.findByIsEvaluatedAndIsMarkerSetAndIsMarkerApprovedAndFormattedAddressExistsAndPlaceIdExists(
-						isEvaluated, isMarkerSet, isMarkerApproved, isFormettedAddressExisting, isPlaceIdExisting,
-						new PageRequest(currentPage, pageSize));
-	}
-
-	@Override
-	public Page<Hotel> findByIsEvaluatedExists(int currentPage, int pageSize, boolean isEvaluatedExisting) {
-		return hotelRepository.findByIsEvaluatedExistsOrderByBookingComIdDesc(isEvaluatedExisting,
-				new PageRequest(currentPage, pageSize));
+	public Page<Hotel> findNewest(int currentPage, int pageSize) {
+		return hotelRepository.findAll(new Sort(Sort.Direction.ASC, "bookingComId"), new PageRequest(currentPage, pageSize));
 	}
 
 	@Override

@@ -84,16 +84,6 @@ public class Hotel {
 	private Double reviewScore;
 	@Field("review_nr")
 	private Integer reviewNr;
-	@Field("is_evaluated")
-	private Boolean isEvaluated;
-	@Field("is_marker_set")
-	private Boolean isMarkerSet;
-	@Field("is_marker_approved")
-	private Boolean isMarkerApproved;
-	@Field("well_formatted_address")
-	private @Indexed String formattedAddress;
-	@Field("place_id")
-	private @Indexed String placeId;
 	private @Field("preferred") @JsonIgnore int preferredBookingComPartner;
 	@LastModifiedDate
 	private Date lastModifiedDate;
@@ -396,46 +386,6 @@ public class Hotel {
 		this.reviewNr = reviewNr;
 	}
 
-	public Boolean getIsEvaluated() {
-		return isEvaluated;
-	}
-
-	public void setIsEvaluated(Boolean isEvaluated) {
-		this.isEvaluated = isEvaluated;
-	}
-
-	public Boolean getIsMarkerSet() {
-		return isMarkerSet;
-	}
-
-	public void setIsMarkerSet(Boolean isMarkerSet) {
-		this.isMarkerSet = isMarkerSet;
-	}
-
-	public Boolean getIsMarkerApproved() {
-		return isMarkerApproved;
-	}
-
-	public void setIsMarkerApproved(Boolean isMarkerApproved) {
-		this.isMarkerApproved = isMarkerApproved;
-	}
-
-	public String getFormattedAddress() {
-		return formattedAddress;
-	}
-
-	public void setFormattedAddress(String formattedAddress) {
-		this.formattedAddress = formattedAddress;
-	}
-
-	public String getPlaceId() {
-		return placeId;
-	}
-
-	public void setPlaceId(String placeId) {
-		this.placeId = placeId;
-	}
-
 	public WorldRegion getWorldRegion() {
 		return WorldRegion.fromValue(this.continentId);
 	}
@@ -484,9 +434,8 @@ public class Hotel {
 				+ ", descRu=" + descRu + ", descSv=" + descSv + ", descAr=" + descAr + ", descEl=" + descEl
 				+ ", descNo=" + descNo + ", cityUnique=" + cityUnique + ", cityPreferred=" + cityPreferred
 				+ ", continentId=" + continentId + ", reviewScore=" + reviewScore + ", reviewNr=" + reviewNr
-				+ ", isEvaluated=" + isEvaluated + ", isMarkerSet=" + isMarkerSet + ", isMarkerApproved="
-				+ isMarkerApproved + ", formattedAddress=" + formattedAddress + ", placeId=" + placeId
-				+ ", preferredBookingComPartner=" + preferredBookingComPartner + "]";
+				+ ", preferredBookingComPartner=" + preferredBookingComPartner + ", lastModifiedDate="
+				+ lastModifiedDate + ", createdDate=" + createdDate + "]";
 	}
 
 	public Date getLastModifiedDate() {

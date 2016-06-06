@@ -34,7 +34,7 @@ import com.tripagor.model.PlaceAddRequest;
 import com.tripagor.model.PlaceAddResponse;
 
 @Component
-public class HotelMarker {
+public class HotelMarkerWorker {
 	private StringSimilarity stringSimilarity;
 	private DistanceCalculator distanceCalculator;
 	private AddressTools addressTools;
@@ -42,11 +42,11 @@ public class HotelMarker {
 	private int accuracy = 30;
 	private HotelService hotelService;
 	private GeoApiContext geoApiContext;
-	private Logger logger = LoggerFactory.getLogger(HotelMarker.class);
+	private Logger logger = LoggerFactory.getLogger(HotelMarkerWorker.class);
 	private PlaceAddApi placeAddApi;
 
 	@Autowired
-	public HotelMarker(HotelService hotelService, PlaceAddApi placeAddApi, GeoApiContext geoApiContext) {
+	public HotelMarkerWorker(HotelService hotelService, PlaceAddApi placeAddApi, GeoApiContext geoApiContext) {
 		stringSimilarity = new StringSimilarity();
 		distanceCalculator = new DistanceCalculator();
 		addressTools = new AddressTools();
@@ -64,7 +64,7 @@ public class HotelMarker {
 		int totalPages = 1;
 
 		while (currentPage < totalPages && currentNumberMarked < numberOfPlacesToMark) {
-			Page<Hotel> pagedResources = hotelService.findByIsEvaluatedExists(currentPage++, pageSize, false);
+			Page<Hotel> pagedResources = hotelService.findNewest(currentPage++, pageSize);
 			totalPages = pagedResources.getTotalPages();
 			Collection<Hotel> hotels = pagedResources.getContent();
 

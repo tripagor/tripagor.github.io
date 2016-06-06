@@ -63,36 +63,6 @@ public class HotelServiceRemoteImpl implements HotelService {
 		}
 	}
 
-	@Override
-	public Page<Hotel> findByIsEvaluatedAndIsMarkerSetAndIsMarkerApprovedAndFormattedAddressExistsAndPlaceIdExists(
-			int currentPage, int pageSize, boolean isEvaluated, boolean isMarkerSet, boolean isMarkerApproved,
-			boolean isFormettedAddressExisting, boolean isPlaceIdExisting) {
-		PagedResources<Hotel> result = restTemplateFactory.get(hateoasConverter)
-				.exchange(
-						host.concat(
-								"hotels/search/findByIsEvaluatedAndIsMarkerSetAndIsMarkerApprovedAndFormattedAddressExistsAndPlaceIdExists?page={page}&size={size}&sort=bookingComId,desc&isEvaluated={isEvaluated}&isMarkerSet={isMarkerSet}&isMarkerApproved={isMarkerSet}&isFormattedAddressExisting={isFormettedAddressExisting}&isPlaceIdExisting={isPlaceIdExisting}"),
-						HttpMethod.GET, null, new ParameterizedTypeReference<PagedResources<Hotel>>() {
-						}, currentPage, pageSize, isEvaluated, isMarkerSet, isMarkerApproved,
-						isFormettedAddressExisting, isPlaceIdExisting)
-				.getBody();
-		Page<Hotel> page = new PageImpl<Hotel>(new LinkedList<Hotel>(result.getContent()),
-				new PageRequest(currentPage, pageSize), result.getMetadata().getTotalElements());
-		return page;
-	}
-
-	@Override
-	public Page<Hotel> findByIsEvaluatedExists(int currentPage, int pageSize, boolean isEvaluatedExisting) {
-		PagedResources<Hotel> result = restTemplateFactory.get(hateoasConverter).exchange(host.concat(
-				"hotels/search/findByIsEvaluatedExists?isEvaluatedExisting={isEvaluatedExisting}&page={page}&size={pageSize}&sort=bookingComId,desc"),
-
-				// host.concat(
-				// "hotels/search/findByIsEvaluatedExists?isEvaluatedExisting={isEvaluatedExisting}&page={page}&size={pageSize}"),
-				HttpMethod.GET, null, new ParameterizedTypeReference<PagedResources<Hotel>>() {
-				}, isEvaluatedExisting, currentPage, pageSize).getBody();
-		Page<Hotel> page = new PageImpl<Hotel>(new LinkedList<Hotel>(result.getContent()),
-				new PageRequest(currentPage, pageSize), result.getMetadata().getTotalElements());
-		return page;
-	}
 
 	@Override
 	public void createOrModify(Iterable<Hotel> hotels) {
@@ -102,6 +72,20 @@ public class HotelServiceRemoteImpl implements HotelService {
 		restTemplateFactory.get(host, clientId, clientSecret)
 				.exchange(host.concat("/hotels/"), HttpMethod.POST, requestEntity, Void.class).getBody();
 
+	}
+
+	@Override
+	public Page<Hotel> findNewest(int currentPage, int pageSize) {
+		PagedResources<Hotel> result = restTemplateFactory.get(hateoasConverter)
+				.exchange(
+						host.concat(
+								"hotels?page={page}&size={size}&sort=bookingComId,desc"),
+						HttpMethod.GET, null, new ParameterizedTypeReference<PagedResources<Hotel>>() {
+						}, currentPage, pageSize)
+				.getBody();
+		Page<Hotel> page = new PageImpl<Hotel>(new LinkedList<Hotel>(result.getContent()),
+				new PageRequest(currentPage, pageSize), result.getMetadata().getTotalElements());
+		return page;
 	}
 
 }

@@ -12,7 +12,7 @@ import org.springframework.data.mongodb.repository.support.MongoRepositoryFactor
 
 import com.google.maps.GeoApiContext;
 import com.mongodb.MongoClientURI;
-import com.tripagor.cli.exporter.HotelMarker;
+import com.tripagor.cli.exporter.HotelMarkerWorker;
 import com.tripagor.cli.service.PlaceApiImpl;
 import com.tripagor.hotels.HotelRepository;
 import com.tripagor.hotels.HotelService;
@@ -90,7 +90,7 @@ public class HotelMarkerCli {
 			}
 
 			if (hotelService != null && key != null) {
-				new HotelMarker(hotelService, new PlaceApiImpl(key), new GeoApiContext().setApiKey(key))
+				new HotelMarkerWorker(hotelService, new PlaceApiImpl(key), new GeoApiContext().setApiKey(key))
 						.doHandle(numberOfPlacesToAdd, urlAppendStr);
 			} else {
 				help();

@@ -11,7 +11,7 @@ import org.springframework.data.rest.core.annotation.HandleBeforeCreate;
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
 import org.springframework.stereotype.Component;
 
-import com.tripagor.cli.exporter.HotelMarker;
+import com.tripagor.cli.exporter.HotelMarkerWorker;
 import com.tripagor.hotels.model.Hotel;
 import com.tripagor.markers.model.HotelMarkerExport;
 import com.tripagor.markers.model.ProcessingStatus;
@@ -19,13 +19,13 @@ import com.tripagor.markers.model.ProcessingStatus;
 @Component
 @RepositoryEventHandler(HotelMarkerExport.class)
 public class HotelMarkerExportHandler {
-	private final HotelMarker hotelMarker;
+	private final HotelMarkerWorker hotelMarker;
 	private ExecutorService executor = Executors.newFixedThreadPool(10);
 	private final String appendStr;
 	private final HotelMarkerExportRepository hotelMarkerExportRepository;
 
 	@Autowired
-	public HotelMarkerExportHandler(HotelMarker hotelMarker, HotelMarkerExportRepository hotelMarkerExportRepository,
+	public HotelMarkerExportHandler(HotelMarkerWorker hotelMarker, HotelMarkerExportRepository hotelMarkerExportRepository,
 			@Value("${hotel.url.postfix}") String appendStr) {
 		super();
 		this.hotelMarker = hotelMarker;

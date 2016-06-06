@@ -20,12 +20,12 @@ import com.tripagor.markers.model.ProcessingStatus;
 @Component
 @RepositoryEventHandler(HotelMarkerCheck.class)
 public class HotelMarkerCheckHandler {
-	private final com.tripagor.cli.exporter.HotelMarkerCheck hotelMarkerCheck;
+	private final com.tripagor.cli.exporter.HotelMarkerCheckWorker hotelMarkerCheck;
 	private ExecutorService executor = Executors.newFixedThreadPool(10);
 	private final HotelMarkerCheckRepository hotelMarkerCheckRepository;
 
 	@Autowired
-	public HotelMarkerCheckHandler(com.tripagor.cli.exporter.HotelMarkerCheck hotelMarkerCheck,
+	public HotelMarkerCheckHandler(com.tripagor.cli.exporter.HotelMarkerCheckWorker hotelMarkerCheck,
 			HotelMarkerCheckRepository hotelMarkerCheckRepository) {
 		super();
 		this.hotelMarkerCheck = hotelMarkerCheck;

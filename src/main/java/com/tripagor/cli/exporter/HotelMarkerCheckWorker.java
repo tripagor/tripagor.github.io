@@ -26,19 +26,19 @@ import com.tripagor.hotels.HotelService;
 import com.tripagor.hotels.model.Hotel;
 
 @Component
-public class HotelMarkerCheck {
+public class HotelMarkerCheckWorker {
 
 	private HotelService hotelService;
 	private GeoApiContext geoApiContext;
 	private String postfix;
-	private Logger logger = LoggerFactory.getLogger(HotelMarkerCheck.class);
+	private Logger logger = LoggerFactory.getLogger(HotelMarkerCheckWorker.class);
 	private PlaceDeleteApi placeDeleteApi;
 	private StringSimilarity stringSimilarity;
 	private DistanceCalculator distanceCalculator;
 	private static final long ACCURACY = 20;
 
 	@Autowired
-	public HotelMarkerCheck(HotelService hotelService, GeoApiContext geoApiContext, PlaceDeleteApi placeDeleteApi,
+	public HotelMarkerCheckWorker(HotelService hotelService, GeoApiContext geoApiContext, PlaceDeleteApi placeDeleteApi,
 			@Value("${hotel.url.postfix}") String postfix) {
 		stringSimilarity = new StringSimilarity();
 		distanceCalculator = new DistanceCalculator();
