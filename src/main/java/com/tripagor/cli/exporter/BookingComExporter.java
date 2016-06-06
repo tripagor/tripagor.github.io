@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.CaseFormat;
-import com.tripagor.hotels.HotelService;
+import com.tripagor.hotels.HotelRepository;
 import com.tripagor.hotels.model.Hotel;
 import com.univocity.parsers.tsv.TsvParser;
 import com.univocity.parsers.tsv.TsvParserSettings;
@@ -24,28 +24,28 @@ public class BookingComExporter {
 	private final Map<Integer, String> propMap = new HashMap<Integer, String>();
 	private final Map<String, String> propertyReplaceMap = new HashMap<String, String>();
 	private TsvParser parser;
-	private HotelService hotelService;
+	private HotelRepository hotelRepository;
 
-	public BookingComExporter(HotelService hotelService) {
+	public BookingComExporter(HotelRepository hotelRepository) {
 		propertyReplaceMap.put("id", "booking_com_id");
 		propertyReplaceMap.put("cc1", "country_code");
 
 		TsvParserSettings settings = new TsvParserSettings();
 		settings.getFormat().setLineSeparator("\n");
 		parser = new TsvParser(settings);
-		this.hotelService = hotelService;
+		this.hotelRepository = hotelRepository;
 	}
 
-	public void extract(Path path, String restUri, String clientId, String clientSecret) {
+	public void extract(Path path) {
 		File directory = path.toFile();
 		for (File file : directory.listFiles()) {
 			logger.debug("extracting file " + file.getName() + "...");
-			extract(file, restUri, clientId, clientSecret);
+			extract(file);
 			logger.debug("extracting file " + file.getName() + " succeeded.");
 		}
 	}
 
-	public void extract(File importFile, String host, String clientId, String clientSecret) {
+	public void extract(File importFile) {
 
 		List<String[]> rows = parser.parseAll(importFile);
 		List<Hotel> hotels = new LinkedList<>();
@@ -65,7 +65,7 @@ public class BookingComExporter {
 							}
 						}
 
-						Hotel loaded = hotelService.getByBookingComId((Long) newValueMap.get("bookingComId"));
+						Hotel loaded = hotelRepository.findByBookingComId(((Long) newValueMap.get("bookingComId")));
 						if (loaded == null) {
 							Hotel hotel = new Hotel();
 							BeanUtils.populate(hotel, newValueMap);
@@ -78,7 +78,7 @@ public class BookingComExporter {
 							hotels.add(loaded);
 						}
 						if (currentSize == 500 || i == (rows.size() - 1)) {
-							hotelService.createOrModify(hotels);
+							hotelRepository.save(hotels);
 
 							currentSize = 0;
 							hotels.clear();
