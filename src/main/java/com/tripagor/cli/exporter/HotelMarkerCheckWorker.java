@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 import com.google.maps.GeoApiContext;
@@ -22,29 +23,27 @@ import com.google.maps.model.RankBy;
 import com.tripagor.cli.service.DistanceCalculator;
 import com.tripagor.cli.service.PlaceDeleteApi;
 import com.tripagor.cli.service.StringSimilarity;
-import com.tripagor.hotels.HotelService;
-import com.tripagor.hotels.model.Hotel;
+import com.tripagor.markers.HotelMarkerRespository;
+import com.tripagor.markers.model.HotelMarker;
+import com.tripagor.markers.model.Scope;
 
 @Component
 public class HotelMarkerCheckWorker {
 
-	private HotelService hotelService;
 	private GeoApiContext geoApiContext;
 	private String postfix;
 	private Logger logger = LoggerFactory.getLogger(HotelMarkerCheckWorker.class);
-	private PlaceDeleteApi placeDeleteApi;
 	private StringSimilarity stringSimilarity;
 	private DistanceCalculator distanceCalculator;
+	private HotelMarkerRespository hotelMarkerRespository;
 	private static final long ACCURACY = 20;
 
 	@Autowired
-	public HotelMarkerCheckWorker(HotelService hotelService, GeoApiContext geoApiContext, PlaceDeleteApi placeDeleteApi,
-			@Value("${hotel.url.postfix}") String postfix) {
+	public HotelMarkerCheckWorker(HotelMarkerRespository hotelMarkerRespository, GeoApiContext geoApiContext, @Value("${hotel.url.postfix}") String postfix) {
 		stringSimilarity = new StringSimilarity();
 		distanceCalculator = new DistanceCalculator();
-		this.hotelService = hotelService;
+		this.hotelMarkerRespository = hotelMarkerRespository;
 		this.geoApiContext = geoApiContext;
-		this.placeDeleteApi = placeDeleteApi;
 		if (postfix == null) {
 			this.postfix = "";
 		} else {
@@ -52,50 +51,47 @@ public class HotelMarkerCheckWorker {
 		}
 	}
 
-	public Collection<Hotel> doCheck() {
-		Collection<Hotel> changedMarkerStatusHotels = new LinkedList<>();
+	public Collection<HotelMarker> doCheck() {
+		Collection<HotelMarker> changedMarkerStatusHotels = new LinkedList<>();
 
 		int currentPage = 0;
 		long totalPages = 1;
 		int pageSize = 50;
 
 		while (currentPage < totalPages) {
-			Page<Hotel> pagedResources = hotelService
-					.findByIsEvaluatedAndIsMarkerSetAndIsMarkerApprovedAndFormattedAddressExistsAndPlaceIdExists(
-							currentPage++, pageSize, true, true, false, true, true);
+			Page<HotelMarker> pagedResources = hotelMarkerRespository.findByIsOwnedAndScope(true, Scope.APP,
+					new PageRequest(currentPage, pageSize));
 			totalPages = pagedResources.getTotalPages();
-			Collection<Hotel> hotels = pagedResources.getContent();
+			Collection<HotelMarker> hotelMarkers = pagedResources.getContent();
 
-			for (Hotel hotel : hotels) {
+			for (HotelMarker hotelMarker : hotelMarkers) {
 				try {
-					LatLng hotelLatLng = new LatLng(Double.parseDouble(hotel.getLatitude()),
-							Double.parseDouble(hotel.getLongitude()));
+					LatLng hotelLatLng = new LatLng(hotelMarker.getLocation().getLat(),
+							hotelMarker.getLocation().getLng());
 					PlacesSearchResponse response = PlacesApi.nearbySearchQuery(geoApiContext, hotelLatLng)
 							.rankby(RankBy.DISTANCE).type(PlaceType.LODGING).await();
 					for (PlacesSearchResult result : response.results) {
-						float cosineDistance = stringSimilarity.cosineDistance(hotel.getName(), result.name);
-						float jaroDistance = stringSimilarity.jaroDistance(hotel.getName(), result.name);
+						float cosineDistance = stringSimilarity.cosineDistance(hotelMarker.getName(), result.name);
+						float jaroDistance = stringSimilarity.jaroDistance(hotelMarker.getName(), result.name);
 						float geometricalDistance = distanceCalculator.distance(hotelLatLng, result.geometry.location);
 
 						if ((cosineDistance >= 0.5 || jaroDistance >= 0.8) && geometricalDistance <= ACCURACY) {
 							PlaceDetails placeDetails = PlacesApi.placeDetails(geoApiContext, result.placeId).await();
 							if (result.scope == PlaceIdScope.GOOGLE) {
-								if (placeDetails.website != null
-										&& hotel.getUrl().concat(postfix).equals(placeDetails.website.toString())) {
-									logger.debug(hotel.getName() + " APPROVED " + result.scope + " " + result.placeId);
-									hotel.setIsMarkerApproved(true);
-									hotel.setPlaceId(placeDetails.placeId);
-									changedMarkerStatusHotels.add(hotel);
-								} else {
+								if (placeDetails.website != null && hotelMarker.getWebsite().concat(postfix)
+										.equals(placeDetails.website.toString())) {
 									logger.debug(
-											hotel.getName() + " NOT APPROVED " + result.scope + " " + result.placeId);
-									hotel.setIsMarkerApproved(false);
-									hotel.setPlaceId(null);
-									changedMarkerStatusHotels.add(hotel);
+											hotelMarker.getName() + " APPROVED " + result.scope + " " + result.placeId);
+									hotelMarker.setIsOwned(true);
+								} else {
+									logger.debug(hotelMarker.getName() + " NOT APPROVED " + result.scope + " "
+											+ result.placeId);
+									hotelMarker.setIsOwned(false);
 								}
+								hotelMarker.setScope(Scope.GOOGLE);
+								hotelMarker.setPlaceId(placeDetails.placeId);
+								changedMarkerStatusHotels.add(hotelMarker);
 								break;
-							} else {
-								hotel.setPlaceId(placeDetails.placeId);
 							}
 						}
 					}
@@ -105,8 +101,8 @@ public class HotelMarkerCheckWorker {
 			}
 		}
 
-		for (Hotel changed : changedMarkerStatusHotels) {
-			hotelService.createOrModify(changed);
+		for (HotelMarker changed : changedMarkerStatusHotels) {
+			hotelMarkerRespository.save(changed);
 		}
 
 		return changedMarkerStatusHotels;

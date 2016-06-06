@@ -11,9 +11,9 @@ import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
 import org.springframework.stereotype.Component;
 
 import com.google.maps.model.LatLng;
-import com.tripagor.hotels.model.Hotel;
 import com.tripagor.markers.model.Approval;
 import com.tripagor.markers.model.ApprovalStatus;
+import com.tripagor.markers.model.HotelMarker;
 import com.tripagor.markers.model.HotelMarkerCheck;
 import com.tripagor.markers.model.ProcessingStatus;
 
@@ -43,18 +43,18 @@ public class HotelMarkerCheckHandler {
 
 			@Override
 			public void run() {
-				Collection<Hotel> exported = hotelMarkerCheck.doCheck();
-				for (Hotel hotel : exported) {
+				Collection<HotelMarker> changed = hotelMarkerCheck.doCheck();
+				for (HotelMarker hotelMarker : changed) {
 					Approval approval = new Approval();
 					markercheck.getApprovals().add(approval);
-					approval.setHotelId(hotel.getId());
-					approval.setHotelName(hotel.getName());
-					approval.setFormattedAddress(hotel.getFormattedAddress());
-					approval.setUrl(hotel.getUrl());
-					approval.setPlaceId(hotel.getPlaceId());
-					approval.setLatLng(new LatLng(Double.parseDouble(hotel.getLatitude()),
-							Double.parseDouble(hotel.getLongitude())));
-					if (hotel.getIsMarkerApproved()) {
+					approval.setHotelId(hotelMarker.getId());
+					approval.setHotelName(hotelMarker.getName());
+					approval.setFormattedAddress(hotelMarker.getAddress());
+					approval.setUrl(hotelMarker.getWebsite());
+					approval.setPlaceId(hotelMarker.getPlaceId());
+					approval.setLatLng(
+							new LatLng(hotelMarker.getLocation().getLat(), hotelMarker.getLocation().getLng()));
+					if (hotelMarker.getIsOwned()) {
 						approval.setStatus(ApprovalStatus.APPROVED);
 					} else {
 						approval.setStatus(ApprovalStatus.REJECTED);
