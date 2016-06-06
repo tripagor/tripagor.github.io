@@ -70,7 +70,7 @@ public class BookingComHotelCitiesExporterCli {
 
 	private static void help() {
 		HelpFormatter formater = new HelpFormatter();
-		formater.printHelp(HotelMarkerCheckCli.class.getName(), options);
+		formater.printHelp(BookingComHotelCitiesExporterCli.class.getName(), options);
 		System.exit(0);
 	}
 }
