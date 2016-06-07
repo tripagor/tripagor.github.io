@@ -73,8 +73,8 @@ public class HotelMarkerWorker {
 		int totalPages = 1;
 
 		while (currentPage < totalPages && currentNumberMarked < numberOfPlacesToMark) {
-			Page<Hotel> pagedResources = hotelRepository.findAll(new Sort(Direction.DESC, "bookingComId"),
-					new PageRequest(currentPage++, pageSize));
+			Page<Hotel> pagedResources = hotelRepository
+					.findAll(new PageRequest(currentPage++, pageSize, new Sort(Direction.DESC, "bookingComId")));
 			totalPages = pagedResources.getTotalPages();
 			Collection<Hotel> hotels = pagedResources.getContent();
 
@@ -83,14 +83,14 @@ public class HotelMarkerWorker {
 					break;
 				}
 				HotelMarker hotelMarker = null;
-				boolean isApprovedByGoogle = false;
 				String placeId = null;
 				String name = null;
 				String wellformattedAddress = null;
 				String website = null;
-				boolean isOwned = true;
+				Boolean isOwned = null;
 				Location location = null;
 				String phoneNumber = null;
+				Scope scope = null;
 
 				try {
 					hotelMarker = hotelMarkerRespository.findByReference(new Long(hotel.getBookingComId()).toString());
@@ -115,29 +115,37 @@ public class HotelMarkerWorker {
 							float jaroDistance = stringSimilarity.jaroDistance(hotel.getName(), result.name);
 							float geometricalDistance = distanceCalculator.distance(latLng, result.geometry.location);
 
-							if (cosineDistance >= 0.5 || jaroDistance >= 0.8 || geometricalDistance <= accuracy) {
+							if ((cosineDistance >= 0.5 || jaroDistance >= 0.8) && geometricalDistance <= accuracy) {
 								PlaceDetails details = PlacesApi.placeDetails(geoApiContext, result.placeId).await();
-								wellformattedAddress = result.formattedAddress;
+
+								wellformattedAddress = details.formattedAddress;
 								location = new Location(details.geometry.location.lat, details.geometry.location.lng);
-								name = result.name;
+								name = details.name;
 								phoneNumber = details.internationalPhoneNumber;
 								placeId = result.placeId;
-								website = details.website.toString();
+								if (details.website != null) {
+									website = details.website.toString();
+								}
 
 								if ("APP".equals(result.scope.name())) {
 									logger.debug("{} ALREADY MARKED BY APP", hotel.getName());
-									isApprovedByGoogle = false;
+									scope = Scope.APP;
 									isOwned = true;
 								} else if ("GOOGLE".equals(result.scope.name())) {
 									logger.debug("{} ALREADY MARKED BY GOOGLE", hotel.getName());
-									isApprovedByGoogle = true;
-									isOwned = false;
+									scope = Scope.GOOGLE;
+									if (details.website != null
+											&& details.website.toString().equals(hotel.getUrl() + appendStr)) {
+										isOwned = true;
+									} else {
+										isOwned = false;
+									}
 								}
 								break;
 							}
 						}
 
-						if (address != null && !isApprovedByGoogle && placeId == null) {
+						if (address != null && scope == null && placeId == null) {
 							GeocodingResult[] results = GeocodingApi.geocode(geoApiContext, address)
 									.resultType(AddressType.STREET_ADDRESS).await();
 							for (GeocodingResult result : results) {
@@ -150,7 +158,7 @@ public class HotelMarkerWorker {
 									name = hotel.getName();
 									website = hotel.getUrl() + appendStr;
 
-									isApprovedByGoogle = false;
+									scope = Scope.APP;
 
 									logger.debug(hotel.getBookingComId() + " " + hotel.getName());
 
@@ -178,28 +186,23 @@ public class HotelMarkerWorker {
 								}
 							}
 						}
+
+						hotelMarker = new HotelMarker();
+						markers.add(hotelMarker);
+						hotelMarker.setAddress(wellformattedAddress);
+						hotelMarker.setIsOwned(isOwned);
+						hotelMarker.setLocation(location);
+						hotelMarker.setName(name);
+						hotelMarker.setPhoneNumber(phoneNumber);
+						hotelMarker.setPlaceId(placeId);
+						hotelMarker.setReference(new Long(hotel.getBookingComId()).toString());
+						hotelMarker.setScope(scope);
+						hotelMarker.setWebsite(website);
+						hotelMarkerRespository.save(hotelMarker);
+
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
-				} finally {
-					if (hotelMarker == null) {
-						hotelMarker = new HotelMarker();
-					}
-					markers.add(hotelMarker);
-					Scope scope = Scope.APP;
-					if (isApprovedByGoogle) {
-						scope = Scope.GOOGLE;
-					}
-					hotelMarker.setAddress(wellformattedAddress);
-					hotelMarker.setIsOwned(isOwned);
-					hotelMarker.setLocation(location);
-					hotelMarker.setName(name);
-					hotelMarker.setPhoneNumber(phoneNumber);
-					hotelMarker.setPlaceId(placeId);
-					hotelMarker.setReference(new Long(hotel.getBookingComId()).toString());
-					hotelMarker.setScope(scope);
-					hotelMarker.setWebsite(website);
-					hotelMarkerRespository.save(hotelMarker);
 				}
 			}
 		}
