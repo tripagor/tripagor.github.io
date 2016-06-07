@@ -21,7 +21,6 @@ import com.google.maps.model.PlacesSearchResponse;
 import com.google.maps.model.PlacesSearchResult;
 import com.google.maps.model.RankBy;
 import com.tripagor.cli.service.DistanceCalculator;
-import com.tripagor.cli.service.PlaceDeleteApi;
 import com.tripagor.cli.service.StringSimilarity;
 import com.tripagor.markers.HotelMarkerRespository;
 import com.tripagor.markers.model.HotelMarker;
@@ -39,7 +38,8 @@ public class HotelMarkerCheckWorker {
 	private static final long ACCURACY = 20;
 
 	@Autowired
-	public HotelMarkerCheckWorker(HotelMarkerRespository hotelMarkerRespository, GeoApiContext geoApiContext, @Value("${hotel.url.postfix}") String postfix) {
+	public HotelMarkerCheckWorker(HotelMarkerRespository hotelMarkerRespository, GeoApiContext geoApiContext,
+			@Value("${hotel.url.postfix}") String postfix) {
 		stringSimilarity = new StringSimilarity();
 		distanceCalculator = new DistanceCalculator();
 		this.hotelMarkerRespository = hotelMarkerRespository;

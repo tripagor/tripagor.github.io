@@ -10,7 +10,6 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.tripagor.hotels.model.Hotel;
 
 @Document
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -23,7 +22,16 @@ public class HotelMarkerExport {
 	private Date creationDate;
 	@LastModifiedDate
 	private Date lastModified;
-	private Collection<Hotel> hotels = new LinkedList<>();
+	private Collection<HotelMarker> hotelsMarkers = new LinkedList<>();
+
+	public Collection<HotelMarker> getHotelsMarkers() {
+		return hotelsMarkers;
+	}
+
+	public void setHotelsMarkers(Collection<HotelMarker> hotelsMarkers) {
+		this.hotelsMarkers = hotelsMarkers;
+	}
+
 	private ProcessingStatus status;
 
 	public String getId() {
@@ -56,14 +64,6 @@ public class HotelMarkerExport {
 
 	public void setLastModified(Date lastModified) {
 		this.lastModified = lastModified;
-	}
-
-	public Collection<Hotel> getHotels() {
-		return hotels;
-	}
-
-	public void setHotels(Collection<Hotel> hotels) {
-		this.hotels = hotels;
 	}
 
 	public ProcessingStatus getStatus() {

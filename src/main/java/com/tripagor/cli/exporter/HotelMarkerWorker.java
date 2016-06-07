@@ -34,8 +34,8 @@ import com.tripagor.hotels.HotelRepository;
 import com.tripagor.hotels.model.Hotel;
 import com.tripagor.markers.HotelMarkerRespository;
 import com.tripagor.markers.model.HotelMarker;
-import com.tripagor.markers.model.Location;
 import com.tripagor.markers.model.Scope;
+import com.tripagor.model.Location;
 import com.tripagor.model.PlaceAddRequest;
 import com.tripagor.model.PlaceAddResponse;
 
@@ -82,20 +82,19 @@ public class HotelMarkerWorker {
 				if (currentNumberMarked >= numberOfPlacesToMark) {
 					break;
 				}
+				HotelMarker hotelMarker = null;
+				boolean isApprovedByGoogle = false;
+				String placeId = null;
+				String name = null;
+				String wellformattedAddress = null;
+				String website = null;
+				boolean isOwned = true;
+				Location location = null;
+				String phoneNumber = null;
 
-				HotelMarker hotelMarker = hotelMarkerRespository
-						.findByReference(new Long(hotel.getBookingComId()).toString());
-				if (hotelMarker == null) {
-					hotelMarker = new HotelMarker();
-					boolean isApprovedByGoogle = false;
-					String placeId = null;
-					String wellformattedAddress = null;
-					String website = null;
-					boolean isOwned = true;
-					Location location = null;
-					String phoneNumber = null;
-
-					try {
+				try {
+					hotelMarker = hotelMarkerRespository.findByReference(new Long(hotel.getBookingComId()).toString());
+					if (hotelMarker == null) {
 						double longitude = new BigDecimal(hotel.getLongitude()).doubleValue();
 						double latitude = new BigDecimal(hotel.getLatitude()).doubleValue();
 						LatLng latLng = new LatLng(latitude, longitude);
@@ -119,12 +118,14 @@ public class HotelMarkerWorker {
 							if (cosineDistance >= 0.5 || jaroDistance >= 0.8 || geometricalDistance <= accuracy) {
 								PlaceDetails details = PlacesApi.placeDetails(geoApiContext, result.placeId).await();
 								wellformattedAddress = result.formattedAddress;
+								location = new Location(details.geometry.location.lat, details.geometry.location.lng);
+								name = result.name;
+								phoneNumber = details.internationalPhoneNumber;
 								placeId = result.placeId;
 								website = details.website.toString();
-								location = new Location(details.geometry.location.lat, details.geometry.location.lng);
-								phoneNumber = details.internationalPhoneNumber;
+
 								if ("APP".equals(result.scope.name())) {
-									logger.debug("{} ALREADY MARKED", hotel.getName());
+									logger.debug("{} ALREADY MARKED BY APP", hotel.getName());
 									isApprovedByGoogle = false;
 									isOwned = true;
 								} else if ("GOOGLE".equals(result.scope.name())) {
@@ -143,12 +144,19 @@ public class HotelMarkerWorker {
 								if (addressTools.isProperStreetAddress(result)
 										&& distanceCalculator.distance(latLng, result.geometry.location) <= accuracy) {
 									wellformattedAddress = result.formattedAddress;
+									isOwned = true;
+									location = new Location(new BigDecimal(hotel.getLatitude()).doubleValue(),
+											new BigDecimal(hotel.getLongitude()).doubleValue());
+									name = hotel.getName();
+									website = hotel.getUrl() + appendStr;
+
+									isApprovedByGoogle = false;
 
 									logger.debug(hotel.getBookingComId() + " " + hotel.getName());
 
 									PlaceAddRequest place = new PlaceAddRequest();
 
-									place.setName(hotel.getName());
+									place.setName(name);
 									place.setAddress(wellformattedAddress);
 									place.setLocation(new com.tripagor.model.Location(
 											new BigDecimal(hotel.getLatitude()).doubleValue(),
@@ -156,7 +164,7 @@ public class HotelMarkerWorker {
 									place.setAccuracy(new BigDecimal(
 											distanceCalculator.distance(latLng, result.geometry.location))
 													.setScale(0, RoundingMode.CEILING).intValue());
-									place.setWebsite(hotel.getUrl() + appendStr);
+									place.setWebsite(website);
 									place.setTypes(Arrays.asList(new String[] { "lodging" }));
 									place.setLanguage("en");
 
@@ -164,31 +172,34 @@ public class HotelMarkerWorker {
 
 									if ("OK".equals(placeAddResponse.getStatus())) {
 										placeId = placeAddResponse.getPlaceId();
-										markers.add(hotelMarker);
 										currentNumberMarked++;
 									}
 									break;
 								}
 							}
 						}
-					} catch (Exception e) {
-						e.printStackTrace();
-					} finally {
-						Scope scope = Scope.APP;
-						if (isApprovedByGoogle) {
-							scope = Scope.GOOGLE;
-						}
-						hotelMarker.setAddress(wellformattedAddress);
-						hotelMarker.setIsOwned(isOwned);
-						hotelMarker.setLocation(location);
-						hotelMarker.setName(hotel.getName());
-						hotelMarker.setPhoneNumber(phoneNumber);
-						hotelMarker.setPlaceId(placeId);
-						hotelMarker.setReference(new Long(hotel.getBookingComId()).toString());
-						hotelMarker.setScope(scope);
-						hotelMarker.setWebsite(website);
-						hotelMarkerRespository.save(hotelMarker);
 					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					if (hotelMarker == null) {
+						hotelMarker = new HotelMarker();
+					}
+					markers.add(hotelMarker);
+					Scope scope = Scope.APP;
+					if (isApprovedByGoogle) {
+						scope = Scope.GOOGLE;
+					}
+					hotelMarker.setAddress(wellformattedAddress);
+					hotelMarker.setIsOwned(isOwned);
+					hotelMarker.setLocation(location);
+					hotelMarker.setName(name);
+					hotelMarker.setPhoneNumber(phoneNumber);
+					hotelMarker.setPlaceId(placeId);
+					hotelMarker.setReference(new Long(hotel.getBookingComId()).toString());
+					hotelMarker.setScope(scope);
+					hotelMarker.setWebsite(website);
+					hotelMarkerRespository.save(hotelMarker);
 				}
 			}
 		}

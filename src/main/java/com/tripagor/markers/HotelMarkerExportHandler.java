@@ -12,7 +12,7 @@ import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
 import org.springframework.stereotype.Component;
 
 import com.tripagor.cli.exporter.HotelMarkerWorker;
-import com.tripagor.hotels.model.Hotel;
+import com.tripagor.markers.model.HotelMarker;
 import com.tripagor.markers.model.HotelMarkerExport;
 import com.tripagor.markers.model.ProcessingStatus;
 
@@ -44,8 +44,9 @@ public class HotelMarkerExportHandler {
 
 			@Override
 			public void run() {
-				Collection<Hotel> exported = hotelMarkerWorker.doHandle(markerExport.getNumberToMark(), appendStr);
-				markerExport.setHotels(exported);
+				Collection<HotelMarker> exported = hotelMarkerWorker.doHandle(markerExport.getNumberToMark(),
+						appendStr);
+				markerExport.setHotelsMarkers(exported);
 				markerExport.setStatus(ProcessingStatus.PROCESSED);
 				hotelMarkerExportRepository.save(markerExport);
 			}
