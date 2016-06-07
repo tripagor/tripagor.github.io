@@ -13,4 +13,6 @@ public interface HotelMarkerRespository extends MongoRepository<HotelMarker, Str
 
 	Page<HotelMarker> findByIsOwnedAndScope(boolean isOwned, Scope scope, Pageable pageable);
 
+	HotelMarker findByReference(String reference);
+
 }

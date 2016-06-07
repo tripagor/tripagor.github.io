@@ -11,6 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Component;
 
 import com.google.maps.GeoApiContext;
@@ -27,8 +30,11 @@ import com.tripagor.cli.service.AddressTools;
 import com.tripagor.cli.service.DistanceCalculator;
 import com.tripagor.cli.service.PlaceAddApi;
 import com.tripagor.cli.service.StringSimilarity;
-import com.tripagor.hotels.HotelService;
+import com.tripagor.hotels.HotelRepository;
 import com.tripagor.hotels.model.Hotel;
+import com.tripagor.markers.HotelMarkerRespository;
+import com.tripagor.markers.model.HotelMarker;
+import com.tripagor.markers.model.Scope;
 import com.tripagor.model.Location;
 import com.tripagor.model.PlaceAddRequest;
 import com.tripagor.model.PlaceAddResponse;
@@ -40,31 +46,35 @@ public class HotelMarkerWorker {
 	private AddressTools addressTools;
 	private int pageSize = 50;
 	private int accuracy = 30;
-	private HotelService hotelService;
+	private HotelRepository hotelRepository;
 	private GeoApiContext geoApiContext;
 	private Logger logger = LoggerFactory.getLogger(HotelMarkerWorker.class);
 	private PlaceAddApi placeAddApi;
+	private HotelMarkerRespository hotelMarkerRespository;
 
 	@Autowired
-	public HotelMarkerWorker(HotelService hotelService, PlaceAddApi placeAddApi, GeoApiContext geoApiContext) {
+	public HotelMarkerWorker(HotelRepository hotelRepository, HotelMarkerRespository hotelMarkerRespository,
+			PlaceAddApi placeAddApi, GeoApiContext geoApiContext) {
 		stringSimilarity = new StringSimilarity();
 		distanceCalculator = new DistanceCalculator();
 		addressTools = new AddressTools();
 
-		this.hotelService = hotelService;
+		this.hotelRepository = hotelRepository;
+		this.hotelMarkerRespository = hotelMarkerRespository;
 		this.placeAddApi = placeAddApi;
 		this.geoApiContext = geoApiContext;
 	}
 
-	public Collection<Hotel> doHandle(int numberOfPlacesToMark, String appendStr) {
-		Collection<Hotel> markedHotels = new LinkedList<>();
+	public Collection<HotelMarker> doHandle(int numberOfPlacesToMark, String appendStr) {
+		Collection<HotelMarker> markers = new LinkedList<>();
 		int currentNumberMarked = 0;
 
 		int currentPage = 0;
 		int totalPages = 1;
 
 		while (currentPage < totalPages && currentNumberMarked < numberOfPlacesToMark) {
-			Page<Hotel> pagedResources = hotelService.findNewest(currentPage++, pageSize);
+			Page<Hotel> pagedResources = hotelRepository.findAll(new Sort(Direction.DESC, "bookingComID"),
+					new PageRequest(currentPage++, pageSize));
 			totalPages = pagedResources.getTotalPages();
 			Collection<Hotel> hotels = pagedResources.getContent();
 
@@ -73,107 +83,119 @@ public class HotelMarkerWorker {
 					break;
 				}
 
-				boolean isApprovedByGoogle = false;
-				boolean isMarketSet = false;
-				String placeId = null;
-				String wellformattedAddress = null;
+				HotelMarker hotelMarker = hotelMarkerRespository
+						.findByReference(new Long(hotel.getBookingComId()).toString());
+				if (hotelMarker == null) {
+					hotelMarker = new HotelMarker();
+					boolean isApprovedByGoogle = false;
+					boolean isMarketSet = false;
+					String placeId = null;
+					String wellformattedAddress = null;
 
-				try {
-					double longitude = new BigDecimal(hotel.getLongitude()).doubleValue();
-					double latitude = new BigDecimal(hotel.getLatitude()).doubleValue();
-					LatLng latLng = new LatLng(latitude, longitude);
-					String query = hotel.getName() + ", " + hotel.getCity() + ", "
-							+ new Locale("en", hotel.getCountryCode()).getDisplayCountry(new Locale("en"));
-					String address = null;
-					if (hotel.getAddress() != null && hotel.getCity() != null && hotel.getCountryCode() != null) {
-						address = hotel.getAddress() + ", " + hotel.getCity() + ", "
+					try {
+						double longitude = new BigDecimal(hotel.getLongitude()).doubleValue();
+						double latitude = new BigDecimal(hotel.getLatitude()).doubleValue();
+						LatLng latLng = new LatLng(latitude, longitude);
+						String query = hotel.getName() + ", " + hotel.getCity() + ", "
 								+ new Locale("en", hotel.getCountryCode()).getDisplayCountry(new Locale("en"));
-					} else {
-						continue;
-					}
-
-					PlacesSearchResponse response = PlacesApi.nearbySearchQuery(geoApiContext, latLng)
-							.rankby(RankBy.DISTANCE).keyword(query).await();
-					for (PlacesSearchResult result : response.results) {
-						float cosineDistance = stringSimilarity.cosineDistance(hotel.getName(), result.name);
-						float jaroDistance = stringSimilarity.jaroDistance(hotel.getName(), result.name);
-						float geometricalDistance = distanceCalculator.distance(latLng, result.geometry.location);
-
-						if (cosineDistance >= 0.5 || jaroDistance >= 0.8 || geometricalDistance <= accuracy) {
-							if ("APP".equals(result.scope.name())) {
-								logger.debug("{} ALREADY MARKED", hotel.getName());
-								isMarketSet = true;
-								isApprovedByGoogle = false;
-								wellformattedAddress = result.formattedAddress;
-								placeId = result.placeId;
-								break;
-							} else if ("GOOGLE".equals(result.scope.name())) {
-								logger.debug("{} ALREADY MARKED BY GOOGLE", hotel.getName());
-								isMarketSet = true;
-								isApprovedByGoogle = true;
-								PlaceDetails details = PlacesApi.placeDetails(geoApiContext, result.placeId).await();
-								if (details.website != null
-										&& hotel.getUrl().concat(appendStr).equals(details.website.toString())) {
-									wellformattedAddress = details.formattedAddress;
-									placeId = details.placeId;
-								}
-								break;
-							}
+						String address = null;
+						if (hotel.getAddress() != null && hotel.getCity() != null && hotel.getCountryCode() != null) {
+							address = hotel.getAddress() + ", " + hotel.getCity() + ", "
+									+ new Locale("en", hotel.getCountryCode()).getDisplayCountry(new Locale("en"));
+						} else {
+							continue;
 						}
-					}
 
-					if (address != null && !isApprovedByGoogle && placeId == null) {
-						GeocodingResult[] results = GeocodingApi.geocode(geoApiContext, address)
-								.resultType(AddressType.STREET_ADDRESS).await();
-						for (GeocodingResult result : results) {
-							if (addressTools.isProperStreetAddress(result)
-									&& distanceCalculator.distance(latLng, result.geometry.location) <= accuracy) {
-								wellformattedAddress = result.formattedAddress;
+						PlacesSearchResponse response = PlacesApi.nearbySearchQuery(geoApiContext, latLng)
+								.rankby(RankBy.DISTANCE).keyword(query).await();
+						for (PlacesSearchResult result : response.results) {
+							float cosineDistance = stringSimilarity.cosineDistance(hotel.getName(), result.name);
+							float jaroDistance = stringSimilarity.jaroDistance(hotel.getName(), result.name);
+							float geometricalDistance = distanceCalculator.distance(latLng, result.geometry.location);
 
-								logger.debug(hotel.getBookingComId() + " " + hotel.getName());
-
-								PlaceAddRequest place = new PlaceAddRequest();
-
-								place.setName(hotel.getName());
-								place.setAddress(wellformattedAddress);
-								Location location = new Location();
-								location.setLat(new BigDecimal(hotel.getLatitude()).doubleValue());
-								location.setLng(new BigDecimal(hotel.getLongitude()).doubleValue());
-								place.setLocation(location);
-								place.setAccuracy(
-										new BigDecimal(distanceCalculator.distance(latLng, result.geometry.location))
-												.setScale(0, RoundingMode.CEILING).intValue());
-								place.setWebsite(hotel.getUrl() + appendStr);
-								place.setTypes(Arrays.asList(new String[] { "lodging" }));
-								place.setLanguage("en");
-
-								PlaceAddResponse placeAddResponse = placeAddApi.add(place);
-
-								if ("OK".equals(placeAddResponse.getStatus())) {
+							if (cosineDistance >= 0.5 || jaroDistance >= 0.8 || geometricalDistance <= accuracy) {
+								if ("APP".equals(result.scope.name())) {
+									logger.debug("{} ALREADY MARKED", hotel.getName());
 									isMarketSet = true;
-									placeId = placeAddResponse.getPlaceId();
-									markedHotels.add(hotel);
-									currentNumberMarked++;
+									isApprovedByGoogle = false;
+									wellformattedAddress = result.formattedAddress;
+									placeId = result.placeId;
+									break;
+								} else if ("GOOGLE".equals(result.scope.name())) {
+									logger.debug("{} ALREADY MARKED BY GOOGLE", hotel.getName());
+									isMarketSet = true;
+									isApprovedByGoogle = true;
+									PlaceDetails details = PlacesApi.placeDetails(geoApiContext, result.placeId)
+											.await();
+									if (details.website != null
+											&& hotel.getUrl().concat(appendStr).equals(details.website.toString())) {
+										wellformattedAddress = details.formattedAddress;
+										placeId = details.placeId;
+									}
+									break;
 								}
-								break;
 							}
 						}
+
+						if (address != null && !isApprovedByGoogle && placeId == null) {
+							GeocodingResult[] results = GeocodingApi.geocode(geoApiContext, address)
+									.resultType(AddressType.STREET_ADDRESS).await();
+							for (GeocodingResult result : results) {
+								if (addressTools.isProperStreetAddress(result)
+										&& distanceCalculator.distance(latLng, result.geometry.location) <= accuracy) {
+									wellformattedAddress = result.formattedAddress;
+
+									logger.debug(hotel.getBookingComId() + " " + hotel.getName());
+
+									PlaceAddRequest place = new PlaceAddRequest();
+
+									place.setName(hotel.getName());
+									place.setAddress(wellformattedAddress);
+									Location location = new Location();
+									location.setLat(new BigDecimal(hotel.getLatitude()).doubleValue());
+									location.setLng(new BigDecimal(hotel.getLongitude()).doubleValue());
+									place.setLocation(location);
+									place.setAccuracy(new BigDecimal(
+											distanceCalculator.distance(latLng, result.geometry.location))
+													.setScale(0, RoundingMode.CEILING).intValue());
+									place.setWebsite(hotel.getUrl() + appendStr);
+									place.setTypes(Arrays.asList(new String[] { "lodging" }));
+									place.setLanguage("en");
+
+									PlaceAddResponse placeAddResponse = placeAddApi.add(place);
+
+									if ("OK".equals(placeAddResponse.getStatus())) {
+										isMarketSet = true;
+										placeId = placeAddResponse.getPlaceId();
+										markers.add(hotelMarker);
+										currentNumberMarked++;
+									}
+									break;
+								}
+							}
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					} finally {
+						Scope scope = Scope.APP;
+						if(isApprovedByGoogle){
+							scope = Scope.GOOGLE;
+						}
+						hotelMarker.setAddress(wellformattedAddress);
+						hotelMarker.setIsOwned(isOwned);
+						hotelMarker.setLocation(location);
+						hotelMarker.setName(hotel.getName());
+						hotelMarker.setPhoneNumber(phoneNumber);
+						hotelMarker.setPlaceId(placeId);
+						hotelMarker.setReference(new Long(hotel.getBookingComId()).toString());
+						hotelMarker.setScope(scope);
+						hotelMarker.setWebsite(website);
+						hotelMarkerRespository.save(hotelMarker);
 					}
-
-				} catch (Exception e) {
-					e.printStackTrace();
-				} finally {
-					hotel.setIsEvaluated(true);
-					hotel.setIsMarkerSet(isMarketSet);
-					hotel.setIsMarkerApproved(isApprovedByGoogle);
-					hotel.setFormattedAddress(wellformattedAddress);
-					hotel.setPlaceId(placeId);
-
-					hotelService.createOrModify(hotel);
 				}
 			}
 		}
-		return markedHotels;
+		return markers;
 	}
 
 }
