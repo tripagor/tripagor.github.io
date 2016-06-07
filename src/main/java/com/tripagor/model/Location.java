@@ -14,8 +14,19 @@ public class Location {
 
 	@JsonProperty("lat")
 	private Double lat;
+
+	public Location(Double lat, Double lng) {
+		super();
+		this.lat = lat;
+		this.lng = lng;
+	}
+
 	@JsonProperty("lng")
 	private Double lng;
+
+	public Location() {
+
+	}
 
 	/**
 	 * 
