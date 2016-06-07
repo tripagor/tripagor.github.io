@@ -34,8 +34,8 @@ import com.tripagor.hotels.HotelRepository;
 import com.tripagor.hotels.model.Hotel;
 import com.tripagor.markers.HotelMarkerRespository;
 import com.tripagor.markers.model.HotelMarker;
+import com.tripagor.markers.model.Location;
 import com.tripagor.markers.model.Scope;
-import com.tripagor.model.Location;
 import com.tripagor.model.PlaceAddRequest;
 import com.tripagor.model.PlaceAddResponse;
 
@@ -73,7 +73,7 @@ public class HotelMarkerWorker {
 		int totalPages = 1;
 
 		while (currentPage < totalPages && currentNumberMarked < numberOfPlacesToMark) {
-			Page<Hotel> pagedResources = hotelRepository.findAll(new Sort(Direction.DESC, "bookingComID"),
+			Page<Hotel> pagedResources = hotelRepository.findAll(new Sort(Direction.DESC, "bookingComId"),
 					new PageRequest(currentPage++, pageSize));
 			totalPages = pagedResources.getTotalPages();
 			Collection<Hotel> hotels = pagedResources.getContent();
@@ -88,9 +88,12 @@ public class HotelMarkerWorker {
 				if (hotelMarker == null) {
 					hotelMarker = new HotelMarker();
 					boolean isApprovedByGoogle = false;
-					boolean isMarketSet = false;
 					String placeId = null;
 					String wellformattedAddress = null;
+					String website = null;
+					boolean isOwned = true;
+					Location location = null;
+					String phoneNumber = null;
 
 					try {
 						double longitude = new BigDecimal(hotel.getLongitude()).doubleValue();
@@ -114,26 +117,22 @@ public class HotelMarkerWorker {
 							float geometricalDistance = distanceCalculator.distance(latLng, result.geometry.location);
 
 							if (cosineDistance >= 0.5 || jaroDistance >= 0.8 || geometricalDistance <= accuracy) {
+								PlaceDetails details = PlacesApi.placeDetails(geoApiContext, result.placeId).await();
+								wellformattedAddress = result.formattedAddress;
+								placeId = result.placeId;
+								website = details.website.toString();
+								location = new Location(details.geometry.location.lat, details.geometry.location.lng);
+								phoneNumber = details.internationalPhoneNumber;
 								if ("APP".equals(result.scope.name())) {
 									logger.debug("{} ALREADY MARKED", hotel.getName());
-									isMarketSet = true;
 									isApprovedByGoogle = false;
-									wellformattedAddress = result.formattedAddress;
-									placeId = result.placeId;
-									break;
+									isOwned = true;
 								} else if ("GOOGLE".equals(result.scope.name())) {
 									logger.debug("{} ALREADY MARKED BY GOOGLE", hotel.getName());
-									isMarketSet = true;
 									isApprovedByGoogle = true;
-									PlaceDetails details = PlacesApi.placeDetails(geoApiContext, result.placeId)
-											.await();
-									if (details.website != null
-											&& hotel.getUrl().concat(appendStr).equals(details.website.toString())) {
-										wellformattedAddress = details.formattedAddress;
-										placeId = details.placeId;
-									}
-									break;
+									isOwned = false;
 								}
+								break;
 							}
 						}
 
@@ -151,10 +150,9 @@ public class HotelMarkerWorker {
 
 									place.setName(hotel.getName());
 									place.setAddress(wellformattedAddress);
-									Location location = new Location();
-									location.setLat(new BigDecimal(hotel.getLatitude()).doubleValue());
-									location.setLng(new BigDecimal(hotel.getLongitude()).doubleValue());
-									place.setLocation(location);
+									place.setLocation(new com.tripagor.model.Location(
+											new BigDecimal(hotel.getLatitude()).doubleValue(),
+											new BigDecimal(hotel.getLongitude()).doubleValue()));
 									place.setAccuracy(new BigDecimal(
 											distanceCalculator.distance(latLng, result.geometry.location))
 													.setScale(0, RoundingMode.CEILING).intValue());
@@ -165,7 +163,6 @@ public class HotelMarkerWorker {
 									PlaceAddResponse placeAddResponse = placeAddApi.add(place);
 
 									if ("OK".equals(placeAddResponse.getStatus())) {
-										isMarketSet = true;
 										placeId = placeAddResponse.getPlaceId();
 										markers.add(hotelMarker);
 										currentNumberMarked++;
@@ -178,7 +175,7 @@ public class HotelMarkerWorker {
 						e.printStackTrace();
 					} finally {
 						Scope scope = Scope.APP;
-						if(isApprovedByGoogle){
+						if (isApprovedByGoogle) {
 							scope = Scope.GOOGLE;
 						}
 						hotelMarker.setAddress(wellformattedAddress);
