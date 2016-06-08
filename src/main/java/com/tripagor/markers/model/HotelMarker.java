@@ -26,8 +26,12 @@ public class HotelMarker {
 	private Scope scope;
 	@Field("is_owned")
 	private Boolean isOwned;
+
+	@Field("last_modified_date")
 	@LastModifiedDate
 	private Date lastModifiedDate;
+
+	@Field("created_date")
 	@CreatedDate
 	private Date createdDate;
 
