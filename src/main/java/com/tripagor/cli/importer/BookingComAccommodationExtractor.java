@@ -12,8 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.tripagor.cli.service.AddressTools;
-import com.tripagor.model.FeatureSection;
-import com.tripagor.model.Lodging;
+import com.tripagor.google.api.model.FeatureSection;
+import com.tripagor.google.api.model.Lodging;
 
 public class BookingComAccommodationExtractor {
 

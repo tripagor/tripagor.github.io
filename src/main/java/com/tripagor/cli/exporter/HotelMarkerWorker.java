@@ -30,14 +30,14 @@ import com.tripagor.cli.service.AddressTools;
 import com.tripagor.cli.service.DistanceCalculator;
 import com.tripagor.cli.service.PlaceAddApi;
 import com.tripagor.cli.service.StringSimilarity;
+import com.tripagor.google.api.model.Location;
+import com.tripagor.google.api.model.PlaceAddRequest;
+import com.tripagor.google.api.model.PlaceAddResponse;
 import com.tripagor.hotels.HotelRepository;
 import com.tripagor.hotels.model.Hotel;
 import com.tripagor.markers.HotelMarkerRespository;
 import com.tripagor.markers.model.HotelMarker;
 import com.tripagor.markers.model.Scope;
-import com.tripagor.model.Location;
-import com.tripagor.model.PlaceAddRequest;
-import com.tripagor.model.PlaceAddResponse;
 
 @Component
 public class HotelMarkerWorker {
@@ -166,7 +166,7 @@ public class HotelMarkerWorker {
 
 									place.setName(name);
 									place.setAddress(wellformattedAddress);
-									place.setLocation(new com.tripagor.model.Location(
+									place.setLocation(new com.tripagor.google.api.model.Location(
 											new BigDecimal(hotel.getLatitude()).doubleValue(),
 											new BigDecimal(hotel.getLongitude()).doubleValue()));
 									place.setAccuracy(new BigDecimal(

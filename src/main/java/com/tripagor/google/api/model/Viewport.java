@@ -1,5 +1,5 @@
 
-package com.tripagor.model;
+package com.tripagor.google.api.model;
 
 import javax.annotation.Generated;
 

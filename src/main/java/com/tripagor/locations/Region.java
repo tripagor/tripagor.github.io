@@ -5,7 +5,7 @@ import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import com.tripagor.model.Location;
+import com.tripagor.google.api.model.Location;
 
 @CompoundIndexes({ @CompoundIndex(name = "region_country", unique = true, def = "{'name' : 1, 'countryCode' : 1}") })
 @Document

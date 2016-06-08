@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.tripagor.model.Location;
+import com.tripagor.google.api.model.Location;
 
 @Document
 @JsonIgnoreProperties(ignoreUnknown = true)

@@ -1,4 +1,4 @@
-package com.tripagor.model;
+package com.tripagor.google.api.model;
 
 public class Address {
 	private String streetName;

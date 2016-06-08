@@ -5,10 +5,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import com.tripagor.model.PlaceAddRequest;
-import com.tripagor.model.PlaceAddResponse;
-import com.tripagor.model.PlaceDeleteRequest;
-import com.tripagor.model.PlaceDeleteResponse;
+import com.tripagor.google.api.model.PlaceAddRequest;
+import com.tripagor.google.api.model.PlaceAddResponse;
+import com.tripagor.google.api.model.PlaceDeleteRequest;
+import com.tripagor.google.api.model.PlaceDeleteResponse;
 
 @Component
 public class PlaceApiImpl implements PlaceAddApi, PlaceDeleteApi {

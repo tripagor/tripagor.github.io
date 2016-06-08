@@ -1,4 +1,4 @@
-package com.tripagor.model;
+package com.tripagor.google.api.model;
 
 import java.util.LinkedList;
 import java.util.List;

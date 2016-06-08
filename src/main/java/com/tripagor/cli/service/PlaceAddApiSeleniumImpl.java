@@ -7,8 +7,8 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
-import com.tripagor.model.PlaceAddRequest;
-import com.tripagor.model.PlaceAddResponse;
+import com.tripagor.google.api.model.PlaceAddRequest;
+import com.tripagor.google.api.model.PlaceAddResponse;
 
 public class PlaceAddApiSeleniumImpl implements PlaceAddApi {
 	private String username;

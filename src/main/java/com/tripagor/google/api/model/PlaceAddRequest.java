@@ -1,5 +1,5 @@
 
-package com.tripagor.model;
+package com.tripagor.google.api.model;
 
 import java.util.ArrayList;
 import java.util.List;

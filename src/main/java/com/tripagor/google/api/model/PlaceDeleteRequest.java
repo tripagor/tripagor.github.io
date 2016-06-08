@@ -1,4 +1,4 @@
-package com.tripagor.model;
+package com.tripagor.google.api.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
