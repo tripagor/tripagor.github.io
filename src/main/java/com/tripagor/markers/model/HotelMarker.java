@@ -1,6 +1,10 @@
 package com.tripagor.markers.model;
 
+import java.util.Date;
+
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -22,6 +26,10 @@ public class HotelMarker {
 	private Scope scope;
 	@Field("is_owned")
 	private Boolean isOwned;
+	@LastModifiedDate
+	private Date lastModifiedDate;
+	@CreatedDate
+	private Date createdDate;
 
 	public String getId() {
 		return id;
@@ -101,6 +109,22 @@ public class HotelMarker {
 
 	public void setIsOwned(Boolean isOwned) {
 		this.isOwned = isOwned;
+	}
+
+	public Date getLastModifiedDate() {
+		return lastModifiedDate;
+	}
+
+	public void setLastModifiedDate(Date lastModifiedDate) {
+		this.lastModifiedDate = lastModifiedDate;
+	}
+
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
 	}
 
 }
