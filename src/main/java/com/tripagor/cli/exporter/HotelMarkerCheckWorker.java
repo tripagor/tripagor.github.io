@@ -99,6 +99,7 @@ public class HotelMarkerCheckWorker {
 					e.printStackTrace();
 				}
 			}
+			currentPage++;
 		}
 
 		for (HotelMarker changed : changedMarkerStatusHotels) {
