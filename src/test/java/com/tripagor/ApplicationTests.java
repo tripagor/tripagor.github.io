@@ -10,9 +10,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 @SpringApplicationConfiguration(classes = AccommodationAffiliateApplication.class)
 @WebAppConfiguration
 public class ApplicationTests {
-
 	@Test
 	public void contextLoads() {
 	}
-
 }
