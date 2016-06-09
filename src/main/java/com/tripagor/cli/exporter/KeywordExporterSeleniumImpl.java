@@ -4,6 +4,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -16,10 +17,12 @@ import org.openqa.selenium.firefox.FirefoxProfile;
 public class KeywordExporterSeleniumImpl {
 	private WebDriver driver;
 	private static final int GOOGLE_KEYWORD_MAX_SIZE = 2;
+	private String target;
 
 	public KeywordExporterSeleniumImpl(String username, String password, String target) {
 		super();
 		try {
+			this.target = target;
 			if (!Files.exists(Paths.get(target))) {
 				Files.createDirectories(Paths.get(target));
 			} else{
@@ -59,7 +62,7 @@ public class KeywordExporterSeleniumImpl {
 
 	}
 
-	public void doExport(List<String> keywords) throws Exception {
+	public List<File> doExport(List<String> keywords) throws Exception {
 		int currentChunk = 0;
 		boolean isLast = false;
 		while (!isLast) {
@@ -92,7 +95,8 @@ public class KeywordExporterSeleniumImpl {
 					.click();
 			driver.findElement(By.id("gwt-debug-retrieve-download-content")).click();
 		}
-
+		
+		return Arrays.asList( new File(target).listFiles());
 	}
 
 	public static void main(String[] args) throws Exception {
