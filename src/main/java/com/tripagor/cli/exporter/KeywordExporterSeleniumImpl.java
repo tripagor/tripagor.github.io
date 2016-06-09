@@ -1,11 +1,13 @@
 package com.tripagor.cli.exporter;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -20,6 +22,8 @@ public class KeywordExporterSeleniumImpl {
 		try {
 			if (!Files.exists(Paths.get(target))) {
 				Files.createDirectories(Paths.get(target));
+			} else{
+				FileUtils.cleanDirectory(new File(target));
 			}
 			FirefoxProfile profile = new FirefoxProfile();
 			profile.setPreference("browser.helperApps.neverAsk.saveToDisk", "text/csv");
