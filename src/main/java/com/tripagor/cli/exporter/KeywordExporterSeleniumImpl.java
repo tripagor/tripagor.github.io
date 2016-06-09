@@ -13,7 +13,7 @@ import org.openqa.selenium.firefox.FirefoxProfile;
 
 public class KeywordExporterSeleniumImpl {
 	private WebDriver driver;
-	private static final int GOOGLE_KEYWORD_MAX_SIZE = 800;
+	private static final int GOOGLE_KEYWORD_MAX_SIZE = 2;
 
 	public KeywordExporterSeleniumImpl(String username, String password, String target) {
 		super();
@@ -29,8 +29,8 @@ public class KeywordExporterSeleniumImpl {
 
 			this.driver = new FirefoxDriver(profile);
 
-			driver.manage().timeouts().implicitlyWait(90, TimeUnit.SECONDS);
-			driver.get("https:adwords.google.com/KeywordPlanner");
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			driver.get("https://adwords.google.com/KeywordPlanner");
 
 			driver.findElement(By.linkText("Anmelden")).click();
 			driver.findElement(By.id("Email")).clear();
@@ -39,13 +39,23 @@ public class KeywordExporterSeleniumImpl {
 			driver.findElement(By.id("Passwd")).clear();
 			driver.findElement(By.id("Passwd")).sendKeys(password);
 			driver.findElement(By.id("signIn")).click();
+
+			driver.findElement(By.cssSelector("#gwt-debug-splash-panel-stats-selection-input > div.gwt-Label.spgf-i"))
+					.click();
+			driver.findElement(By.cssSelector("#gwt-uid-27 > #gwt-debug-upload-text-box")).click();
+			driver.findElement(By.cssSelector("#gwt-uid-27 > #gwt-debug-upload-text-box")).clear();
+			driver.findElement(By.cssSelector("#gwt-uid-27 > #gwt-debug-upload-text-box")).sendKeys("blubb");
+			driver.findElement(By.cssSelector(
+					"#gwt-debug-stats-selection-splash-panel-form > #gwt-debug-action-buttons > div > #gwt-debug-upload-ideas-button > div.goog-button-base-outer-box.goog-inline-block > div.goog-button-base-inner-box.goog-inline-block > div.goog-button-base-pos > div.goog-button-base-content > #gwt-debug-upload-ideas-button-content"))
+					.click();
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 	}
 
-	public void doExport(List<String> keywords) {
+	public void doExport(List<String> keywords) throws Exception {
 		int currentChunk = 0;
 		boolean isLast = false;
 		while (!isLast) {
@@ -63,24 +73,25 @@ public class KeywordExporterSeleniumImpl {
 
 			System.out.println(keywordsStr);
 			currentChunk++;
-			driver.findElement(By.cssSelector("#gwt-debug-splash-panel-stats-selection-input > div.gwt-Label.spff-i"))
-					.click();
-			driver.findElement(By.cssSelector("#gwt-uid-27 > #gwt-debug-upload-text-box")).clear();
-			driver.findElement(By.cssSelector("#gwt-uid-27 > #gwt-debug-upload-text-box")).sendKeys(keywordsStr);
+
 			driver.findElement(By.cssSelector(
-					"#gwt-debug-stats-selection-splash-panel-form > #gwt-debug-action-buttons > div > #gwt-debug-upload-ideas-button > div.goog-button-base-outer-box.goog-inline-block > div.goog-button-base-inner-box.goog-inline-block > div.goog-button-base-pos > div.goog-button-base-content > #gwt-debug-upload-ideas-button-content"))
+					"#gwt-debug-modify-search-button > div.goog-button-base-outer-box.goog-inline-block > div.goog-button-base-inner-box.goog-inline-block > div.goog-button-base-pos > div.goog-button-base-content"))
 					.click();
-			driver.findElement(By.xpath("div[@id='gwt-debug-search-download-button']/div[2]/div/div/div/div/div[2]"))
+			driver.findElement(By.cssSelector("#gwt-uid-1395 > #gwt-debug-upload-text-box")).clear();
+			driver.findElement(By.cssSelector("#gwt-uid-1395 > #gwt-debug-upload-text-box")).sendKeys(keywordsStr);
+			driver.findElement(By.xpath("(//span[@id='gwt-debug-upload-ideas-button-content'])[7]")).click();
+			Thread.sleep(2500);
+			driver.findElement(By.xpath("//div[@id='gwt-debug-search-download-button']/div[2]/div/div/div/div/div[2]"))
 					.click();
-			driver.findElement(By.id("gwt-debug-download-button-content")).click();
 			driver.findElement(By.cssSelector(
-					"#gwt-debug-retrieve-download > div.goog-button-base-outer-box.goog-inline-block > div.goog-button-base-inner-box.goog-inline-block > div.goog-button-base-pos > div.goog-button-base-content"))
+					"#gwt-debug-download-button > div.goog-button-base-outer-box.goog-inline-block > div.goog-button-base-inner-box.goog-inline-block > div.goog-button-base-pos > div.goog-button-base-content"))
 					.click();
+			driver.findElement(By.id("gwt-debug-retrieve-download-content")).click();
 		}
 
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 
 		KeywordExporterSeleniumImpl exporter = new KeywordExporterSeleniumImpl("admin@pickito.de", "sensor2016",
 				"c:\\temp\\keywords");
