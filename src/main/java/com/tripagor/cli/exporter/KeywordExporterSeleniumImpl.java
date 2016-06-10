@@ -1,11 +1,14 @@
 package com.tripagor.cli.exporter;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -13,13 +16,17 @@ import org.openqa.selenium.firefox.FirefoxProfile;
 
 public class KeywordExporterSeleniumImpl {
 	private WebDriver driver;
-	private static final int GOOGLE_KEYWORD_MAX_SIZE = 800;
+	private static final int GOOGLE_KEYWORD_MAX_SIZE = 2;
+	private String target;
 
 	public KeywordExporterSeleniumImpl(String username, String password, String target) {
 		super();
 		try {
+			this.target = target;
 			if (!Files.exists(Paths.get(target))) {
 				Files.createDirectories(Paths.get(target));
+			} else{
+				FileUtils.cleanDirectory(new File(target));
 			}
 			FirefoxProfile profile = new FirefoxProfile();
 			profile.setPreference("browser.helperApps.neverAsk.saveToDisk", "text/csv");
@@ -29,8 +36,8 @@ public class KeywordExporterSeleniumImpl {
 
 			this.driver = new FirefoxDriver(profile);
 
-			driver.manage().timeouts().implicitlyWait(90, TimeUnit.SECONDS);
-			driver.get("https:adwords.google.com/KeywordPlanner");
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			driver.get("https://adwords.google.com/KeywordPlanner");
 
 			driver.findElement(By.linkText("Anmelden")).click();
 			driver.findElement(By.id("Email")).clear();
@@ -39,13 +46,23 @@ public class KeywordExporterSeleniumImpl {
 			driver.findElement(By.id("Passwd")).clear();
 			driver.findElement(By.id("Passwd")).sendKeys(password);
 			driver.findElement(By.id("signIn")).click();
+
+			driver.findElement(By.cssSelector("#gwt-debug-splash-panel-stats-selection-input > div.gwt-Label.spgf-i"))
+					.click();
+			driver.findElement(By.cssSelector("#gwt-uid-27 > #gwt-debug-upload-text-box")).click();
+			driver.findElement(By.cssSelector("#gwt-uid-27 > #gwt-debug-upload-text-box")).clear();
+			driver.findElement(By.cssSelector("#gwt-uid-27 > #gwt-debug-upload-text-box")).sendKeys("blubb");
+			driver.findElement(By.cssSelector(
+					"#gwt-debug-stats-selection-splash-panel-form > #gwt-debug-action-buttons > div > #gwt-debug-upload-ideas-button > div.goog-button-base-outer-box.goog-inline-block > div.goog-button-base-inner-box.goog-inline-block > div.goog-button-base-pos > div.goog-button-base-content > #gwt-debug-upload-ideas-button-content"))
+					.click();
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 	}
 
-	public void doExport(List<String> keywords) {
+	public List<File> doExport(List<String> keywords) throws Exception {
 		int currentChunk = 0;
 		boolean isLast = false;
 		while (!isLast) {
@@ -63,24 +80,26 @@ public class KeywordExporterSeleniumImpl {
 
 			System.out.println(keywordsStr);
 			currentChunk++;
-			driver.findElement(By.cssSelector("#gwt-debug-splash-panel-stats-selection-input > div.gwt-Label.spff-i"))
-					.click();
-			driver.findElement(By.cssSelector("#gwt-uid-27 > #gwt-debug-upload-text-box")).clear();
-			driver.findElement(By.cssSelector("#gwt-uid-27 > #gwt-debug-upload-text-box")).sendKeys(keywordsStr);
-			driver.findElement(By.cssSelector(
-					"#gwt-debug-stats-selection-splash-panel-form > #gwt-debug-action-buttons > div > #gwt-debug-upload-ideas-button > div.goog-button-base-outer-box.goog-inline-block > div.goog-button-base-inner-box.goog-inline-block > div.goog-button-base-pos > div.goog-button-base-content > #gwt-debug-upload-ideas-button-content"))
-					.click();
-			driver.findElement(By.xpath("div[@id='gwt-debug-search-download-button']/div[2]/div/div/div/div/div[2]"))
-					.click();
-			driver.findElement(By.id("gwt-debug-download-button-content")).click();
-			driver.findElement(By.cssSelector(
-					"#gwt-debug-retrieve-download > div.goog-button-base-outer-box.goog-inline-block > div.goog-button-base-inner-box.goog-inline-block > div.goog-button-base-pos > div.goog-button-base-content"))
-					.click();
-		}
 
+			driver.findElement(By.cssSelector(
+					"#gwt-debug-modify-search-button > div.goog-button-base-outer-box.goog-inline-block > div.goog-button-base-inner-box.goog-inline-block > div.goog-button-base-pos > div.goog-button-base-content"))
+					.click();
+			driver.findElement(By.cssSelector("#gwt-uid-1395 > #gwt-debug-upload-text-box")).clear();
+			driver.findElement(By.cssSelector("#gwt-uid-1395 > #gwt-debug-upload-text-box")).sendKeys(keywordsStr);
+			driver.findElement(By.xpath("(//span[@id='gwt-debug-upload-ideas-button-content'])[7]")).click();
+			Thread.sleep(2500);
+			driver.findElement(By.xpath("//div[@id='gwt-debug-search-download-button']/div[2]/div/div/div/div/div[2]"))
+					.click();
+			driver.findElement(By.cssSelector(
+					"#gwt-debug-download-button > div.goog-button-base-outer-box.goog-inline-block > div.goog-button-base-inner-box.goog-inline-block > div.goog-button-base-pos > div.goog-button-base-content"))
+					.click();
+			driver.findElement(By.id("gwt-debug-retrieve-download-content")).click();
+		}
+		
+		return Arrays.asList( new File(target).listFiles());
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 
 		KeywordExporterSeleniumImpl exporter = new KeywordExporterSeleniumImpl("admin@pickito.de", "sensor2016",
 				"c:\\temp\\keywords");

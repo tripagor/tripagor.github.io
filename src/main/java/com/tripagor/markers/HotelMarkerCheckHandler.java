@@ -11,6 +11,7 @@ import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
 import org.springframework.stereotype.Component;
 
 import com.google.maps.model.LatLng;
+import com.tripagor.cli.exporter.HotelMarkerCheckWorker;
 import com.tripagor.markers.model.Approval;
 import com.tripagor.markers.model.ApprovalStatus;
 import com.tripagor.markers.model.HotelMarker;
@@ -20,12 +21,12 @@ import com.tripagor.markers.model.ProcessingStatus;
 @Component
 @RepositoryEventHandler(HotelMarkerCheck.class)
 public class HotelMarkerCheckHandler {
-	private final com.tripagor.cli.exporter.HotelMarkerCheckWorker hotelMarkerCheckWorker;
+	private final HotelMarkerCheckWorker hotelMarkerCheckWorker;
 	private ExecutorService executor = Executors.newFixedThreadPool(10);
 	private final HotelMarkerCheckRepository hotelMarkerCheckRepository;
 
 	@Autowired
-	public HotelMarkerCheckHandler(com.tripagor.cli.exporter.HotelMarkerCheckWorker hotelMarkerCheckWorker,
+	public HotelMarkerCheckHandler(HotelMarkerCheckWorker hotelMarkerCheckWorker,
 			HotelMarkerCheckRepository hotelMarkerCheckRepository) {
 		super();
 		this.hotelMarkerCheckWorker = hotelMarkerCheckWorker;
