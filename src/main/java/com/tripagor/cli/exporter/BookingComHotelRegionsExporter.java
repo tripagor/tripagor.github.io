@@ -14,8 +14,8 @@ import com.google.maps.model.AddressType;
 import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.LatLng;
 import com.tripagor.google.api.model.Location;
-import com.tripagor.locations.Region;
 import com.tripagor.locations.RegionRepository;
+import com.tripagor.locations.model.Region;
 import com.univocity.parsers.tsv.TsvParser;
 import com.univocity.parsers.tsv.TsvParserSettings;
 

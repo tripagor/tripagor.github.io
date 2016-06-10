@@ -17,8 +17,8 @@ import com.mongodb.MongoClientURI;
 import com.tripagor.hotels.HotelRepository;
 import com.tripagor.hotels.model.Hotel;
 import com.tripagor.locations.CityRepository;
-import com.tripagor.locations.Region;
 import com.tripagor.locations.RegionRepository;
+import com.tripagor.locations.model.Region;
 
 public class DataPointExporter {
 
