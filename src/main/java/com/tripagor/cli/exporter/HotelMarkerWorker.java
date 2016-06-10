@@ -200,7 +200,7 @@ public class HotelMarkerWorker {
 						hotelMarker.setScope(scope);
 						hotelMarker.setWebsite(website);
 						hotelMarkerRespository.save(hotelMarker);
-						if(isNewMarkerSet){
+						if (isNewMarkerSet) {
 							newHotelMarkers.add(hotelMarker);
 						}
 
