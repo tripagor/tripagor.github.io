@@ -66,7 +66,7 @@ public class HotelMarkerWorker {
 	}
 
 	public Collection<HotelMarker> doHandle(int numberOfPlacesToMark, String appendStr) {
-		Collection<HotelMarker> markers = new LinkedList<>();
+		Collection<HotelMarker> newHotelMarkers = new LinkedList<>();
 		int currentNumberMarked = 0;
 
 		int currentPage = 0;
@@ -91,6 +91,7 @@ public class HotelMarkerWorker {
 				Location location = null;
 				String phoneNumber = null;
 				Scope scope = null;
+				boolean isNewMarkerSet = false;
 
 				try {
 					hotelMarker = hotelMarkerRespository.findByReference(new Long(hotel.getBookingComId()).toString());
@@ -181,6 +182,7 @@ public class HotelMarkerWorker {
 									if ("OK".equals(placeAddResponse.getStatus())) {
 										placeId = placeAddResponse.getPlaceId();
 										currentNumberMarked++;
+										isNewMarkerSet = true;
 									}
 									break;
 								}
@@ -188,7 +190,6 @@ public class HotelMarkerWorker {
 						}
 
 						hotelMarker = new HotelMarker();
-						markers.add(hotelMarker);
 						hotelMarker.setAddress(wellformattedAddress);
 						hotelMarker.setIsOwned(isOwned);
 						hotelMarker.setLocation(location);
@@ -199,6 +200,9 @@ public class HotelMarkerWorker {
 						hotelMarker.setScope(scope);
 						hotelMarker.setWebsite(website);
 						hotelMarkerRespository.save(hotelMarker);
+						if(isNewMarkerSet){
+							newHotelMarkers.add(hotelMarker);
+						}
 
 					}
 				} catch (Exception e) {
@@ -206,7 +210,7 @@ public class HotelMarkerWorker {
 				}
 			}
 		}
-		return markers;
+		return newHotelMarkers;
 	}
 
 }
