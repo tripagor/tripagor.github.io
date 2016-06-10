@@ -4,7 +4,6 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -25,7 +24,7 @@ public class KeywordExporterSeleniumImpl {
 			this.target = target;
 			if (!Files.exists(Paths.get(target))) {
 				Files.createDirectories(Paths.get(target));
-			} else{
+			} else {
 				FileUtils.cleanDirectory(new File(target));
 			}
 			FirefoxProfile profile = new FirefoxProfile();
@@ -95,15 +94,8 @@ public class KeywordExporterSeleniumImpl {
 					.click();
 			driver.findElement(By.id("gwt-debug-retrieve-download-content")).click();
 		}
-		
-		return Arrays.asList( new File(target).listFiles());
+
+		return Arrays.asList(new File(target).listFiles());
 	}
 
-	public static void main(String[] args) throws Exception {
-
-		KeywordExporterSeleniumImpl exporter = new KeywordExporterSeleniumImpl("admin@pickito.de", "sensor2016",
-				"c:\\temp\\keywords");
-		exporter.doExport(Arrays.asList(
-				new String[] { "hotels fürth", "hotels nürnberg", "hotels bla", "hotels blubb", "hotels bli" }));
-	}
 }
