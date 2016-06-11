@@ -15,7 +15,7 @@ import org.openqa.selenium.firefox.FirefoxProfile;
 
 public class KeywordExporterSeleniumImpl {
 	private WebDriver driver;
-	private static final int GOOGLE_KEYWORD_MAX_SIZE = 2;
+	private static final int GOOGLE_KEYWORD_MAX_SIZE = 100;
 	private String target;
 
 	public KeywordExporterSeleniumImpl(String username, String password, String target) {
@@ -36,6 +36,7 @@ public class KeywordExporterSeleniumImpl {
 			this.driver = new FirefoxDriver(profile);
 
 			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+
 			driver.get("https://adwords.google.com/KeywordPlanner");
 
 			driver.findElement(By.linkText("Anmelden")).click();
@@ -56,12 +57,13 @@ public class KeywordExporterSeleniumImpl {
 					.click();
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new RuntimeException("could nost start browser", e);
 		}
 
 	}
 
 	public List<File> doExport(List<String> keywords) throws Exception {
+
 		int currentChunk = 0;
 		boolean isLast = false;
 		while (!isLast) {
