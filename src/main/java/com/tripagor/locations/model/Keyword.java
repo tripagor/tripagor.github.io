@@ -4,7 +4,9 @@ public class Keyword {
 
 	private String name;
 	private double competition;
-	private double monthlySearches;
+	private long monthlySearches;
+	private String currencyCode;
+	private double suggestedBid;
 
 	public String getName() {
 		return name;
@@ -22,11 +24,27 @@ public class Keyword {
 		this.competition = competition;
 	}
 
-	public double getMonthlySearches() {
+	public String getCurrencyCode() {
+		return currencyCode;
+	}
+
+	public void setCurrencyCode(String currencyCode) {
+		this.currencyCode = currencyCode;
+	}
+
+	public double getSuggestedBid() {
+		return suggestedBid;
+	}
+
+	public void setSuggestedBid(double suggestedBid) {
+		this.suggestedBid = suggestedBid;
+	}
+
+	public long getMonthlySearches() {
 		return monthlySearches;
 	}
 
-	public void setMonthlySearches(double monthlySearches) {
+	public void setMonthlySearches(long monthlySearches) {
 		this.monthlySearches = monthlySearches;
 	}
 }
