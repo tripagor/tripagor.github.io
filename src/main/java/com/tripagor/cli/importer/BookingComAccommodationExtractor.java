@@ -11,9 +11,9 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.tripagor.cli.service.AddressTools;
 import com.tripagor.google.api.model.FeatureSection;
 import com.tripagor.google.api.model.Lodging;
+import com.tripagor.util.AddressTools;
 
 public class BookingComAccommodationExtractor {
 

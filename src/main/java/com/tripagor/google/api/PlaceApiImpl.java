@@ -1,4 +1,4 @@
-package com.tripagor.cli.service;
+package com.tripagor.google.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

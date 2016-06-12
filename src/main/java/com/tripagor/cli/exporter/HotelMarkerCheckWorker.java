@@ -20,11 +20,11 @@ import com.google.maps.model.PlaceType;
 import com.google.maps.model.PlacesSearchResponse;
 import com.google.maps.model.PlacesSearchResult;
 import com.google.maps.model.RankBy;
-import com.tripagor.cli.service.DistanceCalculator;
-import com.tripagor.cli.service.StringSimilarity;
 import com.tripagor.markers.HotelMarkerRespository;
 import com.tripagor.markers.model.HotelMarker;
 import com.tripagor.markers.model.Scope;
+import com.tripagor.util.DistanceCalculator;
+import com.tripagor.util.StringSimilarity;
 
 @Component
 public class HotelMarkerCheckWorker {

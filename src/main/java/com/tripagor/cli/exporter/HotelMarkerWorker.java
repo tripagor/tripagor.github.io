@@ -26,10 +26,7 @@ import com.google.maps.model.PlaceDetails;
 import com.google.maps.model.PlacesSearchResponse;
 import com.google.maps.model.PlacesSearchResult;
 import com.google.maps.model.RankBy;
-import com.tripagor.cli.service.AddressTools;
-import com.tripagor.cli.service.DistanceCalculator;
-import com.tripagor.cli.service.PlaceAddApi;
-import com.tripagor.cli.service.StringSimilarity;
+import com.tripagor.google.api.PlaceAddApi;
 import com.tripagor.google.api.model.Location;
 import com.tripagor.google.api.model.PlaceAddRequest;
 import com.tripagor.google.api.model.PlaceAddResponse;
@@ -38,6 +35,9 @@ import com.tripagor.hotels.model.Hotel;
 import com.tripagor.markers.HotelMarkerRespository;
 import com.tripagor.markers.model.HotelMarker;
 import com.tripagor.markers.model.Scope;
+import com.tripagor.util.AddressTools;
+import com.tripagor.util.DistanceCalculator;
+import com.tripagor.util.StringSimilarity;
 
 @Component
 public class HotelMarkerWorker {

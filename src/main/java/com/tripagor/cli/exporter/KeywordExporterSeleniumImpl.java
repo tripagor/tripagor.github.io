@@ -25,7 +25,7 @@ public class KeywordExporterSeleniumImpl {
 			if (!Files.exists(Paths.get(target))) {
 				Files.createDirectories(Paths.get(target));
 			} else {
-				FileUtils.cleanDirectory(new File(target));
+				//FileUtils.cleanDirectory(new File(target));
 			}
 			FirefoxProfile profile = new FirefoxProfile();
 			profile.setPreference("browser.helperApps.neverAsk.saveToDisk", "text/csv");

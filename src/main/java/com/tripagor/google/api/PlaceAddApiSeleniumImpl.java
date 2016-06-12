@@ -1,4 +1,4 @@
-package com.tripagor.cli.service;
+package com.tripagor.google.api;
 
 import java.util.concurrent.TimeUnit;
 
