@@ -2,12 +2,13 @@ package com.tripagor.cli.exporter;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -16,22 +17,20 @@ import org.openqa.selenium.firefox.FirefoxProfile;
 public class KeywordExporterSeleniumImpl {
 	private WebDriver driver;
 	private static final int GOOGLE_KEYWORD_MAX_SIZE = 100;
-	private String target;
+	private Path targetPath;
 
 	public KeywordExporterSeleniumImpl(String username, String password, String target) {
 		super();
 		try {
-			this.target = target;
+			targetPath = Paths.get(target, UUID.randomUUID().toString());
 			if (!Files.exists(Paths.get(target))) {
-				Files.createDirectories(Paths.get(target));
-			} else {
-				//FileUtils.cleanDirectory(new File(target));
+				Files.createDirectories(targetPath);
 			}
 			FirefoxProfile profile = new FirefoxProfile();
 			profile.setPreference("browser.helperApps.neverAsk.saveToDisk", "text/csv");
 			profile.setPreference("browser.download.folderList", 2);
 			profile.setPreference("browser.download.manager.showWhenStarting", false);
-			profile.setPreference("browser.download.dir", target);
+			profile.setPreference("browser.download.dir", targetPath.toAbsolutePath().toString());
 
 			this.driver = new FirefoxDriver(profile);
 
@@ -97,7 +96,7 @@ public class KeywordExporterSeleniumImpl {
 			driver.findElement(By.id("gwt-debug-retrieve-download-content")).click();
 		}
 
-		return Arrays.asList(new File(target).listFiles());
+		return Arrays.asList(this.targetPath.toFile().listFiles());
 	}
 
 }
