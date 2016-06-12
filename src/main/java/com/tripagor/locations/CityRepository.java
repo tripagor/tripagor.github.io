@@ -12,4 +12,6 @@ public interface CityRepository extends MongoRepository<City, String> {
 
 	List<City> findByCountryCode(String countryCode);
 
+	City findByName(String name);
+
 }

@@ -3,7 +3,7 @@ package com.tripagor.locations.model;
 import java.util.LinkedList;
 import java.util.List;
 
-public class KeywordResearchResult {
+public class KeywordResearchResults {
 
 	private List<Keyword> keywords = new LinkedList<>();
 

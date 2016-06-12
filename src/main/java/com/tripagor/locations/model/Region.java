@@ -18,7 +18,7 @@ public class Region {
 	private String countryCode;
 	private String type;
 	private Location location;
-	private KeywordResearchResult keywordResearch;
+	private KeywordResearchResults keywordResearchResults = new KeywordResearchResults();
 
 	public String getId() {
 		return id;
@@ -68,12 +68,12 @@ public class Region {
 		this.location = location;
 	}
 
-	public KeywordResearchResult getKeywordResearch() {
-		return keywordResearch;
+	public KeywordResearchResults getKeywordResearchResults() {
+		return keywordResearchResults;
 	}
 
-	public void setKeywordResearch(KeywordResearchResult keywordResearch) {
-		this.keywordResearch = keywordResearch;
+	public void setKeywordResearchResults(KeywordResearchResults keywordResearchResults) {
+		this.keywordResearchResults = keywordResearchResults;
 	}
 
 }

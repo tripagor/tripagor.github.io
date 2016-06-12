@@ -16,7 +16,7 @@ public class City {
 	private String countryCode;
 	private int numOfHotels;
 	private Location location;
-	private KeywordResearchResult keywordResearchResult;
+	private KeywordResearchResults keywordResearchResults = new KeywordResearchResults();
 
 	public String getName() {
 		return name;
@@ -58,12 +58,12 @@ public class City {
 		this.location = location;
 	}
 
-	public KeywordResearchResult getKeywordResearchResult() {
-		return keywordResearchResult;
+	public KeywordResearchResults getKeywordResearchResults() {
+		return keywordResearchResults;
 	}
 
-	public void setKeywordResearchResult(KeywordResearchResult keywordResearch) {
-		this.keywordResearchResult = keywordResearch;
+	public void setKeywordResearchResults(KeywordResearchResults keywordResearchResults) {
+		this.keywordResearchResults = keywordResearchResults;
 	}
 
 }

@@ -25,7 +25,7 @@ import com.tripagor.cli.exporter.KeywordExporterSeleniumImpl;
 import com.tripagor.locations.CityRepository;
 import com.tripagor.locations.model.City;
 import com.tripagor.locations.model.Keyword;
-import com.tripagor.locations.model.KeywordResearchResult;
+import com.tripagor.locations.model.KeywordResearchResults;
 import com.univocity.parsers.tsv.TsvParser;
 import com.univocity.parsers.tsv.TsvParserSettings;
 
@@ -91,14 +91,26 @@ public class HotelCitiesKeywordByCountryExport {
 						}
 
 						String keywordStr = (String) valueMap.get("Keyword");
-						KeywordResearchResult keywordResult = new KeywordResearchResult();
-						Keyword keyword = new Keyword();
-						keyword.setCompetition((Double) valueMap.get("Competition"));
-						keyword.setMonthlySearches((Long) valueMap.get("Avg. Monthly Searches (exact match only)"));
-						keyword.setSuggestedBid((Double) valueMap.get("Suggested bid"));
-						keyword.setCurrencyCode((String) valueMap.get("Currency"));
-						keyword.setName(keywordStr.substring(keywordStr.indexOf((keywordStr + " ").length())).trim());
-						keywordResult.getKeywords().add(keyword);
+						City city = cityRepository.findByName(
+								keywordStr.substring(keywordStr.indexOf((keywordStr + " ").length())).trim());
+						if (city != null) {
+							for (Keyword current : city.getKeywordResearchResults().getKeywords()) {
+								if (keywordPrefix.equals(current.getName())) {
+									city.getKeywordResearchResults().getKeywords().remove(current);
+								}
+							}
+
+							KeywordResearchResults keywordResult = city.getKeywordResearchResults();
+							Keyword keyword = new Keyword();
+							keyword.setCompetition((Double) valueMap.get("Competition"));
+							keyword.setMonthlySearches((Long) valueMap.get("Avg. Monthly Searches (exact match only)"));
+							keyword.setSuggestedBid((Double) valueMap.get("Suggested bid"));
+							keyword.setCurrencyCode((String) valueMap.get("Currency"));
+							keyword.setName(keywordPrefix);
+
+							keywordResult.getKeywords().add(keyword);
+							cityRepository.save(city);
+						}
 					} catch (Exception e) {
 						continue;
 					}
