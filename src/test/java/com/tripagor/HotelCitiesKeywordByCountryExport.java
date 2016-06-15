@@ -106,22 +106,26 @@ public class HotelCitiesKeywordByCountryExport {
 								}
 							}
 
-							if(valueMap.get("Competition") != null && valueMap.get("Avg. Monthly Searches (exact match only)") &&){
-							KeywordResearchResults keywordResearchResults = new KeywordResearchResults();
+							if (valueMap.get("Competition") != null
+									&& valueMap.get("Avg. Monthly Searches (exact match only)") != null
+									&& valueMap.get("Suggested bid") != null && valueMap.get("Currency") != null) {
+								KeywordResearchResults keywordResearchResults = new KeywordResearchResults();
 
-							Keyword keyword = new Keyword();
-							keyword.setCompetition((Double) valueMap.get("Competition"));
-							keyword.setMonthlySearches((Long) valueMap.get("Avg. Monthly Searches (exact match only)"));
-							keyword.setSuggestedBid((Double) valueMap.get("Suggested bid"));
-							keyword.setCurrencyCode((String) valueMap.get("Currency"));
-							keyword.setName(keywordPrefix);
-							keywords.add(keyword);
+								Keyword keyword = new Keyword();
+								keyword.setCompetition((Double) valueMap.get("Competition"));
+								keyword.setMonthlySearches(
+										(Long) valueMap.get("Avg. Monthly Searches (exact match only)"));
+								keyword.setSuggestedBid((Double) valueMap.get("Suggested bid"));
+								keyword.setCurrencyCode((String) valueMap.get("Currency"));
+								keyword.setName(keywordPrefix);
+								keywords.add(keyword);
 
-							keywordResearchResults.setKeywords(keywords);
+								keywordResearchResults.setKeywords(keywords);
 
-							city.setKeywordResearchResults(keywordResearchResults);
-							cityRepository.save(city);
-							successful++;}
+								city.setKeywordResearchResults(keywordResearchResults);
+								cityRepository.save(city);
+								successful++;
+							}
 						}
 					} catch (Exception e) {
 						failed++;
