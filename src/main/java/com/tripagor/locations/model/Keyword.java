@@ -3,10 +3,10 @@ package com.tripagor.locations.model;
 public class Keyword {
 
 	private String name;
-	private double competition;
-	private long monthlySearches;
+	private Number competition;
+	private Number monthlySearches;
 	private String currencyCode;
-	private double suggestedBid;
+	private Number suggestedBid;
 
 	public String getName() {
 		return name;
@@ -16,12 +16,20 @@ public class Keyword {
 		this.name = name;
 	}
 
-	public double getCompetition() {
+	public Number getCompetition() {
 		return competition;
 	}
 
-	public void setCompetition(double competition) {
+	public void setCompetition(Number competition) {
 		this.competition = competition;
+	}
+
+	public Number getMonthlySearches() {
+		return monthlySearches;
+	}
+
+	public void setMonthlySearches(Number monthlySearches) {
+		this.monthlySearches = monthlySearches;
 	}
 
 	public String getCurrencyCode() {
@@ -32,19 +40,12 @@ public class Keyword {
 		this.currencyCode = currencyCode;
 	}
 
-	public double getSuggestedBid() {
+	public Number getSuggestedBid() {
 		return suggestedBid;
 	}
 
-	public void setSuggestedBid(double suggestedBid) {
+	public void setSuggestedBid(Number suggestedBid) {
 		this.suggestedBid = suggestedBid;
 	}
 
-	public long getMonthlySearches() {
-		return monthlySearches;
-	}
-
-	public void setMonthlySearches(long monthlySearches) {
-		this.monthlySearches = monthlySearches;
-	}
 }

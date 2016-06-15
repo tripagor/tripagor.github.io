@@ -112,10 +112,10 @@ public class HotelCitiesKeywordByCountryExport {
 								KeywordResearchResults keywordResearchResults = new KeywordResearchResults();
 
 								Keyword keyword = new Keyword();
-								keyword.setCompetition((Double) valueMap.get("Competition"));
+								keyword.setCompetition((Number) valueMap.get("Competition"));
 								keyword.setMonthlySearches(
-										(Long) valueMap.get("Avg. Monthly Searches (exact match only)"));
-								keyword.setSuggestedBid((Double) valueMap.get("Suggested bid"));
+										(Number) valueMap.get("Avg. Monthly Searches (exact match only)"));
+								keyword.setSuggestedBid((Number) valueMap.get("Suggested bid"));
 								keyword.setCurrencyCode((String) valueMap.get("Currency"));
 								keyword.setName(keywordPrefix);
 								keywords.add(keyword);
