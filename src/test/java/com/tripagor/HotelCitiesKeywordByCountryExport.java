@@ -69,6 +69,7 @@ public class HotelCitiesKeywordByCountryExport {
 		File[] files = new File("C://temp/keywords").listFiles();
 
 		for (File file : files) {
+			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>" + file.getName());
 			doExtractKeywordResults(file);
 		}
 
@@ -95,21 +96,29 @@ public class HotelCitiesKeywordByCountryExport {
 						String keywordStr = (String) valueMap.get("Keyword");
 						City city = cityRepository.findByName(keywordStr.substring((keywordPrefix + " ").length()));
 						if (city != null) {
-							for (Keyword current : city.getKeywordResearchResults().getKeywords()) {
-								if (keywordPrefix.equals(current.getName())) {
-									city.getKeywordResearchResults().getKeywords().remove(current);
+							List<Keyword> keywords = new LinkedList<>();
+							if (city.getKeywordResearchResults() != null
+									&& city.getKeywordResearchResults().getKeywords() != null) {
+								for (Keyword current : city.getKeywordResearchResults().getKeywords()) {
+									if (current.getName() != null && !keywordPrefix.equals(current.getName())) {
+										keywords.add(current);
+									}
 								}
 							}
 
-							KeywordResearchResults keywordResult = city.getKeywordResearchResults();
+							KeywordResearchResults keywordResearchResults = new KeywordResearchResults();
+
 							Keyword keyword = new Keyword();
 							keyword.setCompetition((Double) valueMap.get("Competition"));
 							keyword.setMonthlySearches((Long) valueMap.get("Avg. Monthly Searches (exact match only)"));
 							keyword.setSuggestedBid((Double) valueMap.get("Suggested bid"));
 							keyword.setCurrencyCode((String) valueMap.get("Currency"));
 							keyword.setName(keywordPrefix);
+							keywords.add(keyword);
 
-							keywordResult.getKeywords().add(keyword);
+							keywordResearchResults.setKeywords(keywords);
+
+							city.setKeywordResearchResults(keywordResearchResults);
 							cityRepository.save(city);
 							successful++;
 						}
@@ -132,7 +141,7 @@ public class HotelCitiesKeywordByCountryExport {
 			logger.error("failed with {}", e);
 		}
 
-		logger.debug("successfule:" + successful + " failed:" + failed);
+		logger.debug("successful:" + successful + " failed:" + failed);
 	}
 
 	@SuppressWarnings("rawtypes")
