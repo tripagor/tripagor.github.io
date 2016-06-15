@@ -106,6 +106,7 @@ public class HotelCitiesKeywordByCountryExport {
 								}
 							}
 
+							if(valueMap.get("Competition") != null && valueMap.get("Avg. Monthly Searches (exact match only)") &&){
 							KeywordResearchResults keywordResearchResults = new KeywordResearchResults();
 
 							Keyword keyword = new Keyword();
@@ -120,7 +121,7 @@ public class HotelCitiesKeywordByCountryExport {
 
 							city.setKeywordResearchResults(keywordResearchResults);
 							cityRepository.save(city);
-							successful++;
+							successful++;}
 						}
 					} catch (Exception e) {
 						failed++;
