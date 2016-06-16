@@ -2,19 +2,11 @@ package com.tripagor.locations.model;
 
 public class Keyword {
 
-	private String name;
+	private String value;
 	private Number competition;
 	private Number monthlySearches;
 	private String currencyCode;
 	private Number suggestedBid;
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
 
 	public Number getCompetition() {
 		return competition;
@@ -46,6 +38,14 @@ public class Keyword {
 
 	public void setSuggestedBid(Number suggestedBid) {
 		this.suggestedBid = suggestedBid;
+	}
+
+	public String getValue() {
+		return value;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
 	}
 
 }
