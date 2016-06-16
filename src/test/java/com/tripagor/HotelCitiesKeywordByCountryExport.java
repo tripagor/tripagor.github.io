@@ -77,8 +77,6 @@ public class HotelCitiesKeywordByCountryExport {
 
 	private void doExtractKeywordResults(File file) {
 		List<String[]> rows = parser.parseAll(file, Charset.forName("UTF-16LE"));
-		int failed = 0;
-		int successful = 0;
 
 		try {
 			for (int i = 0; i < rows.size(); i++) {
@@ -124,11 +122,9 @@ public class HotelCitiesKeywordByCountryExport {
 
 								city.setKeywordResearchResults(keywordResearchResults);
 								cityRepository.save(city);
-								successful++;
 							}
 						}
 					} catch (Exception e) {
-						failed++;
 						continue;
 					}
 				} else {
@@ -145,8 +141,6 @@ public class HotelCitiesKeywordByCountryExport {
 		} catch (Exception e) {
 			logger.error("failed with {}", e);
 		}
-
-		logger.debug("successful:" + successful + " failed:" + failed);
 	}
 
 	@SuppressWarnings("rawtypes")
