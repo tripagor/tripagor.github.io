@@ -98,7 +98,7 @@ public class HotelCitiesKeywordByCountryExport {
 							if (city.getKeywordResearchResults() != null
 									&& city.getKeywordResearchResults().getKeywords() != null) {
 								for (Keyword current : city.getKeywordResearchResults().getKeywords()) {
-									if (current.getName() != null && !keywordPrefix.equals(current.getName())) {
+									if (current.getValue() != null && !keywordPrefix.equals(current.getValue())) {
 										keywords.add(current);
 									}
 								}
@@ -115,7 +115,7 @@ public class HotelCitiesKeywordByCountryExport {
 										(Number) valueMap.get("Avg. Monthly Searches (exact match only)"));
 								keyword.setSuggestedBid((Number) valueMap.get("Suggested bid"));
 								keyword.setCurrencyCode((String) valueMap.get("Currency"));
-								keyword.setName(keywordPrefix);
+								keyword.setValue(keywordPrefix);
 								keywords.add(keyword);
 
 								keywordResearchResults.setKeywords(keywords);
