@@ -62,6 +62,7 @@ Marketing
 2.3  Reddit post
 2.4  Facebook Ad campaign
 2.5  Facebook post
+2.6  E-Book Amazon
 
 2.1  Keyword analysis on travel destinations
 2.2  Blog articles based on keyword analysis
