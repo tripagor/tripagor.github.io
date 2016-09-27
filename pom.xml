@@ -121,21 +121,17 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
 				<configuration>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
+					<failOnMissingWebXml>false</failOnMissingWebXml>
+					<outputDirectory>deployments</outputDirectory>
+					<warName>ROOT</warName>
 				</configuration>
-				<!-- <executions>
-					<execution>
-						<id>make-assembly</id> 
-						<phase>package</phase> 
-						<goals>
-							<goal>single</goal>
-						</goals>
-					</execution>
-				</executions> -->
 			</plugin>
 		</plugins>
 	</build>
