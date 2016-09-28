@@ -14,22 +14,12 @@ if [ ! -d $OPENSHIFT_DATA_DIR/logs ]
 				mkdir logs
 fi
 
-if [ -d $OPENSHIFT_DATA_DIR/jdk1.8.0_20 ]
-        then
-                rm -rf $OPENSHIFT_DATA_DIR/jdk1.8.0_20 
-fi
-
 if [ ! -d $OPENSHIFT_DATA_DIR/jdk1.8.0_101 ]
         then
                 cd $OPENSHIFT_DATA_DIR
                 wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u101-b13/jdk-8u101-linux-x64.tar.gz
                 tar xvf *.tar.gz
                 rm -f *.tar.gz
-fi
-
-if [ -d $OPENSHIFT_DATA_DIR/apache-maven-3.3.3 ]
-        then
-                rm -rf $OPENSHIFT_DATA_DIR/apache-maven-3.3.3
 fi
 
 if [ ! -d $OPENSHIFT_DATA_DIR/apache-maven-3.3.9 ]
