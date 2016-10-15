@@ -1,0 +1,6 @@
+/target/
+.project
+.classpath
+.settings/
+src/main/resources/static/web/json/hotels.json
+*.json

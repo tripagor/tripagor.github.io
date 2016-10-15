@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html ng-app="demoapp">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="assets/angular.min.js"></script>
+    <script src="assets/leaflet.js"></script>
+    <script src="assets/angular-simple-logger.js"></script>
+    <script src="assets/leaflet-heat.js"></script>
+    <script src="assets/ui-leaflet.js"></script>
+    <script src="https://rawgit.com/elesdoar/ui-leaflet-layers/master/dist/ui-leaflet-layers.min.js"></script>
+    <link rel="stylesheet" href="assets/leaflet.css" />
+    <script>
+        var app = angular.module("demoapp", ['ui-leaflet']);
+        app.controller("LayersHeatmapController", ["$scope", "$http", function($scope, $http) {
+
+            $http.get("json/hotels_AU.json").success(function(data) {
+                $scope.layers.overlays = {
+                    heat: {
+                        name: 'Heat Map',
+                        type: 'heat',
+                        data: data,
+                        layerOptions: {
+                            radius: 60,
+                            blur: 30
+                        },
+                        visible: true
+                    }
+                };
+            });
+
+            angular.extend($scope, {
+                center: {
+                    lat: 37.774546,
+                    lng: -122.433523,
+                    zoom: 1
+                },
+                layers: {
+                    baselayers: {
+                        osm: {
+                            name: 'OpenStreetMap',
+                            url: 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                            type: 'xyz'
+                        }
+                    }
+                }
+            });
+        }]);
+    </script>
+</head>
+
+<body ng-controller="LayersHeatmapController">
+    <leaflet lf-center="center" layers="layers" width="100%" height="400"></leaflet>
+</body>
+
+</html>
